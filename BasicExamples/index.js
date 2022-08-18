@@ -1,4 +1,3 @@
-const fm = require('./first-module');
 const http = require('http');
 const port = 3000;
 
@@ -10,7 +9,7 @@ http
     response.writeHead(200, { 'Content-Type': 'text/plain' });
 
     // Send the response body as "Hello World"
-    response.end('Hello World\n' + fm.hello());
+    response.end('Hello World\n');
   })
   .listen(port);
 
