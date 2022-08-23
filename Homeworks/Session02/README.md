@@ -70,7 +70,7 @@
 
 ---
 
-## 🔶 API: Get a category (Authentication Bearer)
+## 🔶 API: Get a category
 
 ### REQUEST:
 
