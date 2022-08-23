@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
+// ALL
 router.all('/', (req, res, next) => {
   console.log('Accessing the secret section ...');
   next(); // pass control to the next handler
@@ -8,7 +9,7 @@ router.all('/', (req, res, next) => {
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-  res.send('This is products router');
+  res.send('This is index of products router');
 });
 
 router.get('/type', function (req, res, next) {
@@ -19,6 +20,7 @@ router.get('/kind', function (req, res, next) {
   res.send('kind');
 });
 
+// GET WITH PARAMS
 router.get('/search/:name/type/:type', (req, res) => {
   const name = req.params.name;
   const type = req.params.type;
@@ -28,6 +30,7 @@ router.get('/search/:name/type/:type', (req, res) => {
   res.send('ab?cd');
 });
 
+// POST
 router.post('/', function (req, res, next) {
   const result = [
     {
@@ -43,6 +46,7 @@ router.post('/', function (req, res, next) {
   // res.json(result);
 });
 
+// POST
 router.post('/search', function (req, res, next) {
   const data = req.body;
   console.log(data);
