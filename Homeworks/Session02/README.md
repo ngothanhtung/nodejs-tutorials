@@ -75,7 +75,6 @@
 ### REQUEST:
 
 - Url: http://localhost:3000/categories/:id
-- Authorization: Bearer Token
 - Method: GET
 - Params: id = 1
 
