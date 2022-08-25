@@ -2,14 +2,14 @@ var express = require('express');
 var router = express.Router();
 
 // ALL
-router.all('/', (req, res, next) => {
-  console.log('Accessing the secret section ...');
-  next(); // pass control to the next handler
-});
+// router.all('/', (req, res, next) => {
+//   console.log('Accessing the secret section ...');
+//   next(); // pass control to the next handler
+// });
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-  res.send('This is index of products router');
+  res.json([{ id: 1, name: 'iPhone' }]);
 });
 
 router.get('/type', function (req, res, next) {

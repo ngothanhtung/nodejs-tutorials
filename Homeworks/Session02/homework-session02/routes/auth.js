@@ -20,7 +20,6 @@ const users = [
   },
 ];
 
-/* GET users listing. */
 router.post('/login', function (req, res, next) {
   const { username, password } = req.body;
 
@@ -43,7 +42,7 @@ router.post('/login', function (req, res, next) {
       return;
     }
   } catch (error) {
-    res.status(500);
+    res.sendStatus(500);
     return;
   }
 });

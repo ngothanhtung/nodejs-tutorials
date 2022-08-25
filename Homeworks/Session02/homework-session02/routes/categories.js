@@ -9,7 +9,7 @@ let categories = [
     description: 'Các loại CPU cho máy tính',
   },
   {
-    id: 2,
+    id: 9,
     name: 'HDD',
     description: 'Các loại đĩa cứng cho máy tính',
   },
@@ -26,7 +26,11 @@ router.get('/', function (req, res, next) {
     res.json(categories);
     return;
   } catch (error) {
+    // DEV MODE
     res.status(500).json(error);
+    // PRODUCTION MODE
+    // res.sendStatus(500);
+    // res.status(500).json({message: 'Lỗi hệ thống', desc: ''});
     return;
   }
 });
@@ -35,14 +39,16 @@ router.get('/', function (req, res, next) {
 router.get('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
+    if (id === undefined) {
+      res.status(400).json({ message: 'id is required' });
+      return;
+    }
     const found = categories.find((category) => {
       return category.id.toString() === id;
     });
 
     if (found) {
-      res.json({
-        ...found,
-      });
+      res.json(found);
       return;
     } else {
       res.sendStatus(410);
@@ -104,6 +110,7 @@ router.patch('/:id', function (req, res, next) {
       return;
     }
   } catch (error) {
+    // DEV MODE
     res.status(500).json(error);
     return;
   }
