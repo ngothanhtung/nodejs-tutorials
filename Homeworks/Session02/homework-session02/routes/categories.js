@@ -1,25 +1,11 @@
 var _ = require('lodash');
+var fs = require('fs');
 var express = require('express');
 var router = express.Router();
 
-let categories = [
-  {
-    id: 1,
-    name: 'CPU',
-    description: 'Các loại CPU cho máy tính',
-  },
-  {
-    id: 9,
-    name: 'HDD',
-    description: 'Các loại đĩa cứng cho máy tính',
-  },
-  {
-    id: 3,
-    name: 'RAM',
-    description: 'Các loại ram cho máy tính',
-  },
-];
-
+const fileName = './data/categories.json';
+const data = fs.readFileSync(fileName, { encoding: 'utf-8', flag: 'r' });
+let categories = JSON.parse(data);
 // 🔶 API: List all categories
 router.get('/', function (req, res, next) {
   try {
@@ -72,6 +58,12 @@ router.post('/', function (req, res, next) {
     const max = _.maxBy(categories, 'id');
     categories.push({ id: max.id + 1, name, description });
 
+    // Save to file
+    fs.writeFileSync(fileName, JSON.stringify(categories), function (err) {
+      if (err) throw err;
+      console.log('Saved!');
+    });
+
     res.sendStatus(201);
     return;
   } catch (error) {
@@ -103,6 +95,12 @@ router.patch('/:id', function (req, res, next) {
     if (found) {
       found.name = name;
       found.description = description;
+      // Save to file
+      fs.writeFileSync(fileName, JSON.stringify(categories), function (err) {
+        if (err) throw err;
+        console.log('Saved!');
+      });
+
       res.status(200).json(found);
       return;
     } else {
@@ -133,6 +131,12 @@ router.delete('/:id', function (req, res, next) {
     if (found) {
       _.remove(categories, (category) => {
         return category.id.toString() === id;
+      });
+
+      // Save to file
+      fs.writeFileSync(fileName, JSON.stringify(categories), function (err) {
+        if (err) throw err;
+        console.log('Saved!');
       });
 
       res.sendStatus(200);
