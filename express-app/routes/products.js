@@ -42,8 +42,8 @@ router.post('/', function (req, res, next) {
       name: 'iPhone 11',
     },
   ];
-  res.jsonp({ user: 'tobi' });
-  // res.json(result);
+
+  res.json(result);
 });
 
 // POST

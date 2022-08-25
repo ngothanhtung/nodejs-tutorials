@@ -12,12 +12,6 @@ var authRouter = require('./routes/auth');
 
 var app = express();
 
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-  }),
-);
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -28,9 +22,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(
+  cors({
+    origin: '*',
+  }),
+);
+
 // ROUTES
 app.use('/', indexRouter);
-
 app.use('/users', usersRouter);
 
 // MIDDLEWARE
@@ -64,7 +63,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.send({ error: err.message });
 });
 
 module.exports = app;
