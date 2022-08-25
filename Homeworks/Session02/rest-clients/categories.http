@@ -1,0 +1,29 @@
+###
+GET http://192.168.72.222:3000/categories HTTP/1.1
+Content-Type: application/json
+
+###
+GET http://192.168.72.222:3000/categories/1 HTTP/1.1
+Content-Type: application/json
+
+###
+POST http://192.168.72.222:3000/categories HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "New Category",
+  "description": "New Description"
+}
+
+###
+PATCH http://192.168.72.222:3000/categories/3 HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "New Category 2",
+  "description": "New Description 2"
+}
+
+###
+DELETE http://192.168.72.222:3000/categories/3 HTTP/1.1
+Content-Type: application/json
