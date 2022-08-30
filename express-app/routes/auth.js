@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
+var { validateSchema, loginSchema } = require('./schemas.yup');
 
-router.post('/login', function (req, res, next) {
+router.post('/login', validateSchema(loginSchema), function (req, res, next) {
   const { username, password } = req.body;
   if (username === 'tungnt@softech.vn' && password === '123456789') {
     res.json({

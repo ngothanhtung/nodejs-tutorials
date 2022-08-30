@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var { validateSchema, productSchema } = require('./schemas.yup');
 
 // ALL
 // router.all('/', (req, res, next) => {
@@ -21,7 +22,7 @@ router.get('/kind', function (req, res, next) {
 });
 
 // GET WITH PARAMS
-router.get('/search/:name/type/:type', (req, res) => {
+router.get('/search/:name/type/:type', validateSchema(productSchema), (req, res) => {
   const name = req.params.name;
   const type = req.params.type;
   console.log('Params: ', req.params);
