@@ -1,3 +1,12 @@
+// VALIDATE
+// 1. install: yup
+// 2. config: schema
+// 3. config middleware for route
+// JWT:
+// 1. install: jsonwebtoken, passport, passport-jwt
+// 2. app:
+// 3. route: login => token
+// 4. config middleware for route
 var express = require('express');
 var router = express.Router();
 var { validateSchema, loginSchema } = require('./schemas.yup');
@@ -43,6 +52,7 @@ router.post('/login', validateSchema(loginSchema), function (req, res, next) {
   });
 });
 
+// setup jwt middleware
 router.get('/', passport.authenticate('jwt', { session: false }), function (req, res, next) {
   res.json({ ok: true });
 });
