@@ -22,12 +22,8 @@
 ```json
 {
   "user": {
-    "id": 1,
     "email": "tungnt@softech.vn",
-    "username": "tungnt",
-    "firstName": "Tony",
-    "lastName": "Woo",
-    "isActive": true
+    "username": "tungnt"
   },
   "access_token": "..."
 }
