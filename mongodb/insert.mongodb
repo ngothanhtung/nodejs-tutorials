@@ -1,0 +1,22 @@
+
+// Select the database to use.
+use('api-training');
+
+// The drop() command destroys all data from a collection.
+// Make sure you run it against the correct database and collection.
+db.movies.drop();
+
+// Insert a few documents into the sales collection.
+db.movies.insertOne(
+  {
+    title: "The Favourite",
+    genres: [ "Drama", "History" ],
+    runtime: 121,
+    rated: "R",
+    year: 2018,
+    directors: [ "Yorgos Lanthimos" ],
+    cast: [ "Olivia Colman", "Emma Stone", "Rachel Weisz" ],
+    type: "movie"
+  }
+)
+

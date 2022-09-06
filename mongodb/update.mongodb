@@ -1,0 +1,10 @@
+// Select the database to use.
+use('api-training');
+ 
+db.movies.updateOne( { title: "Tag" },
+{
+  $set: {
+    plot: "One month every year, five highly competitive friends hit the ground running for a no-holds-barred game of tag"
+  }
+  { $currentDate: { lastUpdated: true } }
+})
