@@ -1,0 +1,14 @@
+// Select the database to use.
+use('api-training');
+
+// Insert a few documents into the sales collection.
+db.movies.insertOne({
+  title: 'The Favourite',
+  genres: ['Drama', 'History'],
+  runtime: 121,
+  rated: 'R',
+  year: 2018,
+  directors: ['Yorgos Lanthimos'],
+  cast: ['Olivia Colman', 'Emma Stone', 'Rachel Weisz'],
+  type: 'movie',
+});
