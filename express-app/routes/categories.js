@@ -57,12 +57,19 @@ router.get(
     const query = { name: new RegExp(`^${text}`) };
 
     // SORT
-    // const sort = { price: 1 };
-    const sort = { price: -1 };
+    // const sort = { name: 1 };
+    const sort = { name: -1 };
 
     // LIMIT
-    const limit = 1;
-    findDocuments(query, 'categories', sort, limit)
+    const limit = 50;
+
+    // SKIP
+    const skip = 1;
+
+    // PROJECTION: which columns you need
+    const projection = { name: 1 };
+
+    findDocuments(query, 'categories', sort, limit, [], skip, projection)
       .then((result) => {
         res.json(result);
       })
