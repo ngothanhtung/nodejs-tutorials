@@ -37,6 +37,13 @@ const categorySchema = yup.object({
   }),
 });
 
+const supplierSchema = yup.object({
+  body: yup.object({
+    name: yup.string().required(),
+    phone: yup.string().required(),
+  }),
+});
+
 const productSchema = yup.object({
   body: yup.object({
     name: yup.string().required(),
@@ -50,4 +57,5 @@ module.exports = {
   registerSchema,
   productSchema,
   categorySchema,
+  supplierSchema,
 };

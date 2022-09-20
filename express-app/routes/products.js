@@ -20,6 +20,14 @@ router.get('/', function (req, res, next) {
         as: 'category', // alias
       },
     },
+    {
+      $lookup: {
+        from: 'suppliers', // foreign collection name
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'supplier', // alias
+      },
+    },
   ];
 
   findDocuments({}, 'products', {}, 50, lookup)
