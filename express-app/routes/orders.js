@@ -7,23 +7,61 @@ const { validateSchema, categorySchema, supplierSchema } = require('./schemas.yu
 const collectionName = 'orders';
 
 router.get('/', function (req, res, next) {
+  // const lookup = [
+  //   {
+  //     $lookup: {
+  //       from: 'products',
+  //       localField: 'orderDetails.productId',
+  //       foreignField: '_id',
+  //       as: 'orderDetails',
+  //     },
+  //   },
+  //   {
+  //     $unwind: {
+  //       path: '$orderDetails',
+  //       preserveNullAndEmptyArrays: true,
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'categories',
+  //       localField: 'orderDetails.categoryId',
+  //       foreignField: '_id',
+  //       as: 'orderDetails.category',
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'suppliers',
+  //       localField: 'orderDetails.supplierId',
+  //       foreignField: '_id',
+  //       as: 'orderDetails.supplier',
+  //     },
+  //   },
+  //   {
+  //     $group: {
+  //       _id: '$_id',
+  //       name: { $first: '$name' },
+  //       orderDetails: { $push: '$orderDetails' },
+  //     },
+  //   },
+  // ];
+
   const lookup = [
     {
       $lookup: {
         from: 'products',
-        localField: 'orderDetails.productId',
-        foreignField: '_id',
+        let: { productId: '_id' },
         pipeline: [
           {
-            $lookup: {
-              from: 'categories',
-              localField: 'orderDetails.categoryId',
-              foreignField: '_id',
-              as: 'category',
+            $match: {
+              $expr: {
+                $eq: ['$orderDetails.productId', '$$productId'],
+              },
             },
           },
         ],
-        as: 'products',
+        as: 'orderDetails',
       },
     },
   ];
