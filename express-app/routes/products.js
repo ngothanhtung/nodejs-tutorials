@@ -11,16 +11,18 @@ var { validateSchema, productSchema } = require('./schemas.yup');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-  findDocuments({}, 'products', {}, 50, [
+  const lookup = [
     {
       $lookup: {
-        from: 'categories',
+        from: 'categories', // foreign collection name
         localField: 'categoryId',
         foreignField: '_id',
-        as: 'category',
+        as: 'category', // alias
       },
     },
-  ])
+  ];
+
+  findDocuments({}, 'products', {}, 50, lookup)
     .then((result) => {
       res.json(result);
     })

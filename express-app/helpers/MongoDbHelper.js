@@ -192,12 +192,12 @@ function findDocuments(query, collectionName, sort, limit = 50, aggregate = [], 
         const dbo = client.db(DATABASE_NAME);
         const collection = dbo.collection(collectionName);
         collection
-          // .aggregate(aggregate)
-          .find(query)
-          .sort(sort)
-          .limit(limit)
-          .skip(skip)
-          .project(projection)
+          .aggregate(aggregate)
+          // .find(query)
+          // .sort(sort)
+          // .limit(limit)
+          // .skip(skip)
+          // .project(projection)
           .toArray()
 
           .then((result) => {
