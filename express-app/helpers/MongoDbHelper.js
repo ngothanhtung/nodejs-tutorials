@@ -185,15 +185,19 @@ function findDocument(id, collectionName) {
 }
 // ----------------------------------------------------------------------------
 // FIND: Tìm kiếm (nhiều)
-function findDocuments(query, collectionName) {
+function findDocuments(query, collectionName, sort, limit = 50, aggregate = []) {
   return new Promise((resolve, reject) => {
     MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true })
       .then((client) => {
         const dbo = client.db(DATABASE_NAME);
         const collection = dbo.collection(collectionName);
         collection
-          .find(query)
+          .aggregate(aggregate)
+          // .find(query)
+          // .sort(sort)
+          // .limit(limit)
           .toArray()
+
           .then((result) => {
             client.close();
             resolve(result);

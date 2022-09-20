@@ -31,9 +31,16 @@ const registerSchema = yup.object({
   params: yup.object({}),
 });
 
+const categorySchema = yup.object({
+  body: yup.object({
+    name: yup.string().required(),
+  }),
+});
+
 const productSchema = yup.object({
-  params: yup.object({
-    type: yup.number().min(0).max(10),
+  body: yup.object({
+    name: yup.string().required(),
+    price: yup.number().min(0).required(),
   }),
 });
 
@@ -42,4 +49,5 @@ module.exports = {
   loginSchema,
   registerSchema,
   productSchema,
+  categorySchema,
 };

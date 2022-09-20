@@ -1,4 +1,5 @@
 var express = require('express');
+const { insertDocument, findDocuments } = require('../helpers/MongoDbHelper');
 var router = express.Router();
 var { validateSchema, productSchema } = require('./schemas.yup');
 
@@ -10,7 +11,22 @@ var { validateSchema, productSchema } = require('./schemas.yup');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-  res.json([{ id: 1, name: 'iPhone' }]);
+  findDocuments({}, 'products', {}, 50, [
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'categoryId',
+        foreignField: '_id',
+        as: 'category',
+      },
+    },
+  ])
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
 });
 
 router.get('/type', function (req, res, next) {
@@ -32,19 +48,15 @@ router.get('/search/:name/type/:type', validateSchema(productSchema), (req, res)
 });
 
 // POST
-router.post('/', function (req, res, next) {
-  const result = [
-    {
-      id: 1,
-      name: 'iPhone 13',
-    },
-    {
-      id: 2,
-      name: 'iPhone 11',
-    },
-  ];
-
-  res.json(result);
+router.post('/', validateSchema(productSchema), function (req, res, next) {
+  const data = req.body;
+  insertDocument(data, 'products')
+    .then((result) => {
+      res.status(200).json({ ok: true, result });
+    })
+    .catch((error) => {
+      res.status(500).json({ ok: false, error });
+    });
 });
 
 // POST
