@@ -7,61 +7,60 @@ const { validateSchema, categorySchema, supplierSchema } = require('./schemas.yu
 const collectionName = 'orders';
 
 router.get('/', function (req, res, next) {
-  // const lookup = [
-  //   {
-  //     $lookup: {
-  //       from: 'products',
-  //       localField: 'orderDetails.productId',
-  //       foreignField: '_id',
-  //       as: 'orderDetails',
-  //     },
-  //   },
-  //   {
-  //     $unwind: {
-  //       path: '$orderDetails',
-  //       preserveNullAndEmptyArrays: true,
-  //     },
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'categories',
-  //       localField: 'orderDetails.categoryId',
-  //       foreignField: '_id',
-  //       as: 'orderDetails.category',
-  //     },
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'suppliers',
-  //       localField: 'orderDetails.supplierId',
-  //       foreignField: '_id',
-  //       as: 'orderDetails.supplier',
-  //     },
-  //   },
-  //   {
-  //     $group: {
-  //       _id: '$_id',
-  //       name: { $first: '$name' },
-  //       orderDetails: { $push: '$orderDetails' },
-  //     },
-  //   },
-  // ];
-
   const lookup = [
     {
       $lookup: {
         from: 'products',
-        let: { productId: '_id' },
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $eq: ['$orderDetails.productId', '$$productId'],
+        localField: 'orderDetails.productId',
+        foreignField: '_id',
+        as: 'products',
+      },
+    },
+    {
+      $unwind: {
+        path: '$products',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'products.categoryId',
+        foreignField: '_id',
+        as: 'products.category',
+      },
+    },
+    {
+      $lookup: {
+        from: 'suppliers',
+        localField: 'products.supplierId',
+        foreignField: '_id',
+        as: 'products.supplier',
+      },
+    },
+    {
+      $group: {
+        _id: '$_id',
+        code: { $first: '$code' },
+        products: {
+          $push: {
+            product: { _id: '$products._id', name: '$products.name', price: '$products.price', category: { $first: '$products.category' }, supplier: { $first: '$products.supplier' } },
+            quantity: {
+              $getField: {
+                field: 'quantity',
+                input: {
+                  $first: {
+                    $filter: {
+                      input: '$orderDetails',
+                      as: 'od',
+                      cond: { $eq: ['$$od.productId', '$products._id'] },
+                    },
+                  },
+                },
               },
             },
           },
-        ],
-        as: 'orderDetails',
+        },
       },
     },
   ];
