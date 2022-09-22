@@ -18,14 +18,15 @@ router.get('/', async (req, res) => {
 });
 
 // TÌM THEO ID
-const validateGetById = () =>
-  validateSchema(
+const validateGetById = () => {
+  return validateSchema(
     yup.object({
       params: yup.object({
         id: yup.string().required(),
       }),
     }),
   );
+};
 
 router.get('/:id', validateGetById, async (req, res) => {
   try {
@@ -39,31 +40,6 @@ router.get('/:id', validateGetById, async (req, res) => {
   } catch (error) {
     res.status(500).json(error);
   }
-});
-
-router.get('/products', function (req, res) {
-  findDocuments({}, 'categories', {}, 50, [
-    {
-      $lookup: {
-        from: 'products',
-        let: { categoryId: '$_id' },
-        pipeline: [
-          {
-            $match: {
-              $expr: { $eq: ['$$categoryId', '$categoryId'] },
-            },
-          },
-        ],
-        as: 'products',
-      },
-    },
-  ])
-    .then((result) => {
-      res.json(result);
-    })
-    .catch((error) => {
-      res.status(500).json(error);
-    });
 });
 
 // THÊM MỚI
@@ -101,14 +77,16 @@ router.delete('/:id', async (req, res) => {
 });
 
 // SEARCH BY NAME
-const validateSearchByName = () =>
-  validateSchema(
+const validateSearchByName = () => {
+  return validateSchema(
     yup.object({
       query: yup.object({
         text: yup.string().required(),
       }),
     }),
   );
+};
+
 router.get('/search/name', validateSearchByName, function (req, res) {
   const { text } = req.query;
 
@@ -136,6 +114,31 @@ router.get('/search/name', validateSearchByName, function (req, res) {
     })
     .catch((error) => {
       console.log(error);
+      res.status(500).json(error);
+    });
+});
+
+router.get('/products', function (req, res) {
+  findDocuments({}, 'categories', {}, 50, [
+    {
+      $lookup: {
+        from: 'products',
+        let: { categoryId: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ['$$categoryId', '$categoryId'] },
+            },
+          },
+        ],
+        as: 'products',
+      },
+    },
+  ])
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
       res.status(500).json(error);
     });
 });
