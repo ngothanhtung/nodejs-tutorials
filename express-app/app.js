@@ -16,6 +16,7 @@ var authRouter = require('./routes/auth');
 var categoriesRouter = require('./routes/categories');
 var suppliersRouter = require('./routes/suppliers');
 var ordersRouter = require('./routes/orders');
+var blogsRouter = require('./routes/blogs');
 
 var app = express();
 
@@ -41,6 +42,7 @@ app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
 app.use('/suppliers', suppliersRouter);
 app.use('/orders', ordersRouter);
+app.use('/blogs', blogsRouter);
 
 // MIDDLEWARE
 const myLogger = function (req, res, next) {

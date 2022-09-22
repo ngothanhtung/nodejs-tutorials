@@ -2,20 +2,32 @@ var express = require('express');
 var router = express.Router();
 const yup = require('yup');
 
-const MongoClient = require('mongodb').MongoClient;
-const url = 'mongodb://localhost:27017/';
-const dbName = 'api-training';
-
 const { insertDocument, updateDocument, findDocument, findDocuments } = require('../helpers/MongoDbHelper');
 const { validateSchema, categorySchema } = require('./schemas.yup');
 
 router.get('/', function (req, res, next) {
+  findDocuments({}, 'categories', { name: -1 }, 50, [])
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+});
+
+router.get('/products', function (req, res, next) {
   findDocuments({}, 'categories', {}, 50, [
     {
       $lookup: {
         from: 'products',
-        localField: 'productId',
-        foreignField: '_id',
+        let: { categoryId: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ['$$categoryId', '$categoryId'] },
+            },
+          },
+        ],
         as: 'products',
       },
     },
@@ -69,7 +81,7 @@ router.get(
     // PROJECTION: which columns you need
     const projection = { name: 1 };
 
-    findDocuments(query, 'categories', sort, limit, [], skip, projection)
+    findDocuments({}, 'categories', sort, limit, [], skip, projection)
       .then((result) => {
         res.json(result);
       })
