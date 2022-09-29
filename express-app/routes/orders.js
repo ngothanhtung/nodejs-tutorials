@@ -1,13 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
-const { insertDocument, updateDocument, findDocument, findDocuments } = require('../helpers/MongoDbHelper');
+const { insertDocument, updateDocument, findDocument, findDocuments, deleteDocument } = require('../helpers/MongoDbHelper');
 const { validateSchema, categorySchema, supplierSchema } = require('./schemas.yup');
 
-const collectionName = 'orders';
+const COLLECTION_NAME = 'orders';
 
 router.get('/', function (req, res, next) {
-  const lookup = [
+  const aggregate = [
     {
       $lookup: {
         from: 'products',
@@ -65,7 +65,7 @@ router.get('/', function (req, res, next) {
     },
   ];
 
-  findDocuments({}, collectionName, {}, 50, lookup, 0, {})
+  findDocuments({ aggregate: aggregate }, COLLECTION_NAME)
     .then((result) => {
       res.json(result);
     })
@@ -76,13 +76,25 @@ router.get('/', function (req, res, next) {
 
 router.post('/', function (req, res, next) {
   const data = req.body;
-  insertDocument(data, collectionName)
+  insertDocument(data, COLLECTION_NAME)
     .then((result) => {
       res.status(200).json({ ok: true, result });
     })
     .catch((error) => {
       res.status(500).json({ ok: false, error });
     });
+});
+
+// XÓA
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await deleteDocument(id, COLLECTION_NAME);
+    res.json({ ok: true, result });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
 });
 
 module.exports = router;

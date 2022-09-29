@@ -1,4 +1,5 @@
 const express = require('express');
+const { ObjectId } = require('mongodb');
 const router = express.Router();
 const yup = require('yup');
 
@@ -18,20 +19,18 @@ router.get('/', async (req, res) => {
 });
 
 // TÌM THEO ID
-const validateGetById = () => {
-  return validateSchema(
-    yup.object({
-      params: yup.object({
-        id: yup.string().required(),
-      }),
-    }),
-  );
-};
+const getByIdSchema = yup.object({
+  params: yup.object({
+    id: yup.string().required(),
+  }),
+});
 
-router.get('/:id', validateGetById, async (req, res) => {
+router.get('/:id', validateSchema(getByIdSchema), async (req, res) => {
   try {
     const { id } = req.params;
+
     const result = await findDocument(id, COLLECTION_NAME);
+
     if (result) {
       res.json({ ok: true, result });
     } else {
@@ -77,17 +76,13 @@ router.delete('/:id', async (req, res) => {
 });
 
 // SEARCH BY NAME
-const validateSearchByName = () => {
-  return validateSchema(
-    yup.object({
-      query: yup.object({
-        text: yup.string().required(),
-      }),
-    }),
-  );
-};
+const searchByNameSchema = yup.object({
+  query: yup.object({
+    text: yup.string().required(),
+  }),
+});
 
-router.get('/search/name', validateSearchByName, function (req, res) {
+router.get('/search/name', validateSchema(searchByNameSchema), function (req, res) {
   const { text } = req.query;
 
   // QUERY
@@ -118,28 +113,33 @@ router.get('/search/name', validateSearchByName, function (req, res) {
     });
 });
 
-router.get('/products', function (req, res) {
-  findDocuments({}, 'categories', {}, 50, [
+router.get('/products/all', function (req, res) {
+  const aggregate = [
+    {
+      $match: { _id: ObjectId('63293fea50d2f78624e0c6f3') },
+    },
     {
       $lookup: {
         from: 'products',
-        let: { categoryId: '$_id' },
+        let: { id: '$_id' },
         pipeline: [
           {
             $match: {
-              $expr: { $eq: ['$$categoryId', '$categoryId'] },
+              $expr: { $eq: ['$$id', '$categoryId'] },
             },
           },
         ],
         as: 'products',
       },
     },
-  ])
+  ];
+
+  findDocuments({ aggregate: aggregate }, COLLECTION_NAME)
     .then((result) => {
       res.json(result);
     })
     .catch((error) => {
-      res.status(500).json(error);
+      res.status(400).json(error);
     });
 });
 

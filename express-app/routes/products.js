@@ -3,15 +3,10 @@ const { insertDocument, findDocuments } = require('../helpers/MongoDbHelper');
 var router = express.Router();
 var { validateSchema, productSchema } = require('./schemas.yup');
 
-// ALL
-// router.all('/', (req, res, next) => {
-//   console.log('Accessing the secret section ...');
-//   next(); // pass control to the next handler
-// });
-
+const COLLECTION_NAME = 'products';
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-  const lookup = [
+  const aggregate = [
     {
       $lookup: {
         from: 'categories', // foreign collection name
@@ -30,7 +25,7 @@ router.get('/', function (req, res, next) {
     },
   ];
 
-  findDocuments({}, 'products', {}, 50, lookup)
+  findDocuments({ aggregate: aggregate }, COLLECTION_NAME)
     .then((result) => {
       res.json(result);
     })
@@ -60,7 +55,7 @@ router.get('/search/:name/type/:type', validateSchema(productSchema), (req, res)
 // POST
 router.post('/', validateSchema(productSchema), function (req, res, next) {
   const data = req.body;
-  insertDocument(data, 'products')
+  insertDocument(data, COLLECTION_NAME)
     .then((result) => {
       res.status(200).json({ ok: true, result });
     })

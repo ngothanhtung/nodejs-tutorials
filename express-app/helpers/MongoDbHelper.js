@@ -1,7 +1,6 @@
 'use strict';
 // Khai báo thư viện MongoClient
-const { MongoClient } = require('mongodb');
-const { ObjectID } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 
 // Chuỗi kết nối đến MongoDB
 const DATABASE_NAME = 'api-training';
@@ -64,7 +63,7 @@ function updateDocument(id, data, collectionName) {
       .then((client) => {
         const dbo = client.db(DATABASE_NAME);
         const collection = dbo.collection(collectionName);
-        const query = { _id: ObjectID(id) };
+        const query = { _id: ObjectId(id) };
         collection
           .findOneAndUpdate(query, { $set: data })
           .then((result) => {
@@ -115,7 +114,7 @@ function deleteDocument(id, collectionName) {
       .then((client) => {
         const dbo = client.db(DATABASE_NAME);
         const collection = dbo.collection(collectionName);
-        const query = { _id: ObjectID(id) };
+        const query = { _id: ObjectId(id) };
         collection
           .deleteOne(query)
           .then((result) => {
@@ -165,7 +164,7 @@ function findDocument(id, collectionName) {
       .then((client) => {
         const dbo = client.db(DATABASE_NAME);
         const collection = dbo.collection(collectionName);
-        const query = { _id: ObjectID(id) };
+        const query = { _id: ObjectId(id) };
         collection
           .findOne(query)
           .then((result) => {
@@ -185,26 +184,30 @@ function findDocument(id, collectionName) {
 }
 // ----------------------------------------------------------------------------
 // FIND: Tìm kiếm (nhiều)
-function findDocuments(query, collectionName, sort, limit = 50, aggregate = [], skip = 0, projection = {}) {
+function findDocuments({ query = null, sort = null, limit = 50, aggregate = [], skip = 0, projection = null }, collectionName) {
   return new Promise((resolve, reject) => {
     MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true })
       .then((client) => {
         const dbo = client.db(DATABASE_NAME);
         const collection = dbo.collection(collectionName);
         let cursor = collection;
-        if (query !== {}) {
+        if (query) {
           cursor = cursor.find(query);
         } else {
           cursor = cursor.aggregate(aggregate);
         }
 
-        cursor
-          .sort(sort)
-          .limit(limit)
-          .skip(skip)
-          .project(projection)
-          .toArray()
+        if (sort) {
+          cursor = cursor.sort(sort);
+        }
+        cursor.limit(limit).skip(skip);
 
+        if (projection) {
+          cursor = cursor.project(projection);
+        }
+
+        cursor
+          .toArray()
           .then((result) => {
             client.close();
             resolve(result);
