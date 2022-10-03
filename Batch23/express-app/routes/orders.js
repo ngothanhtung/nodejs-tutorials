@@ -1,3 +1,4 @@
+var moment = require('moment');
 var express = require('express');
 var router = express.Router();
 
@@ -42,6 +43,7 @@ router.get('/', function (req, res, next) {
       $group: {
         _id: '$_id',
         code: { $first: '$code' },
+        createdDate: { $first: '$createdDate' },
         products: {
           $push: {
             product: { _id: '$products._id', name: '$products.name', price: '$products.price', category: { $first: '$products.category' }, supplier: { $first: '$products.supplier' } },
@@ -95,6 +97,128 @@ router.delete('/:id', async (req, res) => {
     console.log(error);
     res.status(500).json(error);
   }
+});
+
+router.get('/question/7', function (req, res, next) {
+  const query = {
+    status: 'COMPLETED',
+  };
+
+  findDocuments({ query }, COLLECTION_NAME)
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+});
+
+router.get('/question/8', function (req, res, next) {
+  const today = moment();
+  const query = {
+    $and: [
+      {
+        status: 'COMPLETED',
+      },
+      {
+        createdDate: new Date(today.format('YYYY-MM-DD')),
+      },
+    ],
+  };
+
+  findDocuments({ query }, COLLECTION_NAME)
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+});
+
+router.get('/question/9', function (req, res, next) {
+  const query = {
+    status: 'CANCELED',
+  };
+
+  findDocuments({ query }, COLLECTION_NAME)
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+});
+
+router.get('/question/10', function (req, res, next) {
+  const today = moment();
+
+  const query = {
+    $and: [
+      {
+        status: 'CANCELED',
+      },
+      {
+        createdDate: new Date(today.format('YYYY-MM-DD')),
+      },
+    ],
+  };
+
+  findDocuments({ query }, COLLECTION_NAME)
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+});
+
+router.get('/question/11', function (req, res, next) {
+  const query = {
+    $and: [
+      {
+        paymentType: 'CASH',
+      },
+    ],
+  };
+
+  findDocuments({ query }, COLLECTION_NAME)
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+});
+
+router.get('/question/12', function (req, res, next) {
+  const query = {
+    $and: [
+      {
+        paymentType: 'CREDIT CARD',
+      },
+    ],
+  };
+
+  findDocuments({ query }, COLLECTION_NAME)
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+});
+
+router.get('/question/13', function (req, res, next) {
+  const text = 'Hà Nội';
+  const query = { shippingAddress: new RegExp(`${text}`) };
+
+  findDocuments({ query }, COLLECTION_NAME)
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
 });
 
 module.exports = router;
