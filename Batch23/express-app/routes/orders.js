@@ -7,6 +7,24 @@ const { validateSchema, categorySchema, supplierSchema } = require('./schemas.yu
 
 const COLLECTION_NAME = 'orders';
 
+const lookupCustomer = {
+  $lookup: {
+    from: 'customers',
+    localField: 'customerId',
+    foreignField: '_id',
+    as: 'customer',
+  },
+};
+
+const lookupEmployee = {
+  $lookup: {
+    from: 'employee',
+    localField: 'employeeId',
+    foreignField: '_id',
+    as: 'employee',
+  },
+};
+
 router.get('/', function (req, res, next) {
   const aggregate = [
     {
@@ -189,11 +207,7 @@ router.get('/questions/10', function (req, res, next) {
 // ------------------------------------------------------------------------------------------------
 router.get('/questions/11', function (req, res, next) {
   const query = {
-    $and: [
-      {
-        paymentType: 'CASH',
-      },
-    ],
+    paymentType: 'CASH',
   };
 
   findDocuments({ query }, COLLECTION_NAME)
@@ -210,11 +224,7 @@ router.get('/questions/11', function (req, res, next) {
 // ------------------------------------------------------------------------------------------------
 router.get('/questions/12', function (req, res, next) {
   const query = {
-    $and: [
-      {
-        paymentType: 'CREDIT CARD',
-      },
-    ],
+    paymentType: 'CREDIT CARD',
   };
 
   findDocuments({ query }, COLLECTION_NAME)
@@ -247,16 +257,47 @@ router.get('/questions/13', function (req, res, next) {
 // ------------------------------------------------------------------------------------------------
 router.get('/questions/16', function (req, res, next) {
   const aggregate = [
+    lookupCustomer,
+    lookupEmployee,
+    {
+      $addFields: { customer: { $first: '$customer' }, employee: { $first: '$employee' } },
+    },
+  ];
+
+  findDocuments({ aggregate: aggregate }, COLLECTION_NAME)
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+});
+
+// QUESTION 20
+
+router.get('/questions/20', function (req, res, next) {
+  const aggregate = [
+    // {
+    //   $match: {
+    //     $expr: {},
+    //   },
+    // },
     {
       $lookup: {
-        from: 'customers',
-        localField: 'customerId',
+        from: 'products',
+        localField: 'orderDetails.productId',
         foreignField: '_id',
-        as: 'customer',
+        as: 'products',
       },
     },
     {
-      $addFields: { customer: { $first: '$customer' } },
+      $unwind: {
+        path: '$products',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: { products: 1 },
     },
   ];
 

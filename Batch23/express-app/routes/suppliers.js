@@ -44,13 +44,13 @@ router.get('/question/15', function (req, res, next) {
     {
       // CÁCH 1:
       query: {
-        name: { $in: ['SONY', 'SAMSUNG'] },
+        name: { $in: ['SONY', 'SAMSUNG', 'TOSHIBA', 'APPLE'] },
       },
       // CÁCH 2
       // aggregate: [
       //   {
       //     $match: {
-      //       name: { $in: ['SONY', 'SAMSUNG'] },
+      //       name: { $in: ['SONY', 'SAMSUNG', 'TOSHIBA', 'APPLE'] },
       //     },
       //   },
       // ],

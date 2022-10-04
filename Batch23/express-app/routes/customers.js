@@ -68,9 +68,12 @@ router.get('/questions/5', function (req, res) {
 // ------------------------------------------------------------------------------------------------
 router.get('/questions/6', function (req, res) {
   const today = new Date();
+  const eqDay = { $eq: [{ $dayOfMonth: '$birthday' }, { $dayOfMonth: today }] };
+  const eqMonth = { $eq: [{ $month: '$birthday' }, { $month: today }] };
+
   const query = {
     $expr: {
-      $and: [{ $eq: [{ $dayOfMonth: '$birthday' }, { $dayOfMonth: today }] }, { $eq: [{ $month: '$birthday' }, { $month: today }] }],
+      $and: [eqDay, eqMonth],
     },
   };
 

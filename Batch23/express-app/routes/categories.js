@@ -10,7 +10,6 @@ const COLLECTION_NAME = 'categories';
 
 router.get('/', async (req, res) => {
   try {
-    console.log('OK');
     let query = {};
     const results = await findDocuments({ query }, COLLECTION_NAME);
     res.json({ ok: true, results });
@@ -77,7 +76,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // ------------------------------------------------------------------------------------------------
-// QUESTIONS 19
+// QUESTIONS 18
 // ------------------------------------------------------------------------------------------------
 router.get('/questions/18', function (req, res) {
   const aggregate = [

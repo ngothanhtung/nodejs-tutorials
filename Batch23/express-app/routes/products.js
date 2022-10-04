@@ -1,4 +1,5 @@
 var express = require('express');
+const { ObjectId } = require('mongodb');
 const { insertDocument, findDocuments } = require('../helpers/MongoDbHelper');
 var router = express.Router();
 var { validateSchema, productSchema } = require('./schemas.yup');
@@ -60,7 +61,7 @@ router.post('/', validateSchema(productSchema), function (req, res, next) {
 router.get('/questions/1', async (req, res, next) => {
   try {
     let query = { discount: { $lte: 10 } };
-    const results = await findDocuments({ query }, COLLECTION_NAME);
+    const results = await findDocuments({ query: query }, COLLECTION_NAME);
     res.json({ ok: true, results });
   } catch (error) {
     res.status(500).json(error);
@@ -117,6 +118,45 @@ router.get('/questions/17', function (req, res, next) {
   ];
 
   findDocuments({ aggregate: aggregate }, COLLECTION_NAME)
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+});
+
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 25
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/25', function (req, res, next) {
+  const aggregate = [
+    {
+      $unwind: {
+        path: '$orderDetails',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    { $addFields: { productId: '$orderDetails.productId' } },
+    {
+      $group: {
+        _id: null,
+        productIds: { $addToSet: '$productId' }, // Tạo mảng đã mua
+      },
+    },
+    {
+      $lookup: {
+        from: 'products',
+        let: { productIds: '$productIds' },
+        pipeline: [{ $match: { $expr: { $not: { $in: ['$_id', '$$productIds'] } } } }],
+        as: 'productsNotInOrderDetails',
+      },
+    },
+    { $project: { productsNotInOrderDetails: 1, _id: 0 } },
+  ];
+
+  findDocuments({ aggregate: aggregate }, 'orders')
     .then((result) => {
       res.json(result);
     })
