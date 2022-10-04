@@ -10,8 +10,9 @@ const COLLECTION_NAME = 'categories';
 
 router.get('/', async (req, res) => {
   try {
+    console.log('OK');
     let query = {};
-    const results = await findDocuments(query, COLLECTION_NAME);
+    const results = await findDocuments({ query }, COLLECTION_NAME);
     res.json({ ok: true, results });
   } catch (error) {
     res.status(500).json(error);
@@ -75,6 +76,39 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 19
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/18', function (req, res) {
+  const aggregate = [
+    {
+      $lookup: {
+        from: 'products',
+        let: { id: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ['$$id', '$categoryId'] },
+            },
+          },
+        ],
+        as: 'products',
+      },
+    },
+    {
+      $addFields: { numberOfProducts: { $size: '$products' } },
+    },
+  ];
+
+  findDocuments({ aggregate: aggregate }, COLLECTION_NAME)
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(400).json(error);
+    });
+});
+
 // SEARCH BY NAME
 const searchByNameSchema = yup.object({
   query: yup.object({
@@ -113,34 +147,34 @@ router.get('/search/name', validateSchema(searchByNameSchema), function (req, re
     });
 });
 
-router.get('/products/all', function (req, res) {
-  const aggregate = [
-    {
-      $match: { _id: ObjectId('63293fea50d2f78624e0c6f3') },
-    },
-    {
-      $lookup: {
-        from: 'products',
-        let: { id: '$_id' },
-        pipeline: [
-          {
-            $match: {
-              $expr: { $eq: ['$$id', '$categoryId'] },
-            },
-          },
-        ],
-        as: 'products',
-      },
-    },
-  ];
+// router.get('/products/all', function (req, res) {
+//   const aggregate = [
+//     {
+//       $match: { _id: ObjectId('63293fea50d2f78624e0c6f3') },
+//     },
+//     {
+//       $lookup: {
+//         from: 'products',
+//         let: { id: '$_id' },
+//         pipeline: [
+//           {
+//             $match: {
+//               $expr: { $eq: ['$$id', '$categoryId'] },
+//             },
+//           },
+//         ],
+//         as: 'products',
+//       },
+//     },
+//   ];
 
-  findDocuments({ aggregate: aggregate }, COLLECTION_NAME)
-    .then((result) => {
-      res.json(result);
-    })
-    .catch((error) => {
-      res.status(400).json(error);
-    });
-});
+//   findDocuments({ aggregate: aggregate }, COLLECTION_NAME)
+//     .then((result) => {
+//       res.json(result);
+//     })
+//     .catch((error) => {
+//       res.status(400).json(error);
+//     });
+// });
 
 module.exports = router;

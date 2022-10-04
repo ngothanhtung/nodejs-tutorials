@@ -1,24 +1,26 @@
-var createError = require('http-errors');
-var express = require('express');
-var cors = require('cors');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var passport = require('passport');
-var JwtStrategy = require('passport-jwt').Strategy;
-var ExtractJwt = require('passport-jwt').ExtractJwt;
+const passport = require('passport');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var productsRouter = require('./routes/products');
-var authRouter = require('./routes/auth');
-var categoriesRouter = require('./routes/categories');
-var suppliersRouter = require('./routes/suppliers');
-var ordersRouter = require('./routes/orders');
-var blogsRouter = require('./routes/blogs');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const productsRouter = require('./routes/products');
+const authRouter = require('./routes/auth');
+const categoriesRouter = require('./routes/categories');
+const suppliersRouter = require('./routes/suppliers');
+const customersRouter = require('./routes/customers');
+const employeesRouter = require('./routes/employees');
+const ordersRouter = require('./routes/orders');
+const blogsRouter = require('./routes/blogs');
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -42,6 +44,8 @@ app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
 app.use('/suppliers', suppliersRouter);
 app.use('/orders', ordersRouter);
+app.use('/customers', customersRouter);
+app.use('/employees', employeesRouter);
 app.use('/blogs', blogsRouter);
 
 // MIDDLEWARE

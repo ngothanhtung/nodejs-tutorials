@@ -99,7 +99,10 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-router.get('/question/7', function (req, res, next) {
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 7
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/7', function (req, res, next) {
   const query = {
     status: 'COMPLETED',
   };
@@ -113,7 +116,10 @@ router.get('/question/7', function (req, res, next) {
     });
 });
 
-router.get('/question/8', function (req, res, next) {
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 8
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/8', function (req, res, next) {
   const today = moment();
   const query = {
     $and: [
@@ -135,7 +141,10 @@ router.get('/question/8', function (req, res, next) {
     });
 });
 
-router.get('/question/9', function (req, res, next) {
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 9
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/9', function (req, res, next) {
   const query = {
     status: 'CANCELED',
   };
@@ -149,7 +158,10 @@ router.get('/question/9', function (req, res, next) {
     });
 });
 
-router.get('/question/10', function (req, res, next) {
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 10
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/10', function (req, res, next) {
   const today = moment();
 
   const query = {
@@ -172,7 +184,10 @@ router.get('/question/10', function (req, res, next) {
     });
 });
 
-router.get('/question/11', function (req, res, next) {
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 11
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/11', function (req, res, next) {
   const query = {
     $and: [
       {
@@ -190,7 +205,10 @@ router.get('/question/11', function (req, res, next) {
     });
 });
 
-router.get('/question/12', function (req, res, next) {
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 12
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/12', function (req, res, next) {
   const query = {
     $and: [
       {
@@ -208,11 +226,41 @@ router.get('/question/12', function (req, res, next) {
     });
 });
 
-router.get('/question/13', function (req, res, next) {
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 13
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/13', function (req, res, next) {
   const text = 'Hà Nội';
   const query = { shippingAddress: new RegExp(`${text}`) };
 
   findDocuments({ query }, COLLECTION_NAME)
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+});
+
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 16
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/16', function (req, res, next) {
+  const aggregate = [
+    {
+      $lookup: {
+        from: 'customers',
+        localField: 'customerId',
+        foreignField: '_id',
+        as: 'customer',
+      },
+    },
+    {
+      $addFields: { customer: { $first: '$customer' } },
+    },
+  ];
+
+  findDocuments({ aggregate: aggregate }, COLLECTION_NAME)
     .then((result) => {
       res.json(result);
     })

@@ -36,7 +36,9 @@ router.post('/', validateSchema(supplierSchema), function (req, res, next) {
     });
 });
 
-// MORE
+// ------------------------------------------------------------------------------------------------
+// QUESTION 15
+// ------------------------------------------------------------------------------------------------
 router.get('/question/15', function (req, res, next) {
   findDocuments(
     {
@@ -60,6 +62,39 @@ router.get('/question/15', function (req, res, next) {
     })
     .catch((error) => {
       res.status(500).json(error);
+    });
+});
+
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 19
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/19', function (req, res) {
+  const aggregate = [
+    {
+      $lookup: {
+        from: 'products',
+        let: { id: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ['$$id', '$supplierId'] },
+            },
+          },
+        ],
+        as: 'products',
+      },
+    },
+    {
+      $addFields: { numberOfProducts: { $size: '$products' } },
+    },
+  ];
+
+  findDocuments({ aggregate: aggregate }, COLLECTION_NAME)
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(400).json(error);
     });
 });
 
