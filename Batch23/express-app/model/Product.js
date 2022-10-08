@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
+// Mongoose Datatypes:
+// https://mongoosejs.com/docs/schematypes.html
 const productSchema = new Schema(
   {
     name: String,
@@ -19,7 +21,7 @@ const productSchema = new Schema(
     },
     // VIRTUALS
     virtuals: {
-      sum: {
+      total: {
         get() {
           return (this.price * (100 - this.discount)) / 100;
         },

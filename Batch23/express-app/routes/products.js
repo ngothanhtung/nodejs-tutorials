@@ -88,9 +88,9 @@ router.post('/mongoose', async (req, res, next) => {
     // Create a new blog post object
     const product = new Product(data);
 
-    // Insert the article in our MongoDB database
+    // Insert the product in our MongoDB database
     await product.save();
-    res.sendStatus(201);
+    res.status(201).json(product);
   } catch (err) {
     res.status(400).json({ error: { name: err.name, messgae: err.message } });
   }

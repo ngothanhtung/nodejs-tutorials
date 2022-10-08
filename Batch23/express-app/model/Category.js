@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
 const categorySchema = new Schema({
-  _id: Schema.Types.ObjectId,
   title: String,
   description: String,
 });
