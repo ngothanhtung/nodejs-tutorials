@@ -1,10 +1,14 @@
 var express = require('express');
-const { ObjectId } = require('mongodb');
+
+const { default: mongoose } = require('mongoose');
 const { insertDocument, findDocuments } = require('../helpers/MongoDbHelper');
+const Product = require('../model/Product');
 var router = express.Router();
 var { validateSchema, productSchema } = require('./schemas.yup');
-
 const COLLECTION_NAME = 'products';
+
+// MONGOOSE
+mongoose.connect('mongodb://localhost:27017/api-training');
 
 const lookupCategory = {
   $lookup: {
@@ -53,6 +57,72 @@ router.post('/', validateSchema(productSchema), function (req, res, next) {
       res.status(500).json({ ok: false, error });
     });
 });
+
+// ------------------------------------------------------------------------------------------------
+// BEGIN: MONGOOSE
+// ------------------------------------------------------------------------------------------------
+
+router.get('/mongoose', async (req, res, next) => {
+  try {
+    const products = await Product.find();
+    res.json(products);
+  } catch (err) {
+    res.status(400).json({ error: { name: err.name, messgae: err.message } });
+  }
+});
+
+router.get('/mongoose/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    // const product = await Product.findOne({ _id: id });
+    res.json(product);
+  } catch (err) {
+    res.status(400).json({ error: { name: err.name, messgae: err.message } });
+  }
+});
+
+router.post('/mongoose', async (req, res, next) => {
+  try {
+    const data = req.body;
+    // Create a new blog post object
+    const product = new Product(data);
+
+    // Insert the article in our MongoDB database
+    await product.save();
+    res.sendStatus(201);
+  } catch (err) {
+    res.status(400).json({ error: { name: err.name, messgae: err.message } });
+  }
+});
+
+router.get('/mongoose/find/:name', async (req, res, next) => {
+  try {
+    const { name } = req.params;
+    const product = await Product.find().byName(name);
+    res.json(product);
+  } catch (err) {
+    res.status(400).json({ error: { name: err.name, messgae: err.message } });
+  }
+});
+
+router.patch('/mongoose/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const update = req.body;
+    const product = await Product.findByIdAndUpdate(id, update, {
+      new: true,
+    });
+
+    res.json(product);
+  } catch (err) {
+    res.status(400).json({ error: { name: err.name, messgae: err.message } });
+  }
+});
+
+// ------------------------------------------------------------------------------------------------
+// END: MONGOOSE
+// ------------------------------------------------------------------------------------------------
 
 // ------------------------------------------------------------------------------------------------
 // QUESTIONS 1

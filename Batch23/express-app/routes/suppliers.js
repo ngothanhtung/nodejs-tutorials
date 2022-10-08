@@ -98,4 +98,66 @@ router.get('/questions/19', function (req, res) {
     });
 });
 
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 26
+// Hiển thị tất cả các nhà cung cấp không bán được trong khoảng từ ngày, đến ngày
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/26', function (req, res, next) {
+  const aggregate = [
+    {
+      $unwind: {
+        path: '$orderDetails',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    { $addFields: { productId: '$orderDetails.productId' } },
+    {
+      $group: {
+        _id: null,
+        productIdsInOrderDetails: { $addToSet: '$productId' }, // Tạo mảng đã mua
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'products',
+        let: { productIdsInOrderDetails: '$productIdsInOrderDetails' },
+        pipeline: [{ $match: { $expr: { $not: { $in: ['$_id', '$$productIdsInOrderDetails'] } } } }],
+        as: 'productsNotInOrderDetails',
+      },
+    },
+
+    { $project: { productsNotInOrderDetails: 1, _id: 0 } },
+
+    {
+      $unwind: {
+        path: '$productsNotInOrderDetails',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: 'suppliers', // foreign collection name
+        localField: 'productsNotInOrderDetails.supplierId',
+        foreignField: '_id',
+        as: 'supplier', // alias
+      },
+    },
+    {
+      $addFields: { 'productsNotInOrderDetails.supplier': { $first: '$supplier' } },
+    },
+
+    { $project: { productsNotInOrderDetails: 1, _id: 0 } },
+  ];
+
+  findDocuments({ aggregate: aggregate }, 'orders')
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
+});
+
 module.exports = router;
