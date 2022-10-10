@@ -29,7 +29,7 @@ router.get('/search', (req, res, next) => {
 const productSchema = yup.object({
   body: yup.object({
     name: yup.string().required(),
-    price: yup.number().min(0).required(),
+    price: yup.number().min(0).max(10).required(),
   }),
 });
 
@@ -40,6 +40,26 @@ router.post('/', validateSchema(productSchema), (req, res, next) => {
   // Save to database
   // ...
   res.json({ message: 'This is products router - POST' });
+});
+
+const editProductSchema = yup.object({
+  query: yup.object({
+    name: yup.string().required(),
+  }),
+  params: yup.object({
+    id: yup.number().min(0).required(),
+  }),
+  body: yup.object({
+    name: yup.string().required(),
+    price: yup.number().min(0).max(10).required(),
+  }),
+});
+router.patch('/:id', validateSchema(editProductSchema), (req, res, next) => {
+  //
+  console.log(req.body);
+  // Save to database
+  // ...
+  res.json({ message: 'This is products router - PATCH' });
 });
 
 module.exports = router;
