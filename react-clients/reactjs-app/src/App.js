@@ -3,7 +3,9 @@ import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
 
 import './App.css';
 import Categories from './pages/Categories';
+import Upload from './pages/Upload';
 import Home from './pages/Home';
+import AntUpload from './pages/AntUpload';
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/categories' element={<Categories />} />
+            <Route path='/upload' element={<Upload />} />
+            <Route path='/antd/upload' element={<AntUpload />} />
 
             {/* NO MATCH ROUTE */}
             <Route

@@ -20,6 +20,8 @@ const employeesRouter = require('./routes/employees');
 const ordersRouter = require('./routes/orders');
 const blogsRouter = require('./routes/blogs');
 
+const uploadRouter = require('./routes/upload');
+
 const app = express();
 
 // view engine setup
@@ -46,7 +48,11 @@ app.use('/suppliers', suppliersRouter);
 app.use('/orders', ordersRouter);
 app.use('/customers', customersRouter);
 app.use('/employees', employeesRouter);
+
+// MONGOOSE
 app.use('/blogs', blogsRouter);
+// UPLOAD
+app.use('/upload', uploadRouter);
 
 // MIDDLEWARE
 const myLogger = function (req, res, next) {
