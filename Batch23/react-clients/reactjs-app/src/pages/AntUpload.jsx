@@ -6,12 +6,12 @@ import { UploadOutlined } from '@ant-design/icons';
 export default function AntUpload() {
   return (
     <Layout>
-      <Content>
+      <Content style={{ padding: 12 }}>
         <Upload
           showUploadList={false}
           name='file'
-          data={{ message: 'Hellow' }}
-          action='http://localhost:9000/upload/products/633be1165e3ab8be04c8b421'
+          data={{ message: 'Hello ANTD' }}
+          action='http://localhost:9000/upload/categories/63293fea50d2f78624e0c6f3'
           headers={{ authorization: 'authorization-text' }}
           onChange={(info) => {
             if (info.file.status !== 'uploading') {

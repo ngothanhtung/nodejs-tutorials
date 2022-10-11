@@ -1,12 +1,22 @@
 import React from 'react';
-import { Button, Layout, Table, Form, Input, Popconfirm, message, notification, Space, Modal } from 'antd';
+import { Button, Layout, Table, Form, Input, Popconfirm, message, notification, Space, Modal, Upload } from 'antd';
 
 import { DeleteOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
 
 import axios from 'axios';
+import { WEB_SERVER_URL } from '../constants/URL';
 
 export default function Categories() {
   const columns = [
+    {
+      title: 'Hình ảnh',
+      key: 'imageUrl',
+      dataIndex: 'imageUrl',
+      width: 200,
+      render: (text) => {
+        return <div>{text && <img src={`${WEB_SERVER_URL}${text}`} style={{ height: 60 }} alt='' />}</div>;
+      },
+    },
     {
       title: 'Tên danh mục',
       key: 'name',
@@ -29,16 +39,28 @@ export default function Categories() {
       render: (text, record) => {
         return (
           <Space>
-            <Button
-              type='dashed'
-              icon={<UploadOutlined />}
-              style={{ fontWeight: '600' }}
-              onClick={() => {
-                console.log(record);
-                console.log('Upload: code here');
-                // UPLOAD PICTURE
+            <Upload
+              showUploadList={false}
+              name='file'
+              data={{ message: 'Hello ANTD' }}
+              action={'http://localhost:9000/upload/categories/' + record._id}
+              headers={{ authorization: 'authorization-text' }}
+              onChange={(info) => {
+                if (info.file.status !== 'uploading') {
+                  console.log(info.file, info.fileList);
+                }
+
+                if (info.file.status === 'done') {
+                  message.success(`${info.file.name} file uploaded successfully`);
+
+                  setRefresh((f) => f + 1);
+                } else if (info.file.status === 'error') {
+                  message.error(`${info.file.name} file upload failed.`);
+                }
               }}
-            />
+            >
+              <Button icon={<UploadOutlined />} />
+            </Upload>
             <Button
               type='dashed'
               icon={<EditOutlined />}
