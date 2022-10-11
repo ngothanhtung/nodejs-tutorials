@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Layout, Table, Form, Input, Popconfirm, message, notification, Space, Modal } from 'antd';
 
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
 
 import axios from 'axios';
 
@@ -31,6 +31,16 @@ export default function Categories() {
           <Space>
             <Button
               type='dashed'
+              icon={<UploadOutlined />}
+              style={{ fontWeight: '600' }}
+              onClick={() => {
+                console.log(record);
+                console.log('Upload: code here');
+                // UPLOAD PICTURE
+              }}
+            />
+            <Button
+              type='dashed'
               icon={<EditOutlined />}
               style={{ fontWeight: '600' }}
               onClick={() => {
@@ -39,7 +49,7 @@ export default function Categories() {
                 formEdit.setFieldValue('name', record.name);
                 formEdit.setFieldValue('description', record.description);
               }}
-            ></Button>
+            />
             <Popconfirm
               overlayInnerStyle={{ width: 300 }}
               okText='Đồng ý'
