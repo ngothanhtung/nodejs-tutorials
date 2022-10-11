@@ -11,11 +11,14 @@ var upload = multer({
   storage: multer.diskStorage({
     contentType: multer.AUTO_CONTENT_TYPE,
     destination: function (req, file, callback) {
-      if (!fs.existsSync(UPLOAD_DIRECTORY)) {
+      const categoryId = req.params.id;
+      const PATH = UPLOAD_DIRECTORY + '/' + categoryId;
+
+      if (!fs.existsSync(PATH)) {
         // Create a directory
-        fs.mkdirSync(UPLOAD_DIRECTORY);
+        fs.mkdirSync(PATH);
       } else {
-        callback(null, UPLOAD_DIRECTORY);
+        callback(null, PATH);
       }
     },
     filename: function (req, file, callback) {
@@ -45,7 +48,7 @@ router.post('/categories/:id', function (req, res, next) {
 
       //
 
-      const publicUrl = `${req.protocol}://${req.hostname}:9000/uploads/categories/${req.file.filename}`;
+      const publicUrl = `${req.protocol}://${req.hostname}:9000/uploads/categories/${categoryId}/${req.file.filename}`;
       res.status(200).json({ ok: true, publicUrl: publicUrl, file: req.file });
     }
   });
