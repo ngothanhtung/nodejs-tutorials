@@ -7,6 +7,8 @@ import Upload from './pages/Upload';
 import Home from './pages/Home';
 import AntUpload from './pages/AntUpload';
 import Realtime from './pages/Realtime';
+import TeacherQuiz from './pages/TeacherQuiz';
+import StudentQuiz from './pages/StudentQuiz';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
             <Route path='/upload' element={<Upload />} />
             <Route path='/antd/upload' element={<AntUpload />} />
             <Route path='/realtime' element={<Realtime />} />
+            <Route path='/quiz/teacher' element={<TeacherQuiz />} />
+            <Route path='/quiz/student' element={<StudentQuiz />} />
 
             {/* NO MATCH ROUTE */}
             <Route
