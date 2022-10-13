@@ -6,6 +6,7 @@ import Categories from './pages/Categories';
 import Upload from './pages/Upload';
 import Home from './pages/Home';
 import AntUpload from './pages/AntUpload';
+import Realtime from './pages/Realtime';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path='/categories' element={<Categories />} />
             <Route path='/upload' element={<Upload />} />
             <Route path='/antd/upload' element={<AntUpload />} />
+            <Route path='/realtime' element={<Realtime />} />
 
             {/* NO MATCH ROUTE */}
             <Route
