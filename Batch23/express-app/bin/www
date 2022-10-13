@@ -29,13 +29,16 @@ const io = require('socket.io')(server, {
   },
 });
 
+// Cấu hình các event
 io.on('connection', (socket) => {
-  console.log('SOCKET CONNECT');
+  console.log('SOCKET IS CONNECTED');
 
   // Lắng nghe sự kiện từ client
   socket.on('client-message', (data) => {
     // echo to client
-    io.emit('server-message', { data });
+    console.log('client-message', data);
+
+    io.emit('server-message', data);
   });
 
   socket.on('disconnect', () => {
@@ -43,7 +46,7 @@ io.on('connection', (socket) => {
   });
 });
 
-app.io = io;
+// app.io = io;
 
 /**
  * Listen on provided port, on all network interfaces.

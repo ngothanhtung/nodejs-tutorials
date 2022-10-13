@@ -1,4 +1,4 @@
-import { Button, Form, Input, Layout } from 'antd';
+import { Button, Form, Input, Layout, message } from 'antd';
 import React from 'react';
 import { io } from 'socket.io-client';
 
@@ -14,18 +14,22 @@ const config = {
 
 let socket = io(socketServerUrl, config);
 socket.on('connect', () => {
-  // eslint-disable-next-line no-console
   console.log(`Socket is connected with id: ${socket.id}`);
 });
 
 export default function Realtime() {
-  React.useEffect(() => {
-    // SOCKET: JOIN ROOM
-    socket.emit('client-message', { message: 'Hello Socket from client' });
+  const [username, setUsername] = React.useState('');
+  const [messages, setMessages] = React.useState([]);
 
+  React.useEffect(() => {
     // SOCKET: LISTEN
     socket.on('server-message', (data) => {
-      console.log('Message from server:', data);
+      if (data.type === 'chat') {
+        const tmp = messages;
+        tmp.push(data);
+
+        setMessages([...tmp]);
+      }
     });
   }, []);
 
@@ -50,7 +54,8 @@ export default function Realtime() {
             }}
             onFinish={(values) => {
               // SUBMIT
-              socket.emit('client-message', values);
+              setUsername(values.name);
+              socket.emit('client-message', { ...values, type: 'chat' });
             }}
             onFinishFailed={(error) => {
               console.error(error);
@@ -68,7 +73,7 @@ export default function Realtime() {
                 },
               ]}
             >
-              <Input />
+              <Input disabled={username !== ''} />
             </Form.Item>
             <Form.Item
               label='Nội dung'
@@ -94,6 +99,31 @@ export default function Realtime() {
               </Button>
             </Form.Item>
           </Form>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column  ' }}>
+            {messages.map((m, index) => {
+              return (
+                <div key={'message-' + index} style={{ marginBottom: 8, flex: 1, display: 'flex' }}>
+                  {username === m.name && (
+                    <div style={{ flex: 1, display: 'flex' }}>
+                      <div style={{ flex: 1 }}></div>
+                      <div style={{ backgroundColor: 'blue', display: 'flex', flex: 0 }}>
+                        {m.name}: {m.message}
+                      </div>
+                    </div>
+                  )}
+
+                  {username !== m.name && (
+                    <div style={{ flex: 1, display: 'flex' }}>
+                      <div style={{ backgroundColor: 'gray', display: 'flex', flex: 0 }}>
+                        {m.name}: {m.message}
+                      </div>
+                      <div style={{ flex: 1 }}></div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </Layout.Content>
       </Layout>
     </div>
