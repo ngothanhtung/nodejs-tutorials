@@ -4,3 +4,4 @@ module.exports = {
   ISSUER: 'softech.cloud',
   WHITE_LIST: ['tungnt@softech.vn', 'peter@gmail.com'],
 };
+// HASH

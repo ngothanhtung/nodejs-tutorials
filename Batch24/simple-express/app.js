@@ -42,6 +42,7 @@ opts.issuer = jwtSettings.ISSUER;
 passport.use(
   new JwtStrategy(opts, function (payload, done) {
     console.log(payload);
+    // return done(null, true);
     if (jwtSettings.WHITE_LIST.includes(payload.sub)) {
       let error = null;
       let user = true;
