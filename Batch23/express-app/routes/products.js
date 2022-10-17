@@ -2,7 +2,8 @@ var express = require('express');
 
 const { default: mongoose } = require('mongoose');
 const { insertDocument, findDocuments } = require('../helpers/MongoDbHelper');
-const Product = require('../model/Product');
+const Models = require('../model');
+
 var router = express.Router();
 var { validateSchema, productSchema } = require('./schemas.yup');
 const COLLECTION_NAME = 'products';
@@ -64,7 +65,7 @@ router.post('/', validateSchema(productSchema), function (req, res, next) {
 
 router.get('/mongoose', async (req, res, next) => {
   try {
-    const products = await Product.find();
+    const products = await Models.Product.find().populate('categoryId').populate('supplierId');
     res.json(products);
   } catch (err) {
     res.status(400).json({ error: { name: err.name, messgae: err.message } });
@@ -74,7 +75,7 @@ router.get('/mongoose', async (req, res, next) => {
 router.get('/mongoose/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    const product = await Product.findById(id);
+    const product = await Models.Product.findById(id);
     // const product = await Product.findOne({ _id: id });
     res.json(product);
   } catch (err) {
@@ -86,7 +87,7 @@ router.post('/mongoose', async (req, res, next) => {
   try {
     const data = req.body;
     // Create a new blog post object
-    const product = new Product(data);
+    const product = new Models.Product(data);
 
     // Insert the product in our MongoDB database
     await product.save();
@@ -99,7 +100,7 @@ router.post('/mongoose', async (req, res, next) => {
 router.get('/mongoose/find/:name', async (req, res, next) => {
   try {
     const { name } = req.params;
-    const product = await Product.find().byName(name);
+    const product = await Models.Product.find().byName(name);
     res.json(product);
   } catch (err) {
     res.status(400).json({ error: { name: err.name, messgae: err.message } });
@@ -110,7 +111,7 @@ router.patch('/mongoose/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
     const update = req.body;
-    const product = await Product.findByIdAndUpdate(id, update, {
+    const product = await Models.Product.findByIdAndUpdate(id, update, {
       new: true,
     });
 
