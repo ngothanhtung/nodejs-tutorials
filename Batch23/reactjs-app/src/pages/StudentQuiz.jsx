@@ -1,8 +1,10 @@
 import { Button, Layout } from 'antd';
 import React from 'react';
+import axios from 'axios';
 import { io } from 'socket.io-client';
 
 const socketServerUrl = 'http://localhost:9000';
+const apiServerUrl = 'http://localhost:9000';
 
 const config = {
   secure: true,
@@ -18,7 +20,7 @@ socket.on('connect', () => {
 });
 
 export default function StudentQuiz() {
-  const [username, setUsername] = React.useState('');
+  const [username, setUsername] = React.useState('ductv@softech.vn');
   const [question, setQuestion] = React.useState(null);
 
   React.useEffect(() => {
@@ -46,7 +48,16 @@ export default function StudentQuiz() {
                       style={{ marginBottom: 12 }}
                       key={'option-' + index}
                       onClick={() => {
-                        socket.emit('client-message', { type: 'quiz-answer', username: 'tungnt', option });
+                        // Call api to save to database
+                        axios
+                          .post(`${apiServerUrl}/questions/answer`, {
+                            question: question._id,
+                            username: username,
+                            score: option.isCorrect ? question.score : 0,
+                          })
+                          .then((response) => {
+                            socket.emit('client-message', { type: 'quiz-answer', username: username, option });
+                          });
                       }}
                     >
                       {option.text}

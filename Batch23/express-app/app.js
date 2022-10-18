@@ -22,6 +22,8 @@ const blogsRouter = require('./routes/blogs');
 
 const uploadRouter = require('./routes/upload');
 
+const questionsRouter = require('./routes/questions');
+
 const app = express();
 
 // view engine setup
@@ -51,6 +53,7 @@ app.use('/employees', employeesRouter);
 
 // MONGOOSE
 app.use('/blogs', blogsRouter);
+app.use('/questions', questionsRouter);
 // UPLOAD
 app.use('/upload', uploadRouter);
 
