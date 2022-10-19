@@ -24,6 +24,7 @@ router.get('/', (req, res, next) => {
 
 // 🔶 API: Get a category
 router.get('/:id', function (req, res, next) {
+  req.he;
   try {
     const { id } = req.params;
 
