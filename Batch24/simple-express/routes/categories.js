@@ -7,6 +7,10 @@ const fileName = './data/categories.json';
 const data = fs.readFileSync(fileName, { encoding: 'utf-8', flag: 'r' });
 let categories = JSON.parse(data);
 
+// TODO:
+// Validation: GET/ID, CREATE, UPDATE, DELETE
+// Authorization: CREATE, UPDATE, DELETE
+
 // 🔶 API: List all categories
 router.get('/', (req, res, next) => {
   try {
@@ -71,14 +75,9 @@ router.post('/', function (req, res, next) {
 router.patch('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
+    const { name, description } = req.body;
 
     if (!id) {
-      res.sendStatus(400);
-      return;
-    }
-
-    const { name, description } = req.body;
-    if (!name || !description) {
       res.sendStatus(400);
       return;
     }
@@ -88,8 +87,13 @@ router.patch('/:id', function (req, res, next) {
     });
 
     if (found) {
-      found.name = name;
-      found.description = description;
+      if (name) {
+        found.name = name;
+      }
+
+      if (description) {
+        found.description = description;
+      }
 
       // Save to file
       fs.writeFileSync(fileName, JSON.stringify(categories), function (err) {
