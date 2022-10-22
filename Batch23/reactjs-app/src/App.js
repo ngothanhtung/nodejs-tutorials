@@ -6,6 +6,7 @@ import Categories from './pages/Categories';
 import Upload from './pages/Upload';
 import Home from './pages/Home';
 import AntUpload from './pages/AntUpload';
+import ManualAntUpload from './pages/ManualAntUpload';
 import Realtime from './pages/Realtime';
 import TeacherQuiz from './pages/TeacherQuiz';
 import StudentQuiz from './pages/StudentQuiz';
@@ -28,6 +29,7 @@ function App() {
               <Route path='/categories' element={<Categories />} />
               <Route path='/upload' element={<Upload />} />
               <Route path='/antd/upload' element={<AntUpload />} />
+              <Route path='/antd/upload/manual' element={<ManualAntUpload />} />
               <Route path='/realtime' element={<Realtime />} />
               <Route path='/quiz/teacher' element={<TeacherQuiz />} />
               <Route path='/quiz/student' element={<StudentQuiz />} />

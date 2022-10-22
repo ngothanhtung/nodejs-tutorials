@@ -17,9 +17,8 @@ var upload = multer({
       if (!fs.existsSync(PATH)) {
         // Create a directory
         fs.mkdirSync(PATH);
-      } else {
-        callback(null, PATH);
       }
+      callback(null, PATH);
     },
     filename: function (req, file, callback) {
       // Xử lý tên file cho chuẩn
@@ -41,13 +40,12 @@ router.post('/categories/:id', function (req, res, next) {
     } else {
       const categoryId = req.params.id;
       console.log('categoryId:', categoryId);
+
       // MONGODB
       updateDocument(categoryId, { imageUrl: `/uploads/categories/${req.file.filename}` }, 'categories');
       console.log(req.params);
       console.log(req.body);
-
       //
-
       const publicUrl = `${req.protocol}://${req.hostname}:9000/uploads/categories/${categoryId}/${req.file.filename}`;
       res.status(200).json({ ok: true, publicUrl: publicUrl, file: req.file });
     }
