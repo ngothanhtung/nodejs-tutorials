@@ -1,8 +1,9 @@
-import { Form, Layout } from 'antd';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Col, Form, Layout, Row } from 'antd';
 import React from 'react';
 import { io } from 'socket.io-client';
 import axios from 'axios';
-import { Text, Badge, Button } from '@chakra-ui/react';
+import { Badge, Button } from 'antd';
 
 const socketServerUrl = 'http://localhost:9000';
 const apiServerUrl = 'http://localhost:9000';
@@ -15,17 +16,16 @@ const config = {
   // transports: ['polling'],
 };
 
-let socket = io(socketServerUrl, config);
-socket.on('connect', () => {
-  console.log(`Socket is connected with id: ${socket.id}`);
-});
-
 export default function TeacherQuiz() {
   const [answers, setAnswers] = React.useState([]);
   const [questions, setQuestions] = React.useState([]);
 
   const [currectQuestionIndex, setCurrectQuestionIndex] = React.useState(-1);
 
+  let socket = io(socketServerUrl, config);
+  socket.on('connect', () => {
+    console.log(`Socket is connected with id: ${socket.id}`);
+  });
   React.useEffect(() => {
     // SOCKET: LISTEN
     socket.on('server-message', (data) => {
@@ -35,6 +35,10 @@ export default function TeacherQuiz() {
         setAnswers([...tmp]);
       }
     });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   React.useEffect(() => {
@@ -44,83 +48,59 @@ export default function TeacherQuiz() {
     });
   }, []);
 
-  const [form] = Form.useForm();
-
   return (
-    <div>
-      <Layout>
-        <Layout.Content style={{ padding: 24 }}>
-          {questions &&
-            questions.map((q, index) => {
-              return (
-                <div key={q._id} style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-                  <div>
-                    <Badge colorScheme={index === currectQuestionIndex ? 'red' : 'gray'}>{index + 1}</Badge>
-                  </div>
-                  <div>
-                    <Text>{q.title}</Text>
-                  </div>
-                </div>
-              );
-            })}
-
-          <Button
-            style={{ marginRight: 8 }}
-            colorScheme='teal'
-            onClick={() => {
-              setCurrectQuestionIndex(0);
-
-              socket.emit('client-message', {
-                type: 'quiz',
-                question: questions[0],
-              });
-            }}
-          >
-            Bắt đầu
-          </Button>
-          <Button
-            colorScheme='teal'
-            onClick={() => {
-              const newIndex = currectQuestionIndex + 1;
-              setCurrectQuestionIndex(newIndex);
-
-              socket.emit('client-message', {
-                type: 'quiz',
-                question: questions[newIndex],
-              });
-            }}
-          >
-            Câu tiếp theo
-          </Button>
-          {/* <Button
-            onClick={() => {
-              socket.emit('client-message', {
-                type: 'quiz',
-                question: {
-                  title: 'Chiến thắng Điện Biên Phủ vào năm nào?',
-                  options: [
-                    { text: 1945, isCorrect: false },
-                    { text: 1954, isCorrect: true },
-                    { text: 1968, isCorrect: false },
-                    { text: 1975, isCorrect: false },
-                  ],
-                },
-              });
-            }}
-          >
-            Start
-          </Button> */}
-
-          {answers.map((a) => {
+    <Row gutter={[24, 24]}>
+      <Col>
+        {questions &&
+          questions.map((q, index) => {
             return (
-              <div>
-                <span>{a.username}: </span>
-                <span>{a.option.isCorrect.toString()} </span>
+              <div key={q._id} style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 32, width: 32, borderRadius: 16, backgroundColor: index === currectQuestionIndex ? 'orange' : 'white' }}>{index + 1}</div>
+                <div style={{ marginLeft: 12 }}>
+                  <span>{q.title}</span>
+                </div>
               </div>
             );
           })}
-        </Layout.Content>
-      </Layout>
-    </div>
+
+        <Button
+          style={{ marginRight: 8 }}
+          onClick={() => {
+            setCurrectQuestionIndex(0);
+
+            socket.emit('client-message', {
+              type: 'quiz',
+              question: questions[0],
+            });
+          }}
+        >
+          Bắt đầu
+        </Button>
+        <Button
+          disabled={currectQuestionIndex + 1 >= questions?.length}
+          onClick={() => {
+            const newIndex = currectQuestionIndex + 1;
+            setCurrectQuestionIndex(newIndex);
+
+            socket.emit('client-message', {
+              type: 'quiz',
+              question: questions[newIndex],
+            });
+          }}
+        >
+          Câu tiếp theo
+        </Button>
+      </Col>
+      <Col>
+        {answers.map((a) => {
+          return (
+            <div>
+              <span>{a.username}: </span>
+              <span>{a.option.isCorrect.toString()} </span>
+            </div>
+          );
+        })}
+      </Col>
+    </Row>
   );
 }

@@ -1,7 +1,5 @@
 import React from 'react';
-// 1. import `ChakraProvider` component
-import { ChakraProvider } from '@chakra-ui/react';
-import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import './App.css';
 import Categories from './pages/Categories';
@@ -11,13 +9,19 @@ import AntUpload from './pages/AntUpload';
 import Realtime from './pages/Realtime';
 import TeacherQuiz from './pages/TeacherQuiz';
 import StudentQuiz from './pages/StudentQuiz';
+import { Layout } from 'antd';
+const { Header, Content } = Layout;
 
 function App() {
   return (
-    <ChakraProvider>
-      <div className='App'>
-        <BrowserRouter>
-          <div style={{ backgroundColor: 'white', height: '100vh' }}>
+    <React.Fragment>
+      <BrowserRouter>
+        <Layout>
+          <Header>
+            <h1 style={{ color: 'white' }}>REACT CLIENT</h1>
+          </Header>
+
+          <Content style={{ padding: '24px', backgroundColor: 'white', height: 'calc(100vh - 64px)' }}>
             {/* ROUTES SETTINGS */}
             <Routes>
               <Route path='/' element={<Home />} />
@@ -38,10 +42,10 @@ function App() {
                 }
               />
             </Routes>
-          </div>
-        </BrowserRouter>
-      </div>
-    </ChakraProvider>
+          </Content>
+        </Layout>
+      </BrowserRouter>
+    </React.Fragment>
   );
 }
 
