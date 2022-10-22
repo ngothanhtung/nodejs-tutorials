@@ -12,48 +12,133 @@ var router = express.Router();
 var { validateSchema, loginSchema } = require('./schemas.yup');
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
+const jwtSettings = require('../constants/jwtSettings');
+const { findDocuments, findDocument } = require('../helpers/MongoDbHelper');
 
-router.post('/login', validateSchema(loginSchema), function (req, res, next) {
-  const { username, password } = req.body;
-  if (username === 'tungnt@softech.vn' && password === '123456789') {
-    // jwt
-    var payload = {
-      user: {
-        username: username,
-        email: 'tungnt@softech.vn',
-      },
-      application: 'ecommerce',
-    };
+router.post('/login', validateSchema(loginSchema), async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
 
-    var secret = 'ADB57C459465E3ED43C6C6231E3C9';
-    var token = jwt.sign(payload, secret, {
-      expiresIn: 86400, // expires in 24 hours
-      audience: 'softech.cloud',
-      issuer: 'softech.cloud',
-      subject: username,
-      algorithm: 'HS512',
+    const login = await findDocuments({ query: { username, password }, projection: { _id: 1 } }, 'login');
+    if (login.length > 0) {
+      // jwt
+      var payload = {
+        uid: login[0]._id,
+      };
+
+      var token = jwt.sign(payload, jwtSettings.SECRET, {
+        expiresIn: 86400, // expires in 24 hours
+        issuer: jwtSettings.ISSUER,
+        audience: jwtSettings.AUDIENCE,
+        algorithm: 'HS512',
+      });
+
+      res.status(200).json({
+        ok: true,
+        login: true,
+        payload,
+        token: token,
+      });
+      return;
+    }
+
+    res.status(401).json({
+      message: 'Unauthorized',
     });
-
-    res.status(200).json({
-      ok: true,
-      login: true,
-      user: {
-        username: username,
-        fullname: 'Ngo Thanh Tung',
-      },
-      token: token,
-    });
-    return;
+  } catch (error) {
+    res.sendStatus(500);
   }
-
-  res.status(401).json({
-    statusCode: 401,
-    message: 'Unauthorized',
-  });
 });
 
-// setup jwt middleware
-router.get('/', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+// ------------------------------------------------------------------------------------------------
+// CALL API HTTP BASIC AUTHENTICATION
+// ------------------------------------------------------------------------------------------------
+router.get('/basic', passport.authenticate('basic', { session: false }), function (req, res, next) {
+  res.json({ ok: true });
+});
+
+// ------------------------------------------------------------------------------------------------
+// CALL API JWT AUTHENTICATION
+// ------------------------------------------------------------------------------------------------
+router.get('/jwt', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+  res.json({ ok: true });
+});
+
+// ------------------------------------------------------------------------------------------------
+// GET ALL USERS WITH API-KEY
+// ------------------------------------------------------------------------------------------------
+
+const checkApiKey = () => {
+  // return a middleware
+  return (request, response, next) => {
+    const apiKey = request.get('x-api-key');
+    if (apiKey === '147258369') {
+      next();
+    } else {
+      response.status(401).json({ message: 'x-api-key is invalid' });
+    }
+  };
+};
+
+// Cách 1:
+router.get('/api-key', checkApiKey(), function (req, res, next) {
+  res.json({ ok: true });
+});
+
+// Cách 2
+// router.use(checkApiKey());
+// router.get('/api-key', function (req, res, next) {
+//   res.json({ ok: true });
+// });
+
+// ------------------------------------------------------------------------------------------------
+// CALL API WITH ROLES
+// ------------------------------------------------------------------------------------------------
+
+// CHECK ROLES
+const allowRoles = (...roles) => {
+  // return a middleware
+  return (request, response, next) => {
+    // GET BEARER TOKEN FROM HEADER
+    const bearerToken = request.get('Authorization').replace('Bearer ', '');
+
+    // DECODE TOKEN
+    const payload = jwt.decode(bearerToken, { json: true });
+
+    // AFTER DECODE TOKEN: GET UID FROM PAYLOAD
+    const { uid } = payload;
+
+    // FING BY _id
+    findDocument(uid, 'login')
+      .then((user) => {
+        console.log(user);
+        if (user && user.roles) {
+          let ok = false;
+          user.roles.forEach((role) => {
+            if (roles.includes(role)) {
+              ok = true;
+              return;
+            }
+          });
+          if (ok) {
+            next();
+          } else {
+            response.status(403).json({ message: 'Forbidden' }); // user is forbidden
+          }
+        } else {
+          response.status(403).json({ message: 'Forbidden' }); // user is forbidden
+        }
+      })
+      .catch(() => {
+        response.sendStatus(500);
+      });
+  };
+};
+
+// ------------------------------------------------------------------------------------------------
+// CALL API JWT AUTHENTICATION & CHECK ROLES
+// ------------------------------------------------------------------------------------------------
+router.get('/roles', passport.authenticate('jwt', { session: false }), allowRoles('administrators', 'managers'), function (req, res, next) {
   res.json({ ok: true });
 });
 

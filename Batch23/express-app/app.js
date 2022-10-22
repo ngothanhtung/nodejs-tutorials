@@ -5,7 +5,12 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
+var jwt = require('jsonwebtoken');
 const passport = require('passport');
+
+var BasicStrategy = require('passport-http').BasicStrategy;
+
+const jwtSettings = require('./constants/jwtSettings');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 
@@ -19,10 +24,11 @@ const customersRouter = require('./routes/customers');
 const employeesRouter = require('./routes/employees');
 const ordersRouter = require('./routes/orders');
 const blogsRouter = require('./routes/blogs');
-
 const uploadRouter = require('./routes/upload');
 
+// QUIZ
 const questionsRouter = require('./routes/questions');
+const { findDocuments, findDocument } = require('./helpers/MongoDbHelper');
 
 const app = express();
 
@@ -36,11 +42,61 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// CORS
 app.use(
   cors({
     origin: '*',
   }),
 );
+
+// Passport: Basic Auth
+passport.use(
+  new BasicStrategy(function (username, password, done) {
+    console.log('\n🚀 BasicStrategy 🚀\n');
+    findDocuments({ query: { username: username, password: password } }, 'login')
+      .then((result) => {
+        if (result.length > 0) {
+          return done(null, true);
+        } else {
+          return done(null, false);
+        }
+      })
+      .catch((err) => {
+        return done(err);
+      });
+  }),
+);
+
+// Passport: Bearer Token
+var opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = jwtSettings.SECRET;
+opts.issuer = jwtSettings.ISSUER;
+opts.audience = jwtSettings.AUDIENCE;
+
+passport.use(
+  new JwtStrategy(opts, function (payload, done) {
+    console.log('\n🚀 JwtStrategy 🚀\n');
+    const _id = payload.uid;
+    findDocument(_id, 'login')
+      .then((result) => {
+        if (result) {
+          return done(null, result);
+        } else {
+          return done(null, false);
+        }
+      })
+      .catch((err) => {
+        return done(err, false);
+      });
+  }),
+);
+
+// END: PASSPORT
+
+// app.use();
+
+// app.use(myLogger);
 
 // ROUTES
 app.use('/', indexRouter);
@@ -54,45 +110,24 @@ app.use('/employees', employeesRouter);
 // MONGOOSE
 app.use('/blogs', blogsRouter);
 app.use('/questions', questionsRouter);
+
 // UPLOAD
 app.use('/upload', uploadRouter);
-
-// MIDDLEWARE
-const myLogger = function (req, res, next) {
-  console.log(req.headers['api-key']);
-
-  const apiKey = req.headers['api-key'];
-  if (apiKey && apiKey === 'aptech-node-key') {
-    next();
-  } else {
-    res.sendStatus(401);
-  }
-  console.log('MIDDLEWARE LOGGED');
-};
-
-// Passport: jwt
-var opts = {};
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = 'ADB57C459465E3ED43C6C6231E3C9';
-opts.issuer = 'softech.cloud';
-opts.audience = 'softech.cloud';
-
-passport.use(
-  new JwtStrategy(opts, function (payload, done) {
-    if (payload.sub === 'tungnt@softech.vn') {
-      return done(null, true);
-    } else {
-      return done(null, false);
-    }
-  }),
-);
-
-// END: PASSPORT
-
-// app.use(myLogger);
-
 app.use('/products', productsRouter);
 app.use('/auth', authRouter);
+
+// MIDDLEWARE
+// const myLogger = function (req, res, next) {
+//   console.log(req.headers['api-key']);
+
+//   const apiKey = req.headers['api-key'];
+//   if (apiKey && apiKey === 'aptech-node-key') {
+//     next();
+//   } else {
+//     res.sendStatus(401);
+//   }
+//   console.log('MIDDLEWARE LOGGED');
+// };
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
