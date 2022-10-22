@@ -39,8 +39,8 @@ router.get('/', function (req, res, next) {
   ];
 
   findDocuments({ aggregate: aggregate }, COLLECTION_NAME)
-    .then((result) => {
-      res.json(result);
+    .then((results) => {
+      res.json({ ok: true, results });
     })
     .catch((error) => {
       res.status(500).json(error);
@@ -52,7 +52,7 @@ router.post('/', validateSchema(productSchema), function (req, res, next) {
   const data = req.body;
   insertDocument(data, COLLECTION_NAME)
     .then((result) => {
-      res.status(200).json({ ok: true, result });
+      res.status(201).json({ ok: true, result });
     })
     .catch((error) => {
       res.status(500).json({ ok: false, error });

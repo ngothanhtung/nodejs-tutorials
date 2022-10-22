@@ -42,7 +42,7 @@ router.post('/categories/:id', function (req, res, next) {
       console.log('categoryId:', categoryId);
 
       // MONGODB
-      updateDocument(categoryId, { imageUrl: `/uploads/categories/${req.file.filename}` }, 'categories');
+      updateDocument(categoryId, { imageUrl: `/uploads/categories/${categoryId}/${req.file.filename}` }, 'categories');
       console.log(req.params);
       console.log(req.body);
       //

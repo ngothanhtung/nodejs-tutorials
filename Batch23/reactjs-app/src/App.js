@@ -1,8 +1,12 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import numeral from 'numeral';
+import 'numeral/locales/vi';
 
 import './App.css';
 import Categories from './pages/Categories';
+import Products from './pages/Products';
+
 import Upload from './pages/Upload';
 import Home from './pages/Home';
 import AntUpload from './pages/AntUpload';
@@ -12,6 +16,8 @@ import TeacherQuiz from './pages/TeacherQuiz';
 import StudentQuiz from './pages/StudentQuiz';
 import { Layout } from 'antd';
 const { Header, Content } = Layout;
+
+numeral.locale('vi');
 
 function App() {
   return (
@@ -27,6 +33,8 @@ function App() {
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/categories' element={<Categories />} />
+
+              <Route path='/products' element={<Products />} />
               <Route path='/upload' element={<Upload />} />
               <Route path='/antd/upload' element={<AntUpload />} />
               <Route path='/antd/upload/manual' element={<ManualAntUpload />} />
