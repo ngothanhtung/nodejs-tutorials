@@ -1,12 +1,3 @@
-// VALIDATE
-// 1. install: yup
-// 2. config: schema
-// 3. config middleware for route
-// JWT:
-// 1. install: jsonwebtoken, passport, passport-jwt
-// 2. app:
-// 3. route: login => token
-// 4. config middleware for route
 var express = require('express');
 var router = express.Router();
 var { validateSchema, loginSchema } = require('./schemas.yup');
@@ -19,11 +10,12 @@ router.post('/login', validateSchema(loginSchema), async (req, res, next) => {
   try {
     const { username, password } = req.body;
 
-    const login = await findDocuments({ query: { username, password }, projection: { _id: 1 } }, 'login');
+    const login = await findDocuments({ query: { username, password }, projection: { _id: 1, username: 1 } }, 'login');
     if (login.length > 0) {
       // jwt
       var payload = {
         uid: login[0]._id,
+        email: login[0].username,
       };
 
       var token = jwt.sign(payload, jwtSettings.SECRET, {
