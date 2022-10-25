@@ -130,7 +130,7 @@ const allowRoles = (...roles) => {
 // ------------------------------------------------------------------------------------------------
 // CALL API JWT AUTHENTICATION & CHECK ROLES
 // ------------------------------------------------------------------------------------------------
-router.get('/roles', passport.authenticate('jwt', { session: false }), allowRoles('administrators', 'managers'), function (req, res, next) {
+router.get('/roles', passport.authenticate('jwt', { session: false }), allowRoles('administrators'), function (req, res, next) {
   res.json({ ok: true });
 });
 
