@@ -6,10 +6,7 @@ import { Form, Input, Button, Checkbox, Divider, message } from 'antd';
 import axios from 'axios';
 import useAuth from '../hooks/useAuth';
 
-const markdown = `
-## Xây dựng mẫu kiểm thử cho form Login sau:
-
-`;
+const markdown = ``;
 
 const Login = () => {
   const navigate = useNavigate();
@@ -23,6 +20,7 @@ const Login = () => {
       .then((response) => {
         console.log(response.data);
         localStorage.setItem('auth', JSON.stringify(response.data));
+        // Zustand: method
         signIn({ payload: response.data.payload, token: response.data.token });
         message.success('Login success');
         navigate('/');
