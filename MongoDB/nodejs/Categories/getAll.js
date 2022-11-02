@@ -2,7 +2,7 @@ const { default: mongoose } = require('mongoose');
 
 const { Category } = require('../models');
 // MONGOOSE
-mongoose.connect('mongodb://localhost:27017/api-training');
+mongoose.connect('mongodb://localhost:27017/Test');
 
 try {
   Category.find().then((result) => {

@@ -8,7 +8,7 @@ const { Schema, model } = mongoose;
 // https://mongoosejs.com/docs/validation.html#built-in-validators
 
 const supplierSchema = new Schema({
-  name: { type: String },
+  name: { type: String, required: true },
   email: {
     type: String,
     validate: {
