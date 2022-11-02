@@ -1,0 +1,5 @@
+use('api-training');
+
+db.movies.find({
+  rated: 'R'
+});
