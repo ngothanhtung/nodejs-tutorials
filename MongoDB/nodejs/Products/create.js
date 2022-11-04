@@ -8,6 +8,7 @@ try {
   const data = {
     name: 'Quần Jean',
     price: 100,
+    stock: -1,
     categoryId: '6364bba3efe5791187600234',
     discount: 10,
   };
