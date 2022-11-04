@@ -1,9 +1,3 @@
-const { default: mongoose } = require('mongoose');
-
-const { Category } = require('../models');
-// MONGOOSE
-mongoose.connect('mongodb://localhost:27017/training-database');
-
 var express = require('express');
 var router = express.Router();
 
@@ -16,44 +10,46 @@ let data = [
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-  try {
-    Category.find().then((result) => {
-      res.send(result);
-    });
-  } catch (err) {
-    res.sendStatus(500);
-  }
+  res.send(data);
 });
 
 /* GET users listing. */
 router.get('/:id', function (req, res, next) {
-  try {
-    const { id } = req.params;
-    Category.findById(id).then((result) => {
-      res.send(result);
-      // console.log(result);
-    });
-  } catch (err) {
-    // console.log(err);
-    res.sendStatus(500);
+  console.log(req.params.id);
+  if (req.params.id === 'search') {
+    next();
+    return;
   }
+  const id = parseInt();
+
+  const found = data.find((x) => {
+    return x.id === id;
+  });
+
+  if (found) {
+    res.send(found);
+    return;
+  }
+  // console.log('id: ', id);
+
+  res.status(404).send({ message: 'Category not found' });
 });
 
 /* GET users listing. */
 
 router.post('/', function (req, res, next) {
-  try {
-    const data = req.body;
+  const newCategory = req.body;
+  data.push(newCategory);
+  res.status(201).send({ message: 'Inserted' });
+});
 
-    const newItem = new Category(data);
-    newItem.save().then((result) => {
-      res.send(result);
-      // console.log(result);
-    });
-  } catch (err) {
-    res.sendStatus(500);
-    // console.log(err);
-  }
+// querystring
+router.get('/search', function (req, res, next) {
+  const text = req.query.text;
+  const price = req.query.price;
+  console.log('text: ', text);
+  console.log('price: ', price);
+  res.send('OK');
 });
 
 router.patch('/:id', function (req, res, next) {

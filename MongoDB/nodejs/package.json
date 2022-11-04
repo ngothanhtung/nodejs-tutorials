@@ -11,6 +11,6 @@
   "dependencies": {
     "mongodb": "^4.11.0",
     "mongoose": "^6.7.0",
-    "yup": "^0.32.11"
+    "mongoose-lean-virtuals": "^0.9.1"
   }
 }
