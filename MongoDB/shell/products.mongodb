@@ -1,0 +1,12 @@
+use('training-database')
+
+db.products.find({
+  price: 100
+});
+
+use('training-database')
+db.products.find({
+  price: {
+    $gte: 0, $lte:50
+  }
+}).limit(2);

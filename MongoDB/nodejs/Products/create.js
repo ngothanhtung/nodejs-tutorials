@@ -2,13 +2,14 @@ const { default: mongoose } = require('mongoose');
 
 const { Product } = require('../models');
 // MONGOOSE
-mongoose.connect('mongodb://localhost:27017/Test');
+mongoose.connect('mongodb://localhost:27017/training-database');
 
 try {
   const data = {
-    name: 'iPhone 15',
-    price: -1,
-    categoryId: '63293fea50d2f78624e0c6f3',
+    name: 'Quần Jean',
+    price: 100,
+    categoryId: '6364bba3efe5791187600234',
+    discount: 10,
   };
 
   const newItem = new Product(data);
