@@ -6,10 +6,11 @@ mongoose.connect('mongodb://localhost:27017/training-database');
 
 try {
   const data = {
-    name: 'Quần Jean',
-    price: 100,
-    categoryId: '6364bba3efe5791187600234',
-    discount: 10,
+    name: 'Áo sơ mi',
+    price: 200,
+    stock: 100,
+    discount: 0,
+    categoryId: '6364f9f30486025f375b5942',
   };
 
   const newItem = new Product(data);
