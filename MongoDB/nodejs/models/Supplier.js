@@ -21,6 +21,18 @@ const supplierSchema = new Schema({
     },
     required: [true, 'email is required'],
   },
+  phoneNumber: {
+    type: String,
+    validate: {
+      validator: function (value) {
+        const phoneRegex = /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/;
+        return phoneRegex.test(value);
+      },
+      message: `{VALUE} is not a valid phone!`,
+      // message: (props) => `{props.value} is not a valid email!`,
+    },
+  },
+  address: { type: String, required: true },
 });
 
 const Supplier = model('Supplier', supplierSchema);

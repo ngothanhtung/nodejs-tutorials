@@ -1,16 +1,19 @@
 const { default: mongoose } = require('mongoose');
 
-const { Category } = require('../models');
+const { Order } = require('../models');
 // MONGOOSE
 mongoose.connect('mongodb://localhost:27017/training-database');
 
 var express = require('express');
 var router = express.Router();
 
-/* GET users listing. */
+// GET
 router.get('/', function (req, res, next) {
   try {
-    Category.find()
+    Order.find()
+      .populate('orderDetails.product')
+      .populate('customer')
+      .populate('employee')
       .then((result) => {
         res.send(result);
       })
@@ -22,11 +25,14 @@ router.get('/', function (req, res, next) {
   }
 });
 
-/* GET users listing. */
+// GET/:id
 router.get('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
-    Category.findById(id)
+    Order.findById(id)
+      .populate('orderDetails.product')
+      .populate('customer')
+      .populate('employee')
       .then((result) => {
         res.send(result);
       })
@@ -38,20 +44,18 @@ router.get('/:id', function (req, res, next) {
   }
 });
 
-/* GET users listing. */
-
+// POST
 router.post('/', function (req, res, next) {
   try {
     const data = req.body;
 
-    const newItem = new Category(data);
+    const newItem = new Order(data);
     newItem
       .save()
       .then((result) => {
         res.send(result);
       })
       .catch((err) => {
-        console.log(err);
         res.status(400).send({ message: err.message });
       });
   } catch (err) {
@@ -59,13 +63,13 @@ router.post('/', function (req, res, next) {
   }
 });
 
-// PATCH
+// PATCH/:id
 router.patch('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
     const data = req.body;
 
-    Category.findByIdAndUpdate(id, data, {
+    Order.findByIdAndUpdate(id, data, {
       new: true,
     })
       .then((result) => {
@@ -83,7 +87,7 @@ router.patch('/:id', function (req, res, next) {
 router.delete('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
-    Category.findByIdAndDelete(id)
+    Order.findByIdAndDelete(id)
       .then((result) => {
         res.send(result);
       })

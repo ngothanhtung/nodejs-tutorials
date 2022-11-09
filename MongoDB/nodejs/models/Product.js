@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
-const yup = require('yup');
-
 // Mongoose Datatypes:
 // https://mongoosejs.com/docs/schematypes.html
 
@@ -15,29 +13,7 @@ const productSchema = Schema(
     name: { type: String, required: true },
     price: { type: Number, required: true, min: 0, default: 0 },
     discount: { type: Number, min: 0, max: 75, default: 0 },
-    stock: {
-      type: Number,
-      validate: {
-        validator: function (value) {
-          console.log(value);
-          yup
-            .number()
-            .min(0)
-            .max(5)
-            .validate(value)
-            .then((result) => {
-              return true;
-              console.log('😍', result);
-            })
-            .catch((err) => {
-              return false;
-              console.error('🧨', err);
-            });
-        },
-        message: `{VALUE} is invalid (YUP)`,
-        // message: (props) => `{props.value} is not a valid email!`,
-      },
-    },
+    stock: { type: Number, min: 0, default: 0 },
     categoryId: { type: Schema.Types.ObjectId, ref: 'Category', required: false },
     supplierId: { type: Schema.Types.ObjectId, ref: 'Supplier', required: false },
   },

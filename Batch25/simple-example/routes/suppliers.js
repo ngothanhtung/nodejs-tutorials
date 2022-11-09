@@ -1,16 +1,16 @@
 const { default: mongoose } = require('mongoose');
 
-const { Category } = require('../models');
+const { Supplier } = require('../models');
 // MONGOOSE
 mongoose.connect('mongodb://localhost:27017/training-database');
 
 var express = require('express');
 var router = express.Router();
 
-/* GET users listing. */
+// GET
 router.get('/', function (req, res, next) {
   try {
-    Category.find()
+    Supplier.find()
       .then((result) => {
         res.send(result);
       })
@@ -22,11 +22,11 @@ router.get('/', function (req, res, next) {
   }
 });
 
-/* GET users listing. */
+// GET:id
 router.get('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
-    Category.findById(id)
+    Supplier.findById(id)
       .then((result) => {
         res.send(result);
       })
@@ -38,13 +38,12 @@ router.get('/:id', function (req, res, next) {
   }
 });
 
-/* GET users listing. */
-
+// POST
 router.post('/', function (req, res, next) {
   try {
     const data = req.body;
 
-    const newItem = new Category(data);
+    const newItem = new Supplier(data);
     newItem
       .save()
       .then((result) => {
@@ -59,13 +58,13 @@ router.post('/', function (req, res, next) {
   }
 });
 
-// PATCH
+// PATCH:/id
 router.patch('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
     const data = req.body;
 
-    Category.findByIdAndUpdate(id, data, {
+    Supplier.findByIdAndUpdate(id, data, {
       new: true,
     })
       .then((result) => {
@@ -83,7 +82,7 @@ router.patch('/:id', function (req, res, next) {
 router.delete('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
-    Category.findByIdAndDelete(id)
+    Supplier.findByIdAndDelete(id)
       .then((result) => {
         res.send(result);
       })
