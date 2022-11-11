@@ -5,7 +5,7 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { axiosClient } from '../../libraries/axiosClient';
 import moment from 'moment';
 
-export default function List() {
+export default function Employees() {
   const [employees, setEmployees] = React.useState([]);
   const [selectedRecord, setSelectedRecord] = React.useState(null);
   const [refresh, setRefresh] = React.useState(0);

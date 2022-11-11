@@ -12,6 +12,7 @@ router.get('/', function (req, res, next) {
   try {
     Product.find()
       .populate('category')
+      .populate('supplier')
       .then((result) => {
         res.send(result);
       })
