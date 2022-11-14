@@ -4,6 +4,8 @@ const { Category } = require('../models');
 // MONGOOSE
 mongoose.connect('mongodb://localhost:27017/training-database');
 
+const { findDocuments } = require('../helpers/MongoDbHelper');
+
 var express = require('express');
 var router = express.Router();
 
@@ -93,6 +95,39 @@ router.delete('/:id', function (req, res, next) {
   } catch (err) {
     res.sendStatus(500);
   }
+});
+
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 18
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/18', function (req, res) {
+  const aggregate = [
+    {
+      $lookup: {
+        from: 'products',
+        let: { id: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ['$$id', '$categoryId'] },
+            },
+          },
+        ],
+        as: 'products',
+      },
+    },
+    {
+      $addFields: { numberOfProducts: { $size: '$products' } },
+    },
+  ];
+
+  findDocuments({ aggregate: aggregate }, 'categories')
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(400).json(error);
+    });
 });
 
 module.exports = router;

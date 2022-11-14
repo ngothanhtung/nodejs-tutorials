@@ -3,6 +3,7 @@ const { default: mongoose } = require('mongoose');
 const { Product } = require('../models');
 // MONGOOSE
 mongoose.connect('mongodb://localhost:27017/training-database');
+const { findDocuments } = require('../helpers/MongoDbHelper');
 
 var express = require('express');
 var router = express.Router();
@@ -10,7 +11,7 @@ var router = express.Router();
 // GET
 router.get('/', function (req, res, next) {
   try {
-    Product.find()
+    Product.find({ discount: { $gte: 10 } })
       .populate('category')
       .populate('supplier')
       .then((result) => {
@@ -95,4 +96,46 @@ router.delete('/:id', function (req, res, next) {
   }
 });
 
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 1
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/1', async (req, res, next) => {
+  try {
+    let query = { discount: { $gte: 5 } };
+    const results = await findDocuments({ query: query }, 'products');
+    res.json({ ok: true, results });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 2
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/2', async (req, res, next) => {
+  try {
+    let query = { stock: { $lte: 5 } };
+    const results = await findDocuments({ query }, 'products');
+    res.json({ ok: true, results });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 3
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/3', async (req, res, next) => {
+  try {
+    const s = { $subtract: [100, '$discount'] }; // (100 - 5)
+    const m = { $multiply: ['$price', s] }; // price * 95
+    const d = { $divide: [m, 100] }; // price * 95 / 100
+
+    let aggregate = [{ $match: { $expr: { $lte: [d, 15000000] } } }];
+    const results = await findDocuments({ aggregate }, 'products');
+    res.json({ ok: true, results });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
 module.exports = router;
