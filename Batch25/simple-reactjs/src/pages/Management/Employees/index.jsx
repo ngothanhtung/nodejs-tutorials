@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, Button, Popconfirm, Form, Input, message, Space, Modal } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
-import { axiosClient } from '../../libraries/axiosClient';
+import { axiosClient } from '../../../libraries/axiosClient';
 import moment from 'moment';
 
 export default function Employees() {
@@ -179,7 +179,7 @@ export default function Employees() {
           </Button>
         </Form.Item>
       </Form>
-      <Table rowKey='_id' dataSource={employees} columns={columns} />;
+      <Table rowKey='_id' dataSource={employees} columns={columns} />
       <Modal
         centered
         open={editFormVisible}

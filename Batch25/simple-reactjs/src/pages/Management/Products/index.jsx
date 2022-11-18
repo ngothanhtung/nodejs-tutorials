@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, Button, Popconfirm, Form, Input, message, Space, Modal, InputNumber, Select } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
-import { axiosClient } from '../../libraries/axiosClient';
+import { axiosClient } from '../../../libraries/axiosClient';
 import moment from 'moment';
 import numeral from 'numeral';
 
@@ -222,7 +222,7 @@ export default function Products() {
           </Button>
         </Form.Item>
       </Form>
-      <Table rowKey='_id' dataSource={products} columns={columns} />;
+      <Table rowKey='_id' dataSource={products} columns={columns} />
       <Modal
         centered
         open={editFormVisible}

@@ -5,6 +5,7 @@ const { Order } = require('../models');
 mongoose.connect('mongodb://localhost:27017/training-database');
 
 var express = require('express');
+const { findDocuments } = require('../../../Batch23/express-app/helpers/MongoDbHelper');
 var router = express.Router();
 
 // GET
@@ -88,6 +89,40 @@ router.delete('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
     Order.findByIdAndDelete(id)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).send({ message: err.message });
+      });
+  } catch (err) {
+    res.sendStatus(500);
+  }
+});
+
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 7
+// ------------------------------------------------------------------------------------------------
+router.post('/questions/7', function (req, res, next) {
+  const { status } = req.body;
+
+  const query = {
+    status: status,
+  };
+
+  // findDocuments({ query }, 'orders')
+  //   .then((result) => {
+  //     res.json(result);
+  //   })
+  //   .catch((error) => {
+  //     res.status(500).json(error);
+  //   });
+
+  try {
+    Order.find(query)
+      .populate('orderDetails.product')
+      .populate('customer')
+      .populate('employee')
       .then((result) => {
         res.send(result);
       })

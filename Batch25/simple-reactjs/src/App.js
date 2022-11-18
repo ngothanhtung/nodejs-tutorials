@@ -1,31 +1,52 @@
+import { Layout } from 'antd';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import numeral from 'numeral';
 import 'numeral/locales/vi';
 
 import './App.css';
-import Employees from './pages/Employees';
-import Products from './pages/Products';
+import Employees from './pages/Management/Employees';
+import Products from './pages/Management/Products';
+import Home from './pages/Home';
+import MainMenu from './components/MainMenu';
+import SearchOrdersByStatus from './pages/Sales/Orders/SearchOrdersByStatus';
 
 numeral.locale('vi');
 
+const { Header, Footer, Sider, Content } = Layout;
+
 function App() {
   return (
-    <div style={{ padding: 48 }}>
+    <div style={{}}>
       <BrowserRouter>
-        <Routes>
-          <Route path='/employees' element={<Employees />} />
-          <Route path='/products' element={<Products />} />
+        <Layout>
+          <Sider theme='dark' style={{ minHeight: '100vh' }}>
+            <MainMenu />
+          </Sider>
+          <Layout>
+            <Header>Header</Header>
+            <Content style={{ padding: 24 }}>
+              <Routes>
+                <Route path='/' element={<Home />} />
+                <Route path='/home' element={<Home />} />
+                <Route path='/management/employees' element={<Employees />} />
+                <Route path='/management/products' element={<Products />} />
+                {/* SALES */}
 
-          {/* NO MATCH ROUTE */}
-          <Route
-            path='*'
-            element={
-              <main style={{ padding: '1rem' }}>
-                <p>404 Page not found 😂😂😂</p>
-              </main>
-            }
-          />
-        </Routes>
+                <Route path='/sales/orders/status' element={<SearchOrdersByStatus />} />
+                {/* NO MATCH ROUTE */}
+                <Route
+                  path='*'
+                  element={
+                    <main style={{ padding: '1rem' }}>
+                      <p>404 Page not found 😂😂😂</p>
+                    </main>
+                  }
+                />
+              </Routes>
+            </Content>
+            <Footer>Footer</Footer>
+          </Layout>
+        </Layout>
       </BrowserRouter>
     </div>
   );
