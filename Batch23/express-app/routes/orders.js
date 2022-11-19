@@ -138,16 +138,11 @@ router.get('/questions/7', function (req, res, next) {
 // QUESTIONS 8
 // ------------------------------------------------------------------------------------------------
 router.get('/questions/8', function (req, res, next) {
-  const today = moment();
+  const today = new Date();
   const query = {
-    $and: [
-      {
-        status: 'COMPLETED',
-      },
-      {
-        createdDate: new Date(today.format('YYYY-MM-DD')),
-      },
-    ],
+    $expr: {
+      $and: [{ $eq: [{ $dayOfMonth: '$createdDate' }, { $dayOfMonth: today }] }, { $eq: [{ $month: '$createdDate' }, { $month: today }] }, { $eq: [{ $year: '$createdDate' }, { $year: today }] }, { $eq: ['$status', 'COMPLETED'] }],
+    },
   };
 
   findDocuments({ query }, COLLECTION_NAME)
