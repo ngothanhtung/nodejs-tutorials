@@ -104,27 +104,93 @@ router.delete('/:id', function (req, res, next) {
 // QUESTIONS 7
 // ------------------------------------------------------------------------------------------------
 router.post('/questions/7', function (req, res, next) {
-  const { status } = req.body;
+  // CÁCH 1
+  // try {
+  //   const { status } = req.body;
 
-  const query = {
-    status: status,
-  };
+  //   const aggregate = [
+  //     // MATCH / FIND
+  //     {
+  //       $match: { status: status },
+  //     },
+  //     // LOOKUP / POPULATE
+  //     {
+  //       $lookup: {
+  //         from: 'customers', // foreign collection name
+  //         localField: 'customerId',
+  //         foreignField: '_id',
+  //         as: 'customer', // alias
+  //       },
+  //     },
+  //     // ADD FIELDS
+  //     {
+  //       $addFields: {
+  //         customer: { $first: '$customer' },
+  //       },
+  //     },
+  //     // PROJECT
+  //     {
+  //       $project: {
+  //         _id: 1,
+  //         createdDate: 1,
+  //         status: 1,
+  //         paymentType: 1,
+  //         'customer.email': 1,
+  //         'customer.firstName': 1,
+  //         'customer.lastName': 1,
+  //       },
+  //     },
+  //   ];
 
-  // findDocuments({ query }, 'orders')
-  //   .then((result) => {
-  //     res.json(result);
-  //   })
-  //   .catch((error) => {
-  //     res.status(500).json(error);
-  //   });
+  //   findDocuments({ aggregate }, 'orders')
+  //     .then((result) => {
+  //       res.json(result);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       res.status(400).json(error);
+  //     });
+  // } catch (err) {
+  //   res.sendStatus(500);
+  // }
 
+  // CÁCH 2: MONGOOSE
   try {
-    Order.find(query)
-      .populate('orderDetails.product')
-      .populate('customer')
-      .populate('employee')
+    const { status } = req.body;
+
+    const query = {
+      status: status,
+    };
+    // Order.find(query)
+    //   .populate('orderDetails.product')
+    //   .populate('customer')
+    //   .populate('employee')
+
+    //   .then((result) => {
+    //     res.send(result);
+    //   })
+    //   .catch((err) => {
+    //     res.status(400).send({ message: err.message });
+    //   });
+
+    Order.aggregate([{ $match: { status: status } }])
+      // .lookup({
+      //   from: 'customers',
+      //   localField: 'customerId',
+      //   foreignField: '_id',
+      //   as: 'customer',
+      // })
+      // .addFields({
+      //   customer: { $first: '$customer' },
+      // })
+      // .addFields({
+      //   'customer.fullName': { $concat: ['$customer.firstName', ' ', '$customer.lastName'] },
+      // })
+      // .project({ _id: 1, employeeId: 1, 'customer.fullName': 1 })
       .then((result) => {
-        res.send(result);
+        Order.populate(result, [{ path: 'employee' }, { path: 'customer' }, { path: 'orderDetails.product', select: { name: 1, price: 1, discount: 1, _id: 0 } }]).then((data) => {
+          res.send(data);
+        });
       })
       .catch((err) => {
         res.status(400).send({ message: err.message });
