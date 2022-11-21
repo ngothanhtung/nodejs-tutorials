@@ -94,4 +94,32 @@ router.delete('/:id', function (req, res, next) {
   }
 });
 
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 15
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/15', function (req, res, next) {
+  try {
+    const { supplierNames } = req.query;
+
+    // const supplierNames = ['Samsung', 'Apple'];
+    Supplier.aggregate([
+      {
+        $match: {
+          name: { $in: supplierNames.split(',') },
+        },
+      },
+    ])
+
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).send({ message: err.message });
+      });
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+});
+
 module.exports = router;
