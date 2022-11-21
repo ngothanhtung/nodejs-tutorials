@@ -103,101 +103,64 @@ router.delete('/:id', function (req, res, next) {
 // ------------------------------------------------------------------------------------------------
 // QUESTIONS 7
 // ------------------------------------------------------------------------------------------------
-router.post('/questions/7', function (req, res, next) {
-  // CÁCH 1
-  // try {
-  //   const { status } = req.body;
-
-  //   const aggregate = [
-  //     // MATCH / FIND
-  //     {
-  //       $match: { status: status },
-  //     },
-  //     // LOOKUP / POPULATE
-  //     {
-  //       $lookup: {
-  //         from: 'customers', // foreign collection name
-  //         localField: 'customerId',
-  //         foreignField: '_id',
-  //         as: 'customer', // alias
-  //       },
-  //     },
-  //     // ADD FIELDS
-  //     {
-  //       $addFields: {
-  //         customer: { $first: '$customer' },
-  //       },
-  //     },
-  //     // PROJECT
-  //     {
-  //       $project: {
-  //         _id: 1,
-  //         createdDate: 1,
-  //         status: 1,
-  //         paymentType: 1,
-  //         'customer.email': 1,
-  //         'customer.firstName': 1,
-  //         'customer.lastName': 1,
-  //       },
-  //     },
-  //   ];
-
-  //   findDocuments({ aggregate }, 'orders')
-  //     .then((result) => {
-  //       res.json(result);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       res.status(400).json(error);
-  //     });
-  // } catch (err) {
-  //   res.sendStatus(500);
-  // }
-
-  // CÁCH 2: MONGOOSE
+router.get('/questions/7', function (req, res, next) {
   try {
-    const { status } = req.body;
-
-    const query = {
-      status: status,
-    };
-    // Order.find(query)
-    //   .populate('orderDetails.product')
-    //   .populate('customer')
-    //   .populate('employee')
-
-    //   .then((result) => {
-    //     res.send(result);
-    //   })
-    //   .catch((err) => {
-    //     res.status(400).send({ message: err.message });
-    //   });
-
-    Order.aggregate([{ $match: { status: status } }])
-      // .lookup({
-      //   from: 'customers',
-      //   localField: 'customerId',
-      //   foreignField: '_id',
-      //   as: 'customer',
-      // })
-      // .addFields({
-      //   customer: { $first: '$customer' },
-      // })
-      // .addFields({
-      //   'customer.fullName': { $concat: ['$customer.firstName', ' ', '$customer.lastName'] },
-      // })
-      // .project({ _id: 1, employeeId: 1, 'customer.fullName': 1 })
+    const { status } = req.query;
+    Order.find({ status: status }, { createdDate: 1, status: 1, paymentType: 1, orderDetails: 1, customerId: 1, employeeId: 1 })
+      .populate({ path: 'orderDetails.product', select: { name: 1, price: 1, discount: 1, stock: 1 } })
+      .populate('customer')
+      .populate('employee')
       .then((result) => {
-        Order.populate(result, [{ path: 'employee' }, { path: 'customer' }, { path: 'orderDetails.product', select: { name: 1, price: 1, discount: 1, _id: 0 } }]).then((data) => {
-          res.send(data);
-        });
+        res.send(result);
       })
       .catch((err) => {
         res.status(400).send({ message: err.message });
       });
   } catch (err) {
+    console.log(err);
     res.sendStatus(500);
   }
 });
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 8
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/8', function (req, res, next) {
+  try {
+    const { status, date } = req.query;
 
+    const fromDate = new Date(date);
+    const toDate = new Date(new Date(date).setDate(fromDate.getDate() + 1));
+
+    // console.log('fromDate', fromDate);
+    // console.log('toDate', toDate);
+
+    const compareStatus = { $eq: ['$status', status] };
+    const compareFromDate = { $gte: ['$createdDate', fromDate] };
+    const compareToDate = { $lt: ['$createdDate', toDate] };
+
+    Order.aggregate([
+      {
+        $match: { $expr: { $and: [compareStatus, compareFromDate, compareToDate] } },
+      },
+    ])
+      .project({ _id: 1, status: 1, paymentType: 1, createdDate: 1, orderDetails: 1, employeeId: 1, customerId: 1 })
+      .then((result) => {
+        // res.send(result);
+        // POPULATE
+        Order.populate(result, [{ path: 'employee' }, { path: 'customer' }, { path: 'orderDetails.product', select: { name: 1, price: 1, discount: 1 } }])
+          .then((data) => {
+            res.send(data);
+          })
+          .catch((err) => {
+            res.status(400).send({ message: err.message });
+          });
+      })
+      .catch((err) => {
+        res.status(400).send({ message: err.message });
+      });
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+});
 module.exports = router;

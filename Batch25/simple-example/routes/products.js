@@ -1,6 +1,6 @@
 const { default: mongoose } = require('mongoose');
 
-const { Product } = require('../models');
+const { Product, Order } = require('../models');
 // MONGOOSE
 mongoose.connect('mongodb://localhost:27017/training-database');
 const { findDocuments } = require('../helpers/MongoDbHelper');
@@ -126,16 +126,79 @@ router.get('/questions/2', async (req, res, next) => {
 // QUESTIONS 3
 // ------------------------------------------------------------------------------------------------
 router.get('/questions/3', async (req, res, next) => {
+  // CÁCH 1
+  // try {
+  //   const s = { $subtract: [100, '$discount'] }; // (100 - 5)
+  //   const m = { $multiply: ['$price', s] }; // price * 95
+  //   const d = { $divide: [m, 100] }; // price * 95 / 100
+
+  //   let aggregate = [{ $match: { $expr: { $lte: [d, 15000000] } } }];
+  //   const results = await findDocuments({ aggregate }, 'products');
+
+  //   res.json({ ok: true, results });
+  // } catch (error) {
+  //   res.status(500).json(error);
+  // }
+
+  // CÁCH 2
   try {
     const s = { $subtract: [100, '$discount'] }; // (100 - 5)
     const m = { $multiply: ['$price', s] }; // price * 95
     const d = { $divide: [m, 100] }; // price * 95 / 100
 
     let aggregate = [{ $match: { $expr: { $lte: [d, 15000000] } } }];
-    const results = await findDocuments({ aggregate }, 'products');
-    res.json({ ok: true, results });
+    Product.aggregate(aggregate)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).json(err);
+      });
   } catch (error) {
     res.status(500).json(error);
   }
 });
+
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 25
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/25', async (req, res, next) => {
+  try {
+    const aggregate = [
+      {
+        $unwind: {
+          path: '$orderDetails',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      { $addFields: { productId: '$orderDetails.productId' } },
+      { $project: { productId: 1 } },
+      {
+        $group: {
+          _id: null,
+          productIds: { $addToSet: '$productId' }, // Tạo mảng đã mua
+        },
+      },
+      {
+        $lookup: {
+          from: 'products',
+          let: { productIds: '$productIds' },
+          pipeline: [{ $match: { $expr: { $not: { $in: ['$_id', '$$productIds'] } } } }],
+          as: 'productsNotInOrderDetails',
+        },
+      },
+      { $project: { productsNotInOrderDetails: 1, _id: 0 } },
+    ];
+    Order.aggregate(aggregate)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).json(err);
+      });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 module.exports = router;
