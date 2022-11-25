@@ -7,6 +7,7 @@ mongoose.connect('mongodb://localhost:27017/training-database');
 const { findDocuments } = require('../helpers/MongoDbHelper');
 
 var express = require('express');
+const passport = require('passport');
 var router = express.Router();
 
 /* GET users listing. */
@@ -22,6 +23,11 @@ router.get('/', function (req, res, next) {
   } catch (err) {
     res.sendStatus(500);
   }
+});
+
+/* GET users listing. */
+router.get('/products', function (req, res, next) {
+  next();
 });
 
 /* GET users listing. */
@@ -42,11 +48,12 @@ router.get('/:id', function (req, res, next) {
 
 /* GET users listing. */
 
-router.post('/', function (req, res, next) {
+router.post('/', passport.authenticate('jwt', { session: false }), function (req, res, next) {
   try {
     const data = req.body;
 
     const newItem = new Category(data);
+
     newItem
       .save()
       .then((result) => {

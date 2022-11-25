@@ -5,6 +5,14 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
 
+const passport = require('passport');
+
+var BasicStrategy = require('passport-http').BasicStrategy;
+
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const jwtSettings = require('./constants/jwtSettings');
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
@@ -14,6 +22,7 @@ var customersRouter = require('./routes/customers');
 var employeesRouter = require('./routes/employees');
 var productsRouter = require('./routes/products');
 var ordersRouter = require('./routes/orders');
+const { findDocument, findDocuments } = require('./helpers/MongoDbHelper');
 
 var app = express();
 
@@ -33,10 +42,63 @@ app.use(
   }),
 );
 
+const myLogger = function (req, res, next) {
+  console.log('LOGGED');
+  next();
+};
+
+app.use(myLogger);
+
+// Passport: Basic Auth
+passport.use(
+  new BasicStrategy(function (username, password, done) {
+    console.log('🚀 BasicStrategy');
+    // MONGODB
+    findDocuments({ query: { username: username, password: password } }, 'login')
+      .then((result) => {
+        if (result.length > 0) {
+          return done(null, true);
+        } else {
+          return done(null, false);
+        }
+      })
+      .catch((err) => {
+        return done(err, false);
+      });
+  }),
+);
+
+// Passport: jwt
+const opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = jwtSettings.SECRET;
+opts.audience = jwtSettings.AUDIENCE;
+opts.issuer = jwtSettings.ISSUER;
+
+passport.use(
+  new JwtStrategy(opts, async (payload, done) => {
+    const id = payload.sub;
+    // console.log(payload);
+    const found = await findDocument(id, 'login');
+    console.log('🐣', found);
+
+    if (found && found.active) {
+      let error = null;
+      let user = true;
+      return done(error, user);
+    } else {
+      let error = null;
+      let user = false;
+      return done(error, user);
+    }
+  }),
+);
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/categories', categoriesRouter);
+
 app.use('/suppliers', suppliersRouter);
 app.use('/customers', customersRouter);
 app.use('/employees', employeesRouter);
