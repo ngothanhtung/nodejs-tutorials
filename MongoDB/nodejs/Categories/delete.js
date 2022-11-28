@@ -2,7 +2,7 @@ const { default: mongoose } = require('mongoose');
 
 const { Category } = require('../models');
 // MONGOOSE
-mongoose.connect('mongodb://localhost:27017/training-database');
+mongoose.connect('mongodb://127.0.0.1:27017/training-database');
 
 try {
   const id = '6362647d5ff5a41f96d24df6';

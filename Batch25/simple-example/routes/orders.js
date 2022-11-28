@@ -2,7 +2,7 @@ const { default: mongoose } = require('mongoose');
 
 const { Order } = require('../models');
 // MONGOOSE
-mongoose.connect('mongodb://localhost:27017/training-database');
+mongoose.connect('mongodb://127.0.0.1:27017/training-database');
 
 var express = require('express');
 const { findDocuments } = require('../../../Batch23/express-app/helpers/MongoDbHelper');

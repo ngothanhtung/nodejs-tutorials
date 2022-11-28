@@ -2,7 +2,7 @@ import { Button, Form, Input, Layout, message } from 'antd';
 import React from 'react';
 import { io } from 'socket.io-client';
 
-const socketServerUrl = 'http://localhost:9000';
+const socketServerUrl = 'http://127.0.0.1:9000';
 
 const config = {
   secure: true,

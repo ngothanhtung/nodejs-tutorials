@@ -11,7 +11,7 @@ export default function AntUpload() {
           showUploadList={false}
           name='file'
           data={{ name: 'Hello ANTD', description: 'Mô tả ANTD' }}
-          action='http://localhost:9000/upload/categories/631731e0f4368ae8174a1a67'
+          action='http://127.0.0.1:9000/upload/categories/631731e0f4368ae8174a1a67'
           headers={{ authorization: 'authorization-text' }}
           onChange={(info) => {
             if (info.file.status !== 'uploading') {

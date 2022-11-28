@@ -9,7 +9,7 @@ var { validateSchema, productSchema } = require('./schemas.yup');
 const COLLECTION_NAME = 'products';
 
 // MONGOOSE
-mongoose.connect('mongodb://localhost:27017/api-training');
+mongoose.connect('mongodb://127.0.0.1:27017/api-training');
 
 const lookupCategory = {
   $lookup: {

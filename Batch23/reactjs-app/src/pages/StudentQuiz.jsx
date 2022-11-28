@@ -3,8 +3,8 @@ import axios from 'axios';
 import { io } from 'socket.io-client';
 import { ChakraProvider, Button, Heading } from '@chakra-ui/react';
 
-const socketServerUrl = 'http://localhost:9000';
-const apiServerUrl = 'http://localhost:9000';
+const socketServerUrl = 'http://127.0.0.1:9000';
+const apiServerUrl = 'http://127.0.0.1:9000';
 
 const config = {
   secure: true,

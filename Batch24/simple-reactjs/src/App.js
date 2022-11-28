@@ -144,7 +144,7 @@ function App() {
           }}
           onFinish={(values) => {
             // SUBMIT
-            axios.patch('http://localhost:9000/categories/' + selectedRow.id, values).then((response) => {
+            axios.patch('http://127.0.0.1:9000/categories/' + selectedRow.id, values).then((response) => {
               if (response.status === 200) {
                 setRefresh((r) => r + 1);
                 setVisible(false);

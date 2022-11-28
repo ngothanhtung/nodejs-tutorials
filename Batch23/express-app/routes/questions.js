@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 const Answer = require('../model/Answer');
 var Question = require('../model/Question');
 
-mongoose.connect('mongodb://localhost:27017/api-training');
+mongoose.connect('mongodb://127.0.0.1:27017/api-training');
 
 /* GET home page. */
 router.get('/', async (req, res, next) => {

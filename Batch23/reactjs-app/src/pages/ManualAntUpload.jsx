@@ -27,7 +27,7 @@ export default function ManualAntUpload() {
             formData.append('name', 'Category 1234');
             formData.append('description', 'Mo ta 1234');
 
-            axios.post('http://localhost:9000/upload/categories/631731e0f4368ae8174a1a67', formData).then((respose) => {
+            axios.post('http://127.0.0.1:9000/upload/categories/631731e0f4368ae8174a1a67', formData).then((respose) => {
               console.log(respose.data);
             });
           }}

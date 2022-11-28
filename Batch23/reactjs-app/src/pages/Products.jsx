@@ -78,7 +78,7 @@ export default function Products() {
               showUploadList={false}
               name='file'
               data={{ message: 'Hello ANTD' }}
-              action={'http://localhost:9000/upload/products/' + record._id}
+              action={'http://127.0.0.1:9000/upload/products/' + record._id}
               headers={{ authorization: 'authorization-text' }}
               onChange={(info) => {
                 if (info.file.status !== 'uploading') {
@@ -114,7 +114,7 @@ export default function Products() {
               title='Are you sure?'
               onConfirm={() => {
                 const { _id } = record;
-                axios.delete('http://localhost:9000/products/' + _id).then((response) => {
+                axios.delete('http://127.0.0.1:9000/products/' + _id).then((response) => {
                   if (response.status === 200) {
                     setRefresh((f) => f + 1);
                     message.info('Xóa thành công');
@@ -141,7 +141,7 @@ export default function Products() {
   const [formEdit] = Form.useForm();
 
   React.useEffect(() => {
-    axios.get('http://localhost:9000/categories').then((response) => {
+    axios.get('http://127.0.0.1:9000/categories').then((response) => {
       // console.log(response.data.results);
       setCategories(response.data.results);
       form.setFieldValue('categoryId', response.data.results[0]._id);
@@ -149,7 +149,7 @@ export default function Products() {
   }, []);
 
   React.useEffect(() => {
-    axios.get('http://localhost:9000/products').then((response) => {
+    axios.get('http://127.0.0.1:9000/products').then((response) => {
       // console.log(response.data.results);
       setProducts(response.data.results);
     });
@@ -180,7 +180,7 @@ export default function Products() {
 
             // return;
             axios
-              .post('http://localhost:9000/products', values)
+              .post('http://127.0.0.1:9000/products', values)
               .then((response) => {
                 if (response.status === 201) {
                   setRefresh((f) => f + 1);
@@ -299,7 +299,7 @@ export default function Products() {
             }}
             onFinish={(values) => {
               // SUBMIT
-              axios.patch('http://localhost:9000/products/' + selectedRow._id, values).then((response) => {
+              axios.patch('http://127.0.0.1:9000/products/' + selectedRow._id, values).then((response) => {
                 if (response.status === 200) {
                   setRefresh((f) => f + 1);
                   setVisible(false);

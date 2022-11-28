@@ -1,1 +1,1 @@
-export const WEB_SERVER_URL = 'http://localhost:9000';
+export const WEB_SERVER_URL = 'http://127.0.0.1:9000';

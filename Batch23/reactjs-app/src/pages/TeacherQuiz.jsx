@@ -5,8 +5,8 @@ import { io } from 'socket.io-client';
 import axios from 'axios';
 import { Badge, Button } from 'antd';
 
-const socketServerUrl = 'http://localhost:9000';
-const apiServerUrl = 'http://localhost:9000';
+const socketServerUrl = 'http://127.0.0.1:9000';
+const apiServerUrl = 'http://127.0.0.1:9000';
 
 const config = {
   secure: true,

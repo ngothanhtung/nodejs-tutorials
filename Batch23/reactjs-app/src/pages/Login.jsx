@@ -16,7 +16,7 @@ const Login = () => {
     const { username, password } = values;
 
     axios
-      .post('http://localhost:9000/auth/login', { username, password })
+      .post('http://127.0.0.1:9000/auth/login', { username, password })
       .then((response) => {
         console.log(response.data);
         localStorage.setItem('auth', JSON.stringify(response.data));

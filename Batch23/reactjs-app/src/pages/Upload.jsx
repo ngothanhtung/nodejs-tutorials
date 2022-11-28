@@ -6,7 +6,7 @@ export default function Upload() {
   return (
     <Layout>
       <Content>
-        <form enctype='multipart/form-data' action='http://localhost:9000/upload/categories/63293fea50d2f78624e0c6f3' method='post'>
+        <form enctype='multipart/form-data' action='http://127.0.0.1:9000/upload/categories/63293fea50d2f78624e0c6f3' method='post'>
           <input type='file' name='file' />
           <input type='text' name='name' />
           <input type='text' name='description' />

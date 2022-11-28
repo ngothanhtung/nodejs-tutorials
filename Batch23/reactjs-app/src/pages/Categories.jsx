@@ -43,7 +43,7 @@ export default function Categories() {
               showUploadList={false}
               name='file'
               data={{ message: 'Hello ANTD' }}
-              action={'http://localhost:9000/upload/categories/' + record._id}
+              action={'http://127.0.0.1:9000/upload/categories/' + record._id}
               headers={{ authorization: 'authorization-text' }}
               onChange={(info) => {
                 if (info.file.status !== 'uploading') {
@@ -79,7 +79,7 @@ export default function Categories() {
               title='Are you sure?'
               onConfirm={() => {
                 const { _id } = record;
-                axios.delete('http://localhost:9000/categories/' + _id).then((response) => {
+                axios.delete('http://127.0.0.1:9000/categories/' + _id).then((response) => {
                   if (response.status === 200) {
                     setRefresh((f) => f + 1);
                     message.info('Xóa thành công');
@@ -105,7 +105,7 @@ export default function Categories() {
   const [formEdit] = Form.useForm();
 
   React.useEffect(() => {
-    axios.get('http://localhost:9000/categories').then((response) => {
+    axios.get('http://127.0.0.1:9000/categories').then((response) => {
       console.log(response.data.results);
       setCategories(response.data.results);
     });
@@ -135,13 +135,13 @@ export default function Categories() {
             // formData.append('name', values.name);
             // formData.append('description', values.description);
 
-            // axios.post('http://localhost:9000/upload/categories/631731e0f4368ae8174a1a67', formData).then((respose) => {
+            // axios.post('http://127.0.0.1:9000/upload/categories/631731e0f4368ae8174a1a67', formData).then((respose) => {
             //   console.log(respose.data);
             // });
             // console.log(values);
             // return;
 
-            axios.post('http://localhost:9000/categories', values).then((response) => {
+            axios.post('http://127.0.0.1:9000/categories', values).then((response) => {
               if (response.status === 201) {
                 setRefresh((f) => f + 1);
                 form.resetFields();
@@ -221,7 +221,7 @@ export default function Categories() {
             }}
             onFinish={(values) => {
               // SUBMIT
-              axios.patch('http://localhost:9000/categories/' + selectedRow._id, values).then((response) => {
+              axios.patch('http://127.0.0.1:9000/categories/' + selectedRow._id, values).then((response) => {
                 if (response.status === 200) {
                   setRefresh((f) => f + 1);
                   setVisible(false);

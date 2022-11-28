@@ -2,7 +2,7 @@ const { default: mongoose } = require('mongoose');
 
 const { Customer } = require('../models');
 // MONGOOSE
-mongoose.connect('mongodb://localhost:27017/training-database');
+mongoose.connect('mongodb://127.0.0.1:27017/training-database');
 
 var express = require('express');
 var router = express.Router();

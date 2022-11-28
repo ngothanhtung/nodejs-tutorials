@@ -4,7 +4,7 @@
 
 #### REQUEST:
 
-- Url: http://localhost:3000/auth/login
+- Url: http://127.0.0.1:3000/auth/login
 - Method: POST
 - Body (Raw, JSON):
 
@@ -44,7 +44,7 @@
 
 ### REQUEST:
 
-- Url: http://localhost:3000/categories
+- Url: http://127.0.0.1:3000/categories
 - Method: GET
 
 ### RESPONSE:
@@ -70,7 +70,7 @@
 
 ### REQUEST:
 
-- Url: http://localhost:3000/categories/:id
+- Url: http://127.0.0.1:3000/categories/:id
 - Method: GET
 - Params: id = 1
 
@@ -90,7 +90,7 @@
 
 ### REQUEST:
 
-- Url: http://localhost:3000/categories
+- Url: http://127.0.0.1:3000/categories
 - Method: POST
 - Body:
 
@@ -131,7 +131,7 @@
 
 ### REQUEST:
 
-- Url: http://localhost:3000/categories/:id
+- Url: http://127.0.0.1:3000/categories/:id
 - Method: PATCH
 - Params: id
 - Body:
@@ -165,7 +165,7 @@
 
 ### REQUEST:
 
-- Url: http://localhost:3000/categories/:id
+- Url: http://127.0.0.1:3000/categories/:id
 - Method: DELETE
 - Params: id
 
