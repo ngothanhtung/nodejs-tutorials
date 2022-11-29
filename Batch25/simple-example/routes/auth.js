@@ -36,7 +36,7 @@ router.post('/login-validate', validateSchema(loginSchema), (req, res, next) => 
   const password = req.body.password;
 
   //
-  if (username === 'admin' && password === '123456789') {
+  if (username === 'tungnt@softech.vn' && password === '123456789') {
     res.send({ message: 'Login success!' });
     return;
   }
