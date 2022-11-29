@@ -27,9 +27,7 @@ router.post('/login', (req, res, next) => {
 const loginSchema = yup.object({
   body: yup.object({
     username: yup.string().email().required(),
-    password: yup.string().required(() => {
-      return 'Lỗi ....';
-    }),
+    password: yup.string().required(),
   }),
 });
 
