@@ -7,7 +7,7 @@ const { validateSchema } = require('../schemas');
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
 const jwtSettings = require('../constants/jwtSettings');
-const { findDocuments } = require('../helpers/MongoDbHelper');
+const { findDocuments, findDocument } = require('../helpers/MongoDbHelper');
 
 // req: request
 router.post('/login', (req, res, next) => {
@@ -94,9 +94,6 @@ router.post('/login-jwt', validateSchema(loginSchema), async (req, res, next) =>
   const username = req.body.username;
   const password = req.body.password;
 
-  console.log('* username: ', username);
-  console.log('* password: ', password);
-
   const found = await findDocuments(
     {
       query: {
@@ -107,23 +104,18 @@ router.post('/login-jwt', validateSchema(loginSchema), async (req, res, next) =>
     'login',
   );
 
-  console.log(found);
-
   if (found && found.length > 0) {
     const id = found[0]._id.toString();
     // Cấp token
     // jwt
-    var payload = {
-      user: {
-        username: username,
-        fullName: 'End User',
-      },
-      application: 'ecommerce',
+    const payload = {
+      message: 'payload',
     };
 
-    var secret = jwtSettings.SECRET;
+    const secret = jwtSettings.SECRET;
 
-    var token = jwt.sign(payload, secret, {
+    // ACCESS TOKEN
+    const token = jwt.sign(payload, secret, {
       expiresIn: 24 * 60 * 60, // expires in 24 hours (24 x 60 x 60)
       audience: jwtSettings.AUDIENCE,
       issuer: jwtSettings.ISSUER,
@@ -131,11 +123,51 @@ router.post('/login-jwt', validateSchema(loginSchema), async (req, res, next) =>
       algorithm: 'HS512',
     });
 
-    res.send({ message: 'Login success!', token });
+    // REFRESH TOKEN
+    const refreshToken = jwt.sign(
+      {
+        id,
+      },
+      secret,
+      {
+        expiresIn: '30d', // expires in 24 hours (24 x 60 x 60)
+      },
+    );
+    res.send({ message: 'Login success!', token, refreshToken });
     return;
   }
 
   res.status(401).send({ message: 'Login failed!' });
+});
+
+router.post('/refresh-token', async (req, res, next) => {
+  const { refreshToken } = req.body;
+  jwt.verify(refreshToken, jwtSettings.SECRET, async (err, decoded) => {
+    if (err) {
+      return res.sendStatus(406);
+    } else {
+      const { id } = decoded;
+      const user = await findDocument(id, 'login');
+      if (user && user.active) {
+        const secret = jwtSettings.SECRET;
+
+        const payload = {
+          message: 'payload',
+        };
+
+        const token = jwt.sign(payload, secret, {
+          expiresIn: 24 * 60 * 60, // expires in 24 hours (24 x 60 x 60)
+          audience: jwtSettings.AUDIENCE,
+          issuer: jwtSettings.ISSUER,
+          subject: id, // Thường dùng để kiểm tra JWT lần sau
+          algorithm: 'HS512',
+        });
+
+        return res.json({ token });
+      }
+      return res.sendStatus(401);
+    }
+  });
 });
 
 router.get('/authentication', passport.authenticate('jwt', { session: false }), (req, res, next) => {
@@ -153,12 +185,11 @@ const allowRoles = (...roles) => {
     const payload = jwt.decode(bearerToken, { json: true });
 
     // AFTER DECODE TOKEN: GET UID FROM PAYLOAD
-    const { uid } = payload;
+    const { sub } = payload;
 
     // FING BY _id
-    findDocument(uid, 'login')
+    findDocument(sub, 'login')
       .then((user) => {
-        console.log(user);
         if (user && user.roles) {
           let ok = false;
           user.roles.forEach((role) => {

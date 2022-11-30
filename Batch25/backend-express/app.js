@@ -80,7 +80,7 @@ passport.use(
     const id = payload.sub;
     // console.log(payload);
     const found = await findDocument(id, 'login');
-    console.log('🐣', found);
+    // console.log('🐣', found);
 
     if (found && found.active) {
       let error = null;
