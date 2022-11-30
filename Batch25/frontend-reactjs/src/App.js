@@ -1,4 +1,4 @@
-import { Layout } from 'antd';
+import { Button, Layout, Row } from 'antd';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import numeral from 'numeral';
 import 'numeral/locales/vi';
@@ -9,6 +9,7 @@ import Products from './pages/Management/Products';
 import Home from './pages/Home';
 import MainMenu from './components/MainMenu';
 import SearchOrdersByStatus from './pages/Sales/Orders/SearchOrdersByStatus';
+import Login from './pages/Login';
 
 numeral.locale('vi');
 
@@ -23,11 +24,28 @@ function App() {
             <MainMenu />
           </Sider>
           <Layout>
-            <Header>Header</Header>
+            <Header>
+              <Button
+                onClick={() => {
+                  window.location.href = '/login';
+                }}
+              >
+                Login
+              </Button>
+              <Button
+                onClick={() => {
+                  localStorage.clear();
+                }}
+              >
+                Thoát
+              </Button>
+            </Header>
+
             <Content style={{ padding: 24 }}>
               <Routes>
                 <Route path='/' element={<Home />} />
                 <Route path='/home' element={<Home />} />
+                <Route path='/login' element={<Login />} />
                 <Route path='/management/employees' element={<Employees />} />
                 <Route path='/management/products' element={<Products />} />
                 {/* SALES */}

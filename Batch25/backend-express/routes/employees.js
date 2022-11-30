@@ -1,4 +1,5 @@
 const { default: mongoose } = require('mongoose');
+const passport = require('passport');
 
 const { Employee } = require('../models');
 // MONGOOSE
@@ -8,7 +9,7 @@ var express = require('express');
 var router = express.Router();
 
 // GET
-router.get('/', function (req, res, next) {
+router.get('/', passport.authenticate('jwt', { session: false }), function (req, res, next) {
   try {
     Employee.find()
       .then((result) => {

@@ -130,7 +130,7 @@ router.post('/login-jwt', validateSchema(loginSchema), async (req, res, next) =>
       },
       secret,
       {
-        expiresIn: '30d', // expires in 24 hours (24 x 60 x 60)
+        expiresIn: '365d', // expires in 24 hours (24 x 60 x 60)
       },
     );
     res.send({ message: 'Login success!', token, refreshToken });
@@ -144,8 +144,10 @@ router.post('/refresh-token', async (req, res, next) => {
   const { refreshToken } = req.body;
   jwt.verify(refreshToken, jwtSettings.SECRET, async (err, decoded) => {
     if (err) {
-      return res.sendStatus(406);
+      // return res.sendStatus(406);
+      return res.status(401).json({ message: 'refreshToken is invalid' });
     } else {
+      console.log('🍎 decoded', decoded);
       const { id } = decoded;
       const user = await findDocument(id, 'login');
       if (user && user.active) {
