@@ -6,10 +6,13 @@ import 'numeral/locales/vi';
 import './App.css';
 import Employees from './pages/Management/Employees';
 import Products from './pages/Management/Products';
+import Products1 from './pages/Products';
 import Home from './pages/Home';
 import MainMenu from './components/MainMenu';
 import SearchOrdersByStatus from './pages/Sales/Orders/SearchOrdersByStatus';
 import Login from './pages/Login';
+import Orders from './pages/Sales/Orders/Orders';
+import Categories from './pages/Categories';
 
 numeral.locale('vi');
 
@@ -45,11 +48,14 @@ function App() {
               <Routes>
                 <Route path='/' element={<Home />} />
                 <Route path='/home' element={<Home />} />
+                <Route path='/categories' element={<Categories />} />
+                <Route path='/categories/:id/products' element={<Products1 />} />
                 <Route path='/login' element={<Login />} />
                 <Route path='/management/employees' element={<Employees />} />
                 <Route path='/management/products' element={<Products />} />
                 {/* SALES */}
 
+                <Route path='/sales/orders' element={<Orders />} />
                 <Route path='/sales/orders/status' element={<SearchOrdersByStatus />} />
                 {/* NO MATCH ROUTE */}
                 <Route

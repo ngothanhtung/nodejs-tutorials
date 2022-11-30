@@ -21,14 +21,12 @@ axiosClient.interceptors.response.use(
   async (response) => {
     const { token } = response.data;
     // LOGIN
-    console.log('token:', token);
     if (token) {
       window.localStorage.setItem('token', token);
     }
 
     const { refreshToken } = response.data;
     // LOGIN
-    console.log('refreshToken:', refreshToken);
     if (refreshToken) {
       window.localStorage.setItem('refreshToken', refreshToken);
     }

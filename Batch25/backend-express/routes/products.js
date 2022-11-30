@@ -11,7 +11,7 @@ var router = express.Router();
 // GET
 router.get('/', function (req, res, next) {
   try {
-    Product.find({ discount: { $gte: 10 } })
+    Product.find()
       .populate('category')
       .populate('supplier')
       .then((result) => {

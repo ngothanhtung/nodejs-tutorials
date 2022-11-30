@@ -12,9 +12,9 @@ var router = express.Router();
 router.get('/', function (req, res, next) {
   try {
     Order.find()
-      // .populate('orderDetails.product')
-      // .populate('customer')
-      // .populate('employee')
+      .populate('orderDetails.product')
+      .populate('customer')
+      .populate('employee')
       .then((result) => {
         res.send(result);
       })

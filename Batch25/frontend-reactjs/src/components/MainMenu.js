@@ -21,8 +21,12 @@ const items = [
     children: [
       {
         label: 'Đơn hàng',
-        key: 'sales-orders',
+        key: 'sales-orders-menu',
         children: [
+          {
+            label: 'Đơn hàng',
+            key: 'sales-orders',
+          },
           {
             label: 'Thông kê theo trạng thái',
             key: 'sales-orders-status',
