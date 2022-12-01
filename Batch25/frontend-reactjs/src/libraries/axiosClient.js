@@ -3,56 +3,81 @@ import { API_URL } from '../constants/URLS';
 
 const axiosClient = axios.create({
   baseURL: API_URL,
-  // timeout: 1000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 // REQUEST
-axiosClient.interceptors.request.use(async (config) => {
-  const token = window.localStorage.getItem('token');
-  if (token) {
-    config.headers['Authorization'] = 'Bearer ' + window.localStorage.getItem('token');
-  }
+axiosClient.interceptors.request.use(
+  (config) => {
+    const token = window.localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = 'Bearer ' + window.localStorage.getItem('token');
+    }
 
-  return config;
-});
+    return config;
+  },
+  (error) => {
+    Promise.reject(error);
+  },
+);
 
 // RESPONSE
+
 axiosClient.interceptors.response.use(
   async (response) => {
-    const { token } = response.data;
+    const { token, refreshToken } = response.data;
     // LOGIN
     if (token) {
       window.localStorage.setItem('token', token);
     }
-
-    const { refreshToken } = response.data;
-    // LOGIN
     if (refreshToken) {
       window.localStorage.setItem('refreshToken', refreshToken);
     }
+
     return response;
   },
   async (error) => {
-    console.log(error);
-    if (error.response.status === 401) {
-      const refreshToken = window.localStorage.getItem('refreshToken');
-      if (refreshToken) {
-        await axios
-          .post('http://localhost:9000/auth/refresh-token', {
-            refreshToken: window.localStorage.getItem('refreshToken'),
-          })
-          .then((response) => {
-            window.localStorage.setItem('token', response.data.token);
-          })
-          .catch((err) => {
-            return Promise.reject(err);
-          });
-        return axios(error.config);
-      }
+    if (error?.response?.status !== 401) {
       return Promise.reject(error);
     }
-    console.warn('Error status', error.response.status);
-    return Promise.reject(error);
+
+    const originalConfig = error.config;
+
+    if (error?.response?.status === 401 && !originalConfig.sent) {
+      console.log('Error 🚀', error);
+      originalConfig.sent = true;
+      try {
+        // Trường hợp không có token thì chuyển sang trang LOGIN
+        const token = window.localStorage.getItem('token');
+        if (!token) {
+          window.location.href = '/login';
+          return Promise.reject(error);
+        }
+
+        const refreshToken = window.localStorage.getItem('refreshToken');
+        if (refreshToken) {
+          const response = await axiosClient.post('/auth/refresh-token', {
+            refreshToken: refreshToken,
+          });
+
+          const { token } = response.data;
+          window.localStorage.setItem('token', token);
+
+          originalConfig.headers = {
+            ...originalConfig.headers,
+            authorization: `Bearer ${token}`,
+          };
+
+          return axiosClient(originalConfig);
+        } else {
+          return Promise.reject(error);
+        }
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    }
   },
 );
 

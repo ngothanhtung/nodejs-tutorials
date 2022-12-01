@@ -116,7 +116,7 @@ router.post('/login-jwt', validateSchema(loginSchema), async (req, res, next) =>
 
     // ACCESS TOKEN
     const token = jwt.sign(payload, secret, {
-      expiresIn: 24 * 60 * 60, // expires in 24 hours (24 x 60 x 60)
+      expiresIn: 10, //24 * 60 * 60, // expires in 24 hours (24 x 60 x 60)
       audience: jwtSettings.AUDIENCE,
       issuer: jwtSettings.ISSUER,
       subject: id, // Thường dùng để kiểm tra JWT lần sau
@@ -158,7 +158,7 @@ router.post('/refresh-token', async (req, res, next) => {
         };
 
         const token = jwt.sign(payload, secret, {
-          expiresIn: 24 * 60 * 60, // expires in 24 hours (24 x 60 x 60)
+          expiresIn: 10, //24 * 60 * 60, // expires in 24 hours (24 x 60 x 60)
           audience: jwtSettings.AUDIENCE,
           issuer: jwtSettings.ISSUER,
           subject: id, // Thường dùng để kiểm tra JWT lần sau
