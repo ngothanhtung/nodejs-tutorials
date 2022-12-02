@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Button, Popconfirm, Form, Input, message, Space, Modal, InputNumber, Select, Upload } from 'antd';
+import { Image, Table, Button, Popconfirm, Form, Input, message, Space, Modal, InputNumber, Select, Upload } from 'antd';
 import { DeleteOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
 
 import { axiosClient } from '../../../libraries/axiosClient';
@@ -9,6 +9,7 @@ import { API_URL } from '../../../constants/URLS';
 import axios from 'axios';
 
 export default function Products() {
+  const [isPreview, setIsPreview] = React.useState(false);
   const [categories, setCategories] = React.useState([]);
   const [suppliers, setSuppliers] = React.useState([]);
   const [products, setProducts] = React.useState([]);
@@ -24,8 +25,45 @@ export default function Products() {
       key: 'imageUrl',
       dataIndex: 'imageUrl',
       width: '1%',
-      render: (text) => {
-        return <div>{text && <img src={`${API_URL}${text}`} style={{ width: 60 }} alt='' />}</div>;
+      render: (text, record) => {
+        return (
+          <div>
+            {text && (
+              <React.Fragment>
+                <Image
+                  onClick={() => {
+                    setSelectedRecord(record);
+                    setIsPreview(true);
+                  }}
+                  preview={{
+                    visible: false,
+                  }}
+                  width={60}
+                  src={`${API_URL}${text}`}
+                />
+                <div
+                  style={{
+                    display: 'none',
+                  }}
+                >
+                  <Image.PreviewGroup
+                    preview={{
+                      visible: isPreview && record._id === selectedRecord?._id,
+                      onVisibleChange: (vis) => setIsPreview(vis),
+                    }}
+                  >
+                    <Image src={`${API_URL}${text}`} />
+                    {record &&
+                      record.images &&
+                      record.images.map((image) => {
+                        return <Image key={image} src={`${API_URL}${image}`} />;
+                      })}
+                  </Image.PreviewGroup>
+                </div>
+              </React.Fragment>
+            )}
+          </div>
+        );
       },
     },
     {
@@ -74,6 +112,26 @@ export default function Products() {
       key: 'supplier',
       render: (text, record) => {
         return <strong>{record?.supplier?.name}</strong>;
+      },
+    },
+    {
+      title: 'Hình chi tiết',
+      dataIndex: 'images',
+      key: 'images',
+      render: (text, record) => {
+        if (record.images) {
+          return (
+            <Button
+              onClick={() => {
+                console.log('selectedRecord', record);
+                // setSelectedRecord(record);
+              }}
+            >
+              Xem
+            </Button>
+          );
+        }
+        return <React.Fragment></React.Fragment>;
       },
     },
     {
@@ -280,7 +338,7 @@ export default function Products() {
           </Button>
         </Form.Item>
       </Form>
-      <Table rowKey='_id' dataSource={products} columns={columns} />
+      <Table rowKey='_id' dataSource={products} columns={columns} pagination={false} />
       <Modal
         centered
         open={editFormVisible}
