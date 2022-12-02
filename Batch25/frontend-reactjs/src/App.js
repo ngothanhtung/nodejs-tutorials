@@ -13,6 +13,9 @@ import SearchOrdersByStatus from './pages/Sales/Orders/SearchOrdersByStatus';
 import Login from './pages/Login';
 import Orders from './pages/Sales/Orders/Orders';
 import Categories from './pages/Categories';
+import FormUpload from './pages/Upload/FormUpload';
+import AntUpload from './pages/Upload/AntUpload';
+import ManualAntUpload from './pages/Upload/ManualAntUpload';
 
 numeral.locale('vi');
 
@@ -57,6 +60,9 @@ function App() {
 
                 <Route path='/sales/orders' element={<Orders />} />
                 <Route path='/sales/orders/status' element={<SearchOrdersByStatus />} />
+                <Route path='/upload/form' element={<FormUpload />} />
+                <Route path='/upload/antd' element={<AntUpload />} />
+                <Route path='/upload/manual-antd' element={<ManualAntUpload />} />
                 {/* NO MATCH ROUTE */}
                 <Route
                   path='*'

@@ -116,7 +116,7 @@ router.post('/login-jwt', validateSchema(loginSchema), async (req, res, next) =>
 
     // ACCESS TOKEN
     const token = jwt.sign(payload, secret, {
-      expiresIn: 10, //24 * 60 * 60, // expires in 24 hours (24 x 60 x 60)
+      expiresIn: 24 * 60 * 60, // expires in 24 hours (24 x 60 x 60)
       audience: jwtSettings.AUDIENCE,
       issuer: jwtSettings.ISSUER,
       subject: id, // Thường dùng để kiểm tra JWT lần sau
@@ -218,7 +218,7 @@ const allowRoles = (...roles) => {
 // ------------------------------------------------------------------------------------------------
 // CALL API JWT AUTHENTICATION & CHECK ROLES
 // ------------------------------------------------------------------------------------------------
-router.get('/roles', passport.authenticate('jwt', { session: false }), allowRoles('administrators', 'managers'), function (req, res, next) {
+router.get('/roles', passport.authenticate('jwt', { session: false }), allowRoles('managers'), function (req, res, next) {
   res.json({ ok: true });
 });
 

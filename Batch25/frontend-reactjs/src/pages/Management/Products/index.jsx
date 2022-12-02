@@ -1,10 +1,12 @@
 import React from 'react';
-import { Table, Button, Popconfirm, Form, Input, message, Space, Modal, InputNumber, Select } from 'antd';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { Table, Button, Popconfirm, Form, Input, message, Space, Modal, InputNumber, Select, Upload } from 'antd';
+import { DeleteOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
 
 import { axiosClient } from '../../../libraries/axiosClient';
 import moment from 'moment';
 import numeral from 'numeral';
+import { API_URL } from '../../../constants/URLS';
+import axios from 'axios';
 
 export default function Products() {
   const [categories, setCategories] = React.useState([]);
@@ -14,7 +16,18 @@ export default function Products() {
   const [refresh, setRefresh] = React.useState(0);
   const [editFormVisible, setEditFormVisible] = React.useState(false);
 
+  const [file, setFile] = React.useState(null);
+
   const columns = [
+    {
+      title: 'Hình ảnh',
+      key: 'imageUrl',
+      dataIndex: 'imageUrl',
+      width: '1%',
+      render: (text) => {
+        return <div>{text && <img src={`${API_URL}${text}`} style={{ width: 60 }} alt='' />}</div>;
+      },
+    },
     {
       title: 'Danh mục',
       dataIndex: 'category',
@@ -103,6 +116,27 @@ export default function Products() {
                 setEditFormVisible(true);
               }}
             />
+            <Upload
+              showUploadList={false}
+              name='file'
+              action={API_URL + '/upload/products/' + record._id}
+              headers={{ authorization: 'authorization-text' }}
+              onChange={(info) => {
+                if (info.file.status !== 'uploading') {
+                  console.log(info.file, info.fileList);
+                }
+
+                if (info.file.status === 'done') {
+                  message.success(`${info.file.name} file uploaded successfully`);
+
+                  setRefresh((f) => f + 1);
+                } else if (info.file.status === 'error') {
+                  message.error(`${info.file.name} file upload failed.`);
+                }
+              }}
+            >
+              <Button icon={<UploadOutlined />} />
+            </Upload>
           </Space>
         );
       },
@@ -134,9 +168,22 @@ export default function Products() {
     axiosClient
       .post('/products', values)
       .then((response) => {
-        message.success('Thêm mới thành công!');
-        createForm.resetFields();
-        setRefresh((f) => f + 1);
+        // UPLOAD FILE
+        const { _id } = response.data;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        axios
+          .post(API_URL + '/upload/products/' + _id, formData)
+          .then((respose) => {
+            message.success('Thêm mới thành công!');
+            createForm.resetFields();
+            setRefresh((f) => f + 1);
+          })
+          .catch((err) => {
+            message.error('Upload file bị lỗi!');
+          });
       })
       .catch((err) => {
         message.error('Thêm mới bị lỗi!');
@@ -215,6 +262,17 @@ export default function Products() {
               })
             }
           />
+        </Form.Item>
+        <Form.Item label='Hình minh họa' name='file'>
+          <Upload
+            showUploadList={true}
+            beforeUpload={(file) => {
+              setFile(file);
+              return false;
+            }}
+          >
+            <Button icon={<UploadOutlined />}>Chọn hình ảnh</Button>
+          </Upload>
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Button type='primary' htmlType='submit'>
