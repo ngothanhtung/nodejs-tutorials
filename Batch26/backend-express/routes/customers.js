@@ -3,18 +3,18 @@ var router = express.Router();
 
 var { write } = require('../helpers/fileHelper');
 
-const products = require('../data/products.json');
-const fileName = './data/products.json';
+const customers = require('../data/customers.json');
+const fileName = './data/customers.json';
 
 /* GET */
 router.get('/', function (req, res, next) {
-  res.send(products);
+  res.send(customers);
 });
 
 /* GET (PARAMS) */
 router.get('/:id', function (req, res, next) {
   const { id } = req.params;
-  const found = products.find((p) => {
+  const found = customers.find((p) => {
     return p.id == id;
   });
 
@@ -38,10 +38,10 @@ router.get('/:id', function (req, res, next) {
 router.post('/', function (req, res, next) {
   const data = req.body;
   console.log('Data = ', data);
-  products.push(data);
+  customers.push(data);
 
   // Save to file
-  write(fileName, products);
+  write(fileName, customers);
 
   res.sendStatus(201);
 });
@@ -53,7 +53,7 @@ router.patch('/:id', function (req, res, next) {
   console.log('Data = ', data);
 
   // Tìm data để sửa
-  let found = products.find((p) => {
+  let found = customers.find((p) => {
     return p.id == id;
   });
 
@@ -66,7 +66,7 @@ router.patch('/:id', function (req, res, next) {
     }
 
     // Save to file
-    write(fileName, products);
+    write(fileName, customers);
 
     // database
     //  code here ...
@@ -80,7 +80,7 @@ router.patch('/:id', function (req, res, next) {
 /* DELETE (PARAMS) */
 router.delete('/:id', function (req, res, next) {
   const { id } = req.params;
-  const found = products.find((p) => {
+  const found = customers.find((p) => {
     return p.id == id;
   });
 
@@ -88,7 +88,7 @@ router.delete('/:id', function (req, res, next) {
     return res.status(404).json({ message: 'not found' });
   }
 
-  let remainData = products.filter((p) => {
+  let remainData = customers.filter((p) => {
     return p.id != id;
   });
 
