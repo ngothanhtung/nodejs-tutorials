@@ -25,15 +25,6 @@ router.get('/:id', function (req, res, next) {
   res.send(found);
 });
 
-// GET (MANY PARAMS)
-// router.get('/:id/:name/search/:price', function (req, res, next) {
-//   const { id, name } = req.params;
-//   // const id = req.params.id;
-//   // const name = req.params.name;
-//   // const price = req.params.price;
-//   res.send('OK');
-// });
-
 /* POST */
 router.post('/', function (req, res, next) {
   const data = req.body;
@@ -67,9 +58,6 @@ router.patch('/:id', function (req, res, next) {
 
     // Save to file
     write(fileName, customers);
-
-    // database
-    //  code here ...
 
     return res.sendStatus(200);
   }
