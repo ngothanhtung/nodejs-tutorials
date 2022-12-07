@@ -7,6 +7,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import HomePage from './pages/HomePage';
 import CategoriesPage from 'pages/CategoriesPage';
 import LegacyCategoriesPage from 'pages/LegacyCategoriesPage';
+import ChatPage from 'pages/ChatPage';
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
             <Route path='/' element={<HomePage />} />
             <Route path='/categories' element={<CategoriesPage />} />
             <Route path='/legacy-categories' element={<LegacyCategoriesPage />} />
+
+            <Route path='/chat' element={<ChatPage />} />
 
             {/* NO MATCH ROUTE */}
             <Route

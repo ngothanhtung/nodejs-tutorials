@@ -34,12 +34,12 @@ io.on('connection', (socket) => {
   console.log('SOCKET IS CONNECTED');
 
   // Lắng nghe sự kiện từ client
-  socket.on('client-message', (data) => {
-    // echo to client
-    console.log('client-message', data);
+  // socket.on('client-message', (data) => {
+  //   // echo to client
+  //   console.log('client-message', data);
 
-    io.emit('server-message', data);
-  });
+  //   io.emit('server-message', data);
+  // });
 
   socket.on('disconnect', () => {
     io.emit('user disconnected');

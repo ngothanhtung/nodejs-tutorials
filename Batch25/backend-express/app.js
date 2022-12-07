@@ -44,12 +44,12 @@ app.use(
   }),
 );
 
-const myLogger = function (req, res, next) {
-  console.log('LOGGED');
-  next();
-};
+// const myLogger = function (req, res, next) {
+//   console.log('LOGGED');
+//   next();
+// };
 
-app.use(myLogger);
+// app.use(myLogger);
 
 // Passport: Basic Auth
 passport.use(

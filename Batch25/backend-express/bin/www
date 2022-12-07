@@ -21,6 +21,35 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
+// Socket IO
+const io = require('socket.io')(server, {
+  cors: {
+    origin: true,
+    credentials: true,
+  },
+});
+
+// Cấu hình các event
+io.on('connection', (socket) => {
+  console.log('SOCKET IS CONNECTED');
+  // console.log('🚀', socket);
+
+  // Lắng nghe sự kiện từ client
+  socket.on('client-message', (data) => {
+    // echo to client
+    console.log('client-message', data);
+    // Save to database
+
+    // Emit to clients
+    io.emit('server-message', data); // all
+    // socket.emit('server-message', data); // only send client
+  });
+
+  socket.on('disconnect', () => {
+    io.emit('user disconnected');
+  });
+});
+
 /**
  * Listen on provided port, on all network interfaces.
  */
