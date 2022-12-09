@@ -36,13 +36,27 @@ io.on('connection', (socket) => {
 
   // Lắng nghe sự kiện từ client
   socket.on('client-message', (data) => {
-    // echo to client
-    console.log('client-message', data);
-    // Save to database
+    if (data.type === 'join') {
+      socket.join(data.room);
+      io.to(data.room).emit('server-message', { message: 'Join room is successful' }); // all
+    } else if (data.type === 'chat') {
+      // Emit to clients
+      io.emit('server-message', data); // all
+      // socket.emit('server-message', data); // only send client
+    } else if (data.type === 'quiz') {
+      io.emit('server-message', data); // all
+    } else if (data.type === 'quiz-answer') {
+      io.emit('server-message', data); // all
+    } else {
+      console.log('Other', data);
+      // echo to client
+      console.log('client-message', data);
+      // Save to database
 
-    // Emit to clients
-    io.emit('server-message', data); // all
-    // socket.emit('server-message', data); // only send client
+      // Emit to clients
+      io.emit('server-message', data); // all
+      // socket.emit('server-message', data); // only send client
+    }
   });
 
   socket.on('disconnect', () => {

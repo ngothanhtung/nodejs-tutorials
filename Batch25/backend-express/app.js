@@ -23,6 +23,7 @@ var employeesRouter = require('./routes/employees');
 var productsRouter = require('./routes/products');
 var ordersRouter = require('./routes/orders');
 var uploadRouter = require('./routes/upload');
+var questionsRouter = require('./routes/questions');
 
 const { findDocument, findDocuments } = require('./helpers/MongoDbHelper');
 
@@ -108,6 +109,7 @@ app.use('/orders', ordersRouter);
 app.use('/products', productsRouter);
 
 app.use('/upload', uploadRouter);
+app.use('/questions', questionsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

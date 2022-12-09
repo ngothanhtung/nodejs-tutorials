@@ -18,7 +18,7 @@ export default function ChatPage({}: Props) {
   React.useEffect(() => {
     // SOCKET: LISTEN
     socket.on('server-message', (data) => {
-      // console.log('data', data);
+      console.log('data', data);
       const tmp = messages;
       tmp.push(data);
       setMessages([...tmp]);
@@ -65,6 +65,7 @@ export default function ChatPage({}: Props) {
               console.log('messageText', messageText);
 
               socket.emit('client-message', {
+                type: 'chat',
                 username,
                 messageText,
               });
@@ -74,6 +75,27 @@ export default function ChatPage({}: Props) {
           </button>
         </form>
       </div>
+
+      <button
+        onClick={() => {
+          socket.emit('client-message', {
+            type: 'join',
+            room: 'private-chat',
+          });
+        }}
+      >
+        Join to Room (Private)
+      </button>
+      <button
+        onClick={() => {
+          socket.emit('client-message', {
+            type: 'join',
+            room: 'friends-chat',
+          });
+        }}
+      >
+        Join to Room (friends)
+      </button>
     </div>
   );
 }

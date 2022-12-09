@@ -8,6 +8,8 @@ import HomePage from './pages/HomePage';
 import CategoriesPage from 'pages/CategoriesPage';
 import LegacyCategoriesPage from 'pages/LegacyCategoriesPage';
 import ChatPage from 'pages/ChatPage';
+import TeacherQuizPage from 'pages/TeacherQuizPage';
+import StudentQuizPage from 'pages/StudentQuizPage';
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
 
             <Route path='/chat' element={<ChatPage />} />
 
+            <Route path='/quiz/teacher' element={<TeacherQuizPage />} />
+            <Route path='/quiz/student' element={<StudentQuizPage />} />
             {/* NO MATCH ROUTE */}
             <Route
               path='*'
