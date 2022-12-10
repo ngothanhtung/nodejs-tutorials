@@ -1,12 +1,1 @@
-[
-  {
-    "firstName": "Tom",
-    "lastName": "Criuse",
-    "email": "tomcruise@gmail.com"
-  },
-  {
-    "firstName": "Peter",
-    "lastName": "Jackson",
-    "email": "jackson@gmail.com"
-  }
-]
+[{"firstName":"Tom","lastName":"Criuse","email":"tomcruise@gmail.com"},{"firstName":"Peter","lastName":"Jackson","email":"jackson@gmail.com"},{}]
