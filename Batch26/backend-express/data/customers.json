@@ -1,1 +1,25 @@
-[{"firstName":"Tom","lastName":"Criuse","email":"tomcruise@gmail.com"},{"firstName":"Peter","lastName":"Jackson","email":"jackson@gmail.com"},{}]
+[
+  {
+    "firstName": "Tom",
+    "lastName": "Criuse",
+    "email": "tomcruise@gmail.com"
+  },
+  {
+    "firstName": "Peter",
+    "lastName": "Jackson",
+    "email": "jackson@gmail.com"
+  },
+  {},
+  {
+    "firstName": "Peter",
+    "lastName": "Jackson",
+    "email": "jackson@gmail.com",
+    "id": "qkvWFA7aMAPfLA_26tZmu"
+  },
+  {
+    "firstName": "Peter",
+    "lastName": "Jackson",
+    "email": "jackson@gmail.com",
+    "id": "9e53-3Q6ewNtvGH1SiR95"
+  }
+]

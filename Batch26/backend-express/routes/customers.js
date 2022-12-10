@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
+const nanoid = require('nanoid');
+
 var { write } = require('../helpers/fileHelper');
 
 const customers = require('../data/customers.json');
@@ -28,7 +30,9 @@ router.get('/:id', function (req, res, next) {
 /* POST */
 router.post('/', function (req, res, next) {
   const data = req.body;
-  console.log('Data = ', data);
+
+  data.id = nanoid();
+  console.log('Data =', data);
   customers.push(data);
 
   // Save to file
