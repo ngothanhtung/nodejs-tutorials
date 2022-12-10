@@ -5,7 +5,7 @@ const nanoid = require('nanoid');
 
 var { write } = require('../helpers/fileHelper');
 
-const customers = require('../data/customers.json');
+let customers = require('../data/customers.json');
 const fileName = './data/customers.json';
 
 /* GET */
@@ -54,10 +54,8 @@ router.patch('/:id', function (req, res, next) {
 
   if (found) {
     // Cập nhật data gì?
-    for (let x in found) {
-      if (data[x]) {
-        found[x] = data[x];
-      }
+    for (let x in data) {
+      found[x] = data[x];
     }
 
     // Save to file
@@ -85,7 +83,8 @@ router.delete('/:id', function (req, res, next) {
   });
 
   // Save to file
-  write(fileName, remainData);
+  customers = remainData;
+  write(fileName, customers);
 
   res.sendStatus(200);
 });
