@@ -1,0 +1,9 @@
+.button {
+  border: none;
+  outline: none;
+  border: 1px solid blue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+}
