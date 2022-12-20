@@ -35,6 +35,13 @@ productSchema.virtual('category', {
   justOne: true,
 });
 
+productSchema.virtual('supplier', {
+  ref: 'Supplier',
+  localField: 'supplierId',
+  foreignField: '_id',
+  justOne: true,
+});
+
 // Include virtuals
 
 // Virtuals in console.log()
