@@ -1,7 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 import React from 'react';
 import Head from 'next/head';
-import Button from '../../components/Button';
+import { Grid, Card, Text } from '@nextui-org/react';
 import { axiosClient } from '../../libraries/axiosClient';
+import { API_URL } from '../../constants/URLS';
 
 type Props = {
   products: any[];
@@ -23,21 +25,19 @@ export default function Products({ products }: Props) {
         <meta name='description' content='Sản phẩm thương mại điện tử' />
         <meta name='keywords' content='san pham, thuong mai dien tu' />
       </Head>
-      <div className='container'>
-        <h2>
-          <Button title='Search' />
-        </h2>
-        <strong>Jean</strong>
-        <hr />
+      <Grid.Container gap={2} justify='center'>
         {products &&
           products.map((product: any) => {
             return (
-              <div key={product._id}>
-                <h4>{product.name}</h4>
-              </div>
+              <Grid xs={3} key={product._id}>
+                <Card css={{}}>
+                  <h4 style={{ padding: 12 }}>{product.name}</h4>
+                  <img src={`${API_URL}${product.imageUrl}`} style={{ width: '100%', height: 200, objectFit: 'cover' }} alt='' />
+                </Card>
+              </Grid>
             );
           })}
-      </div>
+      </Grid.Container>
     </div>
   );
 }
