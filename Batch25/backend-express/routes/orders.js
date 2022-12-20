@@ -12,7 +12,7 @@ var router = express.Router();
 router.get('/', function (req, res, next) {
   try {
     Order.find()
-      .populate('orderDetails.product')
+      .populate({ path: 'orderDetails.product', populate: { path: 'category' } })
       .populate('customer')
       .populate('employee')
       .then((result) => {
@@ -31,7 +31,7 @@ router.get('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
     Order.findById(id)
-      .populate('orderDetails.product')
+      .populate({ path: 'orderDetails.product', populate: { path: 'category' } })
       .populate('customer')
       .populate('employee')
       .then((result) => {
