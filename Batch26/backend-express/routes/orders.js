@@ -1,6 +1,6 @@
 const { default: mongoose } = require('mongoose');
 
-const { Employee } = require('../models');
+const { Order } = require('../models');
 // MONGOOSE
 mongoose.connect('mongodb://127.0.0.1:27017/training-database');
 
@@ -10,7 +10,10 @@ var router = express.Router();
 /* GET users listing. */
 router.get('/', function (req, res, next) {
   try {
-    Employee.find()
+    Order.find()
+      .populate('orderDetails.product')
+      .populate('customer')
+      .populate('employee')
       .then((result) => {
         res.send(result);
       })
@@ -26,7 +29,10 @@ router.get('/', function (req, res, next) {
 router.get('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
-    Employee.findById(id)
+    Order.findById(id)
+      .populate('orderDetails.product')
+      .populate('customer')
+      .populate('employee')
       .then((result) => {
         res.send(result);
       })
@@ -43,7 +49,7 @@ router.post('/', function (req, res, next) {
   try {
     const data = req.body;
 
-    const newItem = new Employee(data);
+    const newItem = new Order(data);
 
     newItem
       .save()
@@ -65,7 +71,7 @@ router.patch('/:id', function (req, res, next) {
     const { id } = req.params;
     const data = req.body;
 
-    Employee.findByIdAndUpdate(id, data, {
+    Order.findByIdAndUpdate(id, data, {
       new: true,
     })
       .then((result) => {
@@ -83,7 +89,7 @@ router.patch('/:id', function (req, res, next) {
 router.delete('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
-    Employee.findByIdAndDelete(id)
+    Order.findByIdAndDelete(id)
       .then((result) => {
         res.send(result);
       })

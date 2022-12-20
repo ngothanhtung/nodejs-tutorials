@@ -49,7 +49,7 @@ productSchema.set('toObject', { virtuals: true });
 // Virtuals in JSON
 productSchema.set('toJSON', { virtuals: true });
 
-productSchema.plugin(mongooseLeanVirtuals);
+// productSchema.plugin(mongooseLeanVirtuals);
 
 const Product = model('Product', productSchema);
 module.exports = Product;

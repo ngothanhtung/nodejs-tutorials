@@ -10,6 +10,8 @@ const { Schema, model } = mongoose;
 const orderDetailSchema = new Schema({
   productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
   quantity: { type: Number, require: true, min: 0 },
+  price: { type: Number, required: true, min: 0, default: 0 },
+  discount: { type: Number, default: 0 },
 });
 
 // Virtual with Populate
@@ -82,6 +84,7 @@ const orderSchema = new Schema({
   customerId: { type: Schema.Types.ObjectId, ref: 'Customer', required: false },
   employeeId: { type: Schema.Types.ObjectId, ref: 'Employee', required: false },
 
+  // Array
   orderDetails: [orderDetailSchema],
 });
 

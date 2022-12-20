@@ -1,92 +1,98 @@
+const { default: mongoose } = require('mongoose');
+
+const { Customer } = require('../models');
+// MONGOOSE
+mongoose.connect('mongodb://127.0.0.1:27017/training-database');
+
 var express = require('express');
 var router = express.Router();
 
-const nanoid = require('nanoid');
-
-var { write } = require('../helpers/fileHelper');
-
-let customers = require('../data/customers.json');
-const fileName = './data/customers.json';
-
-/* GET */
+/* GET users listing. */
 router.get('/', function (req, res, next) {
-  res.send(customers);
+  try {
+    Customer.find()
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).send({ message: err.message });
+      });
+  } catch (err) {
+    res.sendStatus(500);
+  }
 });
 
-/* GET (PARAMS) */
+/* GET users listing. */
 router.get('/:id', function (req, res, next) {
-  const { id } = req.params;
-  const found = customers.find((p) => {
-    return p.id == id;
-  });
-
-  if (!found) {
-    return res.status(404).json({ message: 'not found' });
+  try {
+    const { id } = req.params;
+    Customer.findById(id)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).send({ message: err.message });
+      });
+  } catch (err) {
+    res.sendStatus(500);
   }
-
-  res.send(found);
 });
 
 /* POST */
 router.post('/', function (req, res, next) {
-  const data = req.body;
+  try {
+    const data = req.body;
 
-  data.id = nanoid();
-  console.log('Data =', data);
-  customers.push(data);
+    const newItem = new Customer(data);
 
-  // Save to file
-  write(fileName, customers);
-
-  res.sendStatus(201);
+    newItem
+      .save()
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(400).send({ message: err.message });
+      });
+  } catch (err) {
+    res.sendStatus(500);
+  }
 });
 
-/* PATCH */
+// PATCH
 router.patch('/:id', function (req, res, next) {
-  const { id } = req.params;
-  const data = req.body;
-  console.log('Data = ', data);
+  try {
+    const { id } = req.params;
+    const data = req.body;
 
-  // Tìm data để sửa
-  let found = customers.find((p) => {
-    return p.id == id;
-  });
-
-  if (found) {
-    // Cập nhật data gì?
-    for (let x in data) {
-      found[x] = data[x];
-    }
-
-    // Save to file
-    write(fileName, customers);
-
-    return res.sendStatus(200);
+    Customer.findByIdAndUpdate(id, data, {
+      new: true,
+    })
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).send({ message: err.message });
+      });
+  } catch (error) {
+    res.sendStatus(500);
   }
-
-  return res.status(404).json({ message: 'not found' });
 });
 
-/* DELETE (PARAMS) */
+// DELETE
 router.delete('/:id', function (req, res, next) {
-  const { id } = req.params;
-  const found = customers.find((p) => {
-    return p.id == id;
-  });
-
-  if (!found) {
-    return res.status(404).json({ message: 'not found' });
+  try {
+    const { id } = req.params;
+    Customer.findByIdAndDelete(id)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).send({ message: err.message });
+      });
+  } catch (err) {
+    res.sendStatus(500);
   }
-
-  let remainData = customers.filter((p) => {
-    return p.id != id;
-  });
-
-  // Save to file
-  customers = remainData;
-  write(fileName, customers);
-
-  res.sendStatus(200);
 });
 
 module.exports = router;
