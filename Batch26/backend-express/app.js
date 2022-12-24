@@ -8,6 +8,8 @@ const cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var categoriesRouter = require('./routes/categories');
+var suppliersRouter = require('./routes/suppliers');
 var productsRouter = require('./routes/products');
 var employeesRouter = require('./routes/employees');
 var customersRouter = require('./routes/customers');
@@ -34,6 +36,8 @@ app.use(
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/categories', categoriesRouter);
+app.use('/suppliers', suppliersRouter);
 app.use('/products', productsRouter);
 app.use('/employees', employeesRouter);
 app.use('/customers', customersRouter);

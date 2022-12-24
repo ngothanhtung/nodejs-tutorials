@@ -1,3 +1,5 @@
+// https://stackoverflow.com/questions/10729276/how-can-i-get-the-full-object-in-node-jss-console-log-rather-than-object
+const util = require('util');
 const { default: mongoose } = require('mongoose');
 
 const { Order } = require('../models');
@@ -9,7 +11,9 @@ try {
     .populate('customer')
     .populate('employee')
     .then((result) => {
-      console.log(result);
+      // alternative shortcut
+      console.log(util.inspect(result, false, null, true /* enable colors */));
+      // console.log(result);
     });
 } catch (err) {
   console.log(err);

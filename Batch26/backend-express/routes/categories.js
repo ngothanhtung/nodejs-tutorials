@@ -1,20 +1,16 @@
 const { default: mongoose } = require('mongoose');
 
-const { Order } = require('../models');
+const { Category } = require('../models');
 // MONGOOSE
 mongoose.connect('mongodb://127.0.0.1:27017/training-database');
 
 var express = require('express');
 var router = express.Router();
 
-/* GET ALL */
+/* GET users listing. */
 router.get('/', function (req, res, next) {
   try {
-    Order.find()
-      .populate('customer')
-      .populate('employee')
-      .populate('orderDetails.product')
-      // .populate({ path: 'orderDetails.product', populate: { path: 'category' } })
+    Category.find()
       .then((result) => {
         res.send(result);
       })
@@ -26,15 +22,11 @@ router.get('/', function (req, res, next) {
   }
 });
 
-/* GET BY ID */
+/* GET users listing. */
 router.get('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
-    Order.findById(id)
-      .populate('customer')
-      .populate('employee')
-      .populate('orderDetails.product')
-      // .populate({ path: 'orderDetails.product', populate: { path: 'category' } })
+    Category.findById(id)
       .then((result) => {
         res.send(result);
       })
@@ -51,7 +43,7 @@ router.post('/', function (req, res, next) {
   try {
     const data = req.body;
 
-    const newItem = new Order(data);
+    const newItem = new Category(data);
 
     newItem
       .save()
@@ -73,7 +65,7 @@ router.patch('/:id', function (req, res, next) {
     const { id } = req.params;
     const data = req.body;
 
-    Order.findByIdAndUpdate(id, data, {
+    Category.findByIdAndUpdate(id, data, {
       new: true,
     })
       .then((result) => {
@@ -91,7 +83,7 @@ router.patch('/:id', function (req, res, next) {
 router.delete('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
-    Order.findByIdAndDelete(id)
+    Category.findByIdAndDelete(id)
       .then((result) => {
         res.send(result);
       })

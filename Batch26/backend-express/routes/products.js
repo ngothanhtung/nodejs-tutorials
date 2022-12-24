@@ -11,6 +11,8 @@ var router = express.Router();
 router.get('/', function (req, res, next) {
   try {
     Product.find()
+      .populate('category')
+      .populate('supplier')
       .then((result) => {
         res.send(result);
       })
@@ -48,7 +50,7 @@ router.post('/', function (req, res, next) {
     newItem
       .save()
       .then((result) => {
-        res.send(result);
+        res.status(201).send(result);
       })
       .catch((err) => {
         console.log(err);
