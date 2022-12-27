@@ -97,4 +97,26 @@ router.delete('/:id', function (req, res, next) {
   }
 });
 
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 15
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/15', function (req, res, next) {
+  try {
+    let supplierNames = ['Apple', 'SONY'];
+    let query = {
+      name: { $in: supplierNames },
+    };
+
+    Supplier.find(query)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).send({ message: err.message });
+      });
+  } catch (err) {
+    res.sendStatus(500);
+  }
+});
+
 module.exports = router;
