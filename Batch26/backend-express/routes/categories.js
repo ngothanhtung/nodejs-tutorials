@@ -1,13 +1,15 @@
+const { CONNECTION_STRING } = require('../constants/dbSettings');
 const { default: mongoose } = require('mongoose');
 
 const { Category } = require('../models');
 // MONGOOSE
-mongoose.connect('mongodb://127.0.0.1:27017/training-database');
+mongoose.set('strictQuery', false);
+mongoose.connect(CONNECTION_STRING);
 
 var express = require('express');
 var router = express.Router();
 
-/* GET users listing. */
+/* GET ALL */
 router.get('/', function (req, res, next) {
   try {
     Category.find()
@@ -22,7 +24,7 @@ router.get('/', function (req, res, next) {
   }
 });
 
-/* GET users listing. */
+/* GET BY ID */
 router.get('/:id', function (req, res, next) {
   try {
     const { id } = req.params;

@@ -1,13 +1,16 @@
+const { CONNECTION_STRING } = require('../constants/dbSettings');
 const { default: mongoose } = require('mongoose');
 
 const { Product } = require('../models');
 // MONGOOSE
-mongoose.connect('mongodb://127.0.0.1:27017/training-database');
+mongoose.set('strictQuery', false);
+mongoose.connect(CONNECTION_STRING);
 
 var express = require('express');
+
 var router = express.Router();
 
-/* GET users listing. */
+/* GET ALL */
 router.get('/', function (req, res, next) {
   try {
     Product.find()
@@ -24,7 +27,7 @@ router.get('/', function (req, res, next) {
   }
 });
 
-/* GET users listing. */
+/* GET BY ID */
 router.get('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
@@ -86,6 +89,24 @@ router.delete('/:id', function (req, res, next) {
   try {
     const { id } = req.params;
     Product.findByIdAndDelete(id)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).send({ message: err.message });
+      });
+  } catch (err) {
+    res.sendStatus(500);
+  }
+});
+
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 1
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/1', async (req, res, next) => {
+  try {
+    let query = { discount: { $gte: 0 } };
+    Product.findOne(query)
       .then((result) => {
         res.send(result);
       })

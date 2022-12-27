@@ -7,12 +7,17 @@ const { Schema, model } = mongoose;
 // Validator
 // https://mongoosejs.com/docs/validation.html#built-in-validators
 
-const orderDetailSchema = new Schema({
-  productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
-  quantity: { type: Number, require: true, min: 0 },
-  price: { type: Number, required: true, min: 0, default: 0 },
-  discount: { type: Number, default: 0 },
-});
+const orderDetailSchema = new Schema(
+  {
+    productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+    quantity: { type: Number, require: true, min: 0 },
+    price: { type: Number, required: true, min: 0, default: 0 },
+    discount: { type: Number, default: 0 },
+  },
+  {
+    versionKey: false,
+  },
+);
 
 // Virtual with Populate
 orderDetailSchema.virtual('product', {
@@ -29,64 +34,69 @@ orderDetailSchema.set('toJSON', { virtuals: true });
 
 // ------------------------------------------------------------------------------------------------
 
-const orderSchema = new Schema({
-  createdDate: {
-    type: Date,
-    required: true,
-    default: Date.now,
-  },
+const orderSchema = new Schema(
+  {
+    createdDate: {
+      type: Date,
+      required: true,
+      default: Date.now,
+    },
 
-  shippedDate: {
-    type: Date,
-    validate: {
-      validator: function (value) {
-        if (!value) return true;
+    shippedDate: {
+      type: Date,
+      validate: {
+        validator: function (value) {
+          if (!value) return true;
 
-        if (value < this.createdDate) {
+          if (value < this.createdDate) {
+            return false;
+          }
+          return true;
+        },
+        message: `Shipped date: {VALUE} is invalid!`,
+      },
+    },
+
+    paymentType: {
+      type: String,
+      required: true,
+      default: 'CASH',
+      validate: {
+        validator: (value) => {
+          if (['CASH', 'CREDIT CARD'].includes(value.toUpperCase())) {
+            return true;
+          }
           return false;
-        }
-        return true;
+        },
+        message: `Payment type: {VALUE} is invalid!`,
       },
-      message: `Shipped date: {VALUE} is invalid!`,
     },
-  },
 
-  paymentType: {
-    type: String,
-    required: true,
-    default: 'CASH',
-    validate: {
-      validator: (value) => {
-        if (['CASH', 'CREDIT CARD'].includes(value.toUpperCase())) {
-          return true;
-        }
-        return false;
+    status: {
+      type: String,
+      required: true,
+      default: 'WAITING',
+      validate: {
+        validator: (value) => {
+          if (['WAITING', 'COMPLETED', 'CANCELED'].includes(value)) {
+            return true;
+          }
+          return false;
+        },
+        message: `Status: {VALUE} is invalid!`,
       },
-      message: `Payment type: {VALUE} is invalid!`,
     },
+
+    customerId: { type: Schema.Types.ObjectId, ref: 'Customer', required: false },
+    employeeId: { type: Schema.Types.ObjectId, ref: 'Employee', required: false },
+
+    // Array
+    orderDetails: [orderDetailSchema],
   },
-
-  status: {
-    type: String,
-    required: true,
-    default: 'WAITING',
-    validate: {
-      validator: (value) => {
-        if (['WAITING', 'COMPLETED', 'CANCELED'].includes(value)) {
-          return true;
-        }
-        return false;
-      },
-      message: `Status: {VALUE} is invalid!`,
-    },
+  {
+    versionKey: false,
   },
-
-  customerId: { type: Schema.Types.ObjectId, ref: 'Customer', required: false },
-  employeeId: { type: Schema.Types.ObjectId, ref: 'Employee', required: false },
-
-  // Array
-  orderDetails: [orderDetailSchema],
-});
+);
 
 // Virtual with Populate
 orderSchema.virtual('customer', {

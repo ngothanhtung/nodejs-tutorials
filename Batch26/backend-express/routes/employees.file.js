@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var { write } = require('../helpers/fileHelper');
+var { write } = require('../helpers/FileHelper');
 
 const employees = require('../data/employees.json');
 const fileName = './data/employees.json';

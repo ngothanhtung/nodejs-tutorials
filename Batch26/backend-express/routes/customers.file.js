@@ -3,7 +3,7 @@ var router = express.Router();
 
 const nanoid = require('nanoid');
 
-var { write } = require('../helpers/fileHelper');
+var { write } = require('../helpers/FileHelper');
 
 let customers = require('../data/customers.json');
 const fileName = './data/customers.json';
