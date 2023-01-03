@@ -103,11 +103,14 @@ router.delete('/:id', function (req, res, next) {
 // QUESTIONS 1
 // ------------------------------------------------------------------------------------------------
 // https://www.mongodb.com/docs/manual/reference/operator/query/
+// http://localhost:9000/products/questions/1?discount=10
 router.get('/questions/1', function (req, res, next) {
   try {
-    let query = { discount: { $lte: 10 } };
+    let discount = req.query.discount;
+    let query = { discount: { $lte: discount } };
     Product.find(query)
-
+      .populate('category')
+      .populate('supplier')
       .then((result) => {
         res.send(result);
       })
@@ -140,6 +143,28 @@ router.get('/questions/1b', function (req, res, next) {
   }
 });
 
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 2
+// ------------------------------------------------------------------------------------------------
+// https://www.mongodb.com/docs/manual/reference/operator/query/
+// http://localhost:9000/products/questions/2?stock=10
+router.get('/questions/2', function (req, res, next) {
+  try {
+    let stock = req.query.stock;
+    let query = { stock: { $lte: stock } };
+    Product.find(query)
+      .populate('category')
+      .populate('supplier')
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).send({ message: err.message });
+      });
+  } catch (err) {
+    res.sendStatus(500);
+  }
+});
 // ------------------------------------------------------------------------------------------------
 // QUESTIONS 3
 // ------------------------------------------------------------------------------------------------
