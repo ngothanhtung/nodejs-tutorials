@@ -1,3 +1,6 @@
+const yup = require('yup');
+var { validateSchema } = require('../validations/validateSchema');
+
 const { CONNECTION_STRING } = require('../constants/dbSettings');
 const { default: mongoose } = require('mongoose');
 
@@ -104,7 +107,14 @@ router.delete('/:id', function (req, res, next) {
 // ------------------------------------------------------------------------------------------------
 // https://www.mongodb.com/docs/manual/reference/operator/query/
 // http://localhost:9000/products/questions/1?discount=10
-router.get('/questions/1', function (req, res, next) {
+
+const question1Schema = yup.object({
+  query: yup.object({
+    discount: yup.number().integer().min(0).max(100).required(),
+  }),
+});
+
+router.get('/questions/1', validateSchema(question1Schema), function (req, res, next) {
   try {
     let discount = req.query.discount;
     let query = { discount: { $lte: discount } };

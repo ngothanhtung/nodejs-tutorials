@@ -16,7 +16,8 @@
     "mongoose": "^6.8.1",
     "mongoose-lean-virtuals": "^0.9.1",
     "morgan": "~1.9.1",
-    "nanoid": "2.1.11"
+    "nanoid": "2.1.11",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
