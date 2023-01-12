@@ -4,6 +4,12 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+// JWT
+const passport = require('passport');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const jwtSettings = require('./constants/jwtSettings');
+
 const cors = require('cors');
 
 var indexRouter = require('./routes/index');
@@ -44,6 +50,30 @@ const myLogger = function (req, res, next) {
 };
 
 app.use(myLogger);
+
+// jwt
+
+// Passport: jwt
+const opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = jwtSettings.SECRET;
+opts.audience = jwtSettings.AUDIENCE;
+opts.issuer = jwtSettings.ISSUER;
+
+passport.use(
+  new JwtStrategy(opts, function (payload, done) {
+    console.log('payload', payload);
+    if (jwtSettings.WHITE_LIST.includes(payload.sub)) {
+      let error = null;
+      let user = true;
+      return done(error, user);
+    } else {
+      let error = null;
+      let user = false;
+      return done(error, user);
+    }
+  }),
+);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
