@@ -178,14 +178,16 @@ router.get('/questions/2', function (req, res, next) {
 // ------------------------------------------------------------------------------------------------
 // QUESTIONS 3
 // ------------------------------------------------------------------------------------------------
-router.get('/questions/3', async (req, res, next) => {
+router.get('/questions/3?price=1000000', async (req, res, next) => {
   try {
     // let finalPrice = price * (100 - discount) / 100;
     const s = { $subtract: [100, '$discount'] }; // (100 - 5)
     const m = { $multiply: ['$price', s] }; // price * 95
     const d = { $divide: [m, 100] }; // price * 95 / 100
 
-    let aggregate = [{ $match: { $expr: { $lte: [d, 100000] } } }];
+    const { price } = req.query;
+
+    let aggregate = [{ $match: { $expr: { $lte: [d, price] } } }];
     Product.aggregate(aggregate)
       .then((result) => {
         res.send(result);
