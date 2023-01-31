@@ -178,7 +178,8 @@ router.get('/questions/2', function (req, res, next) {
 // ------------------------------------------------------------------------------------------------
 // QUESTIONS 3
 // ------------------------------------------------------------------------------------------------
-router.get('/questions/3?price=1000000', async (req, res, next) => {
+// http://localhost:9000/products/questions/3?price=100000
+router.get('/questions/3', async (req, res, next) => {
   try {
     // let finalPrice = price * (100 - discount) / 100;
     const s = { $subtract: [100, '$discount'] }; // (100 - 5)
