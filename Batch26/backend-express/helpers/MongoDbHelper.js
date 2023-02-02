@@ -1,10 +1,7 @@
 'use strict';
-const { CONNECTION_STRING } = require('../constants/dbSettings');
+const { CONNECTION_STRING, DATABASE_NAME } = require('../constants/dbSettings');
 // Khai báo thư viện MongoClient
 const { MongoClient, ObjectId } = require('mongodb');
-
-// Chuỗi kết nối đến MongoDB
-const DATABASE_NAME = 'training-database';
 
 // INSERT: Thêm mới (một)
 function insertDocument(data, collectionName) {

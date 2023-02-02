@@ -5,4 +5,6 @@ const Employee = require('./Employee');
 const Product = require('./Product');
 const Order = require('./Order');
 
-module.exports = { Category, Product, Supplier, Order, Customer, Employee };
+const Login = require('./Login');
+
+module.exports = { Category, Product, Supplier, Order, Customer, Employee, Login };
