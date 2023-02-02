@@ -6,6 +6,8 @@ var logger = require('morgan');
 
 // JWT
 const passport = require('passport');
+var BasicStrategy = require('passport-http').BasicStrategy;
+
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwtSettings = require('./constants/jwtSettings');
@@ -24,6 +26,7 @@ var ordersRouter = require('./routes/orders');
 var mwRouter = require('./routes/mw');
 
 var authRouter = require('./routes/auth');
+const { findDocuments } = require('./helpers/MongoDbHelper');
 
 var app = express();
 
@@ -51,8 +54,26 @@ const myLogger = function (req, res, next) {
 
 app.use(myLogger);
 
-// jwt
+// Passport: Basic Auth
+passport.use(
+  new BasicStrategy(function (username, password, done) {
+    console.log('🚀 BasicStrategy');
+    // MONGODB
+    findDocuments({ query: { username: username, password: password } }, 'login')
+      .then((result) => {
+        if (result.length > 0) {
+          return done(null, true);
+        } else {
+          return done(null, false);
+        }
+      })
+      .catch((err) => {
+        return done(err, false);
+      });
+  }),
+);
 
+// jwt
 // Passport: jwt
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
@@ -63,15 +84,9 @@ opts.issuer = jwtSettings.ISSUER;
 passport.use(
   new JwtStrategy(opts, function (payload, done) {
     console.log('payload', payload);
-    if (jwtSettings.WHITE_LIST.includes(payload.sub)) {
-      let error = null;
-      let user = true;
-      return done(error, user);
-    } else {
-      let error = null;
-      let user = false;
-      return done(error, user);
-    }
+    let error = null;
+    let user = true;
+    return done(error, user);
   }),
 );
 
