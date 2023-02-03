@@ -21,7 +21,7 @@ router.post('/login', validateSchema(loginSchema), function (req, res, next) {
   const { email, password } = req.body;
 
   if (email === 'tungnt@softech.vn' && password === '123456789') {
-    res.send({ ok: true });
+    res.send({ ok: true, name: 'Ngô Thanh Tùng', email, phone: '0905157803' });
   }
 
   res.status(401).send({ ok: false });

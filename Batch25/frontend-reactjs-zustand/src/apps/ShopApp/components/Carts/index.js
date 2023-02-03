@@ -1,10 +1,13 @@
 import React from 'react';
+import { useAuthStore } from '../../hooks/useAuthStore';
 import { useCartStore } from '../../hooks/useCartStore';
 
 export default function Carts() {
   const { items, remove, increase, decrease } = useCartStore((state) => state);
+  const { loggedInUser } = useAuthStore((state) => state);
   return (
     <div>
+      <h1 style={{ color: 'red' }}>{loggedInUser?.name}</h1>
       <table className='table'>
         <thead>
           <tr>
