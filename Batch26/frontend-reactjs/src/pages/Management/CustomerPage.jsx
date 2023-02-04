@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React from 'react';
 import { Button, Form, Input, Modal, Space, Table } from 'antd';
+import moment from 'moment';
 
 export default function CustomerPage() {
   const [refresh, setRefresh] = React.useState(0);
@@ -55,6 +56,20 @@ export default function CustomerPage() {
       title: 'Số điện thoại',
       dataIndex: 'phoneNumber',
       key: 'phoneNumber',
+    },
+
+    {
+      title: 'Ngày sinh',
+      dataIndex: 'birthday',
+      key: 'birthday',
+      width: '1%',
+      render: (text, record, index) => {
+        return (
+          <div style={{ textAlign: 'right' }}>
+            <strong>{moment(text).format('DD/MM/yyyy')}</strong>
+          </div>
+        );
+      },
     },
     {
       title: '',
