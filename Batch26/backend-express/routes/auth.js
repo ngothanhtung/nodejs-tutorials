@@ -3,6 +3,8 @@ var router = express.Router();
 
 const { findDocuments, findDocument } = require('../helpers/MongoDbHelper');
 
+const { Login } = require('../models');
+
 var passport = require('passport');
 var jwt = require('jsonwebtoken');
 const jwtSettings = require('../constants/jwtSettings');
@@ -17,6 +19,9 @@ const loginSchema = yup.object({
   }),
 });
 
+// ------------------------------------------------------------------------------------------------
+// LOGIN (WITH DUMMIES DATA)
+// ------------------------------------------------------------------------------------------------
 router.post('/login', validateSchema(loginSchema), function (req, res, next) {
   const { email, password } = req.body;
 
@@ -27,23 +32,37 @@ router.post('/login', validateSchema(loginSchema), function (req, res, next) {
   res.status(401).send({ ok: false });
 });
 
-// req: request
+// ------------------------------------------------------------------------------------------------
+// LOGIN (WITH MONGODB)
+// ------------------------------------------------------------------------------------------------
+router.post('/login-db', async (req, res, next) => {
+  const { username, password } = req.body;
+
+  const found = await Login.findOne({
+    username,
+    password,
+  });
+
+  if (found) {
+    return res.status(200).send({ ok: true, loggedInUser: found });
+  }
+
+  return res.status(401).send({ ok: false });
+});
+
+// ------------------------------------------------------------------------------------------------
+// LOGIN WITH JWT + REFRESH TOKEN
+// ------------------------------------------------------------------------------------------------
 router.post('/login-jwt', async (req, res, next) => {
-  const username = req.body.username;
-  const password = req.body.password;
+  const { username, password } = req.body;
 
-  const found = await findDocuments(
-    {
-      query: {
-        username: username,
-        password: password,
-      },
-    },
-    'login',
-  );
+  const found = await Login.findOne({
+    username,
+    password,
+  });
 
-  if (found && found.length > 0) {
-    const id = found[0]._id.toString();
+  if (found) {
+    const id = found._id.toString();
     // Cấp token
     // jwt
     const payload = {
@@ -71,24 +90,29 @@ router.post('/login-jwt', async (req, res, next) => {
         expiresIn: '365d', // expires in 24 hours (24 x 60 x 60)
       },
     );
-    res.send({ message: 'Login success!', token, refreshToken });
+    res.send({ message: 'Login success!', loggedInUser: found, token, refreshToken });
     return;
   }
 
   res.status(401).send({ message: 'Login failed!' });
 });
 
+// ------------------------------------------------------------------------------------------------
+// REFRESH TOKEN
+// ------------------------------------------------------------------------------------------------
 router.post('/refresh-token', async (req, res, next) => {
   const { refreshToken } = req.body;
   jwt.verify(refreshToken, jwtSettings.SECRET, async (err, decoded) => {
     if (err) {
-      // return res.sendStatus(406);
       return res.status(401).json({ message: 'refreshToken is invalid' });
     } else {
-      console.log('🍎 decoded', decoded);
+      // console.log('🍎 decoded', decoded);
       const { id } = decoded;
-      const user = await findDocument(id, 'login');
-      if (user && user.active) {
+
+      const user = await Login.findById(id);
+
+      if (user) {
+        console.log(user);
         const secret = jwtSettings.SECRET;
 
         const payload = {
