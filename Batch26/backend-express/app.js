@@ -22,10 +22,11 @@ var productsRouter = require('./routes/products');
 var employeesRouter = require('./routes/employees');
 var customersRouter = require('./routes/customers');
 var ordersRouter = require('./routes/orders');
-
 var mwRouter = require('./routes/mw');
-
 var authRouter = require('./routes/auth');
+
+var uploadRouter = require('./routes/upload');
+
 const { findDocuments } = require('./helpers/MongoDbHelper');
 
 var app = express();
@@ -100,8 +101,9 @@ app.use('/employees', employeesRouter);
 app.use('/customers', customersRouter);
 app.use('/orders', ordersRouter);
 app.use('/mw', mwRouter);
-
 app.use('/auth', authRouter);
+
+app.use('/upload', uploadRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
