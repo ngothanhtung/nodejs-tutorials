@@ -17,6 +17,8 @@ import ProductPage from './pages/Management/ProductPage';
 import NotFoundPage from './pages/NotFoundPage';
 import DiscountPage from './pages/Sales/Products/DiscountPage';
 import StockPage from './pages/Sales/Products/StockPage';
+import FormUpload from './pages/Upload/FormUpload';
+import AntUpload from './pages/Upload/AntUpload';
 
 numeral.locale('vi');
 
@@ -49,6 +51,10 @@ function App() {
                 <Route path='/sales/products/discount' element={<DiscountPage />} />
                 <Route path='/sales/products/stock' element={<StockPage />} />
 
+                {/* UPLOAD */}
+
+                <Route path='/upload/form' element={<FormUpload />} />
+                <Route path='/upload/antd' element={<AntUpload />} />
                 {/* NO MATCH ROUTE */}
                 <Route path='*' element={<NotFoundPage />} />
               </Routes>

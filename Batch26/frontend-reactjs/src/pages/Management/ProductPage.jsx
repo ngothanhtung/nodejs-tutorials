@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React from 'react';
-import { Button, Form, Input, InputNumber, Select, Modal, Space, Table, Popconfirm } from 'antd';
+import { Button, Form, Input, InputNumber, Select, Modal, Space, Table, Popconfirm, Upload, message } from 'antd';
 import { DeleteOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
 import numeral from 'numeral';
 
@@ -27,7 +27,15 @@ export default function ProductPage() {
         );
       },
     },
-
+    {
+      title: 'Picture',
+      key: 'imageUrl',
+      dataIndex: 'imageUrl',
+      width: '1%',
+      render: (text, record, index) => {
+        return <img src={'http://localhost:9000' + text} style={{ height: 60 }} />;
+      },
+    },
     {
       title: 'Danh mục',
       dataIndex: 'category',
@@ -115,6 +123,28 @@ export default function ProductPage() {
       render: (text, record, index) => {
         return (
           <Space>
+            <Upload
+              showUploadList={false}
+              name='file'
+              action={'http://localhost:9000/upload/products/' + record._id + '/image'}
+              headers={{ authorization: 'authorization-text' }}
+              onChange={(info) => {
+                if (info.file.status !== 'uploading') {
+                  console.log(info.file, info.fileList);
+                }
+
+                if (info.file.status === 'done') {
+                  message.success(`${info.file.name} file uploaded successfully`);
+
+                  setRefresh((f) => f + 1);
+                } else if (info.file.status === 'error') {
+                  message.error(`${info.file.name} file upload failed.`);
+                }
+              }}
+            >
+              <Button icon={<UploadOutlined />} />
+            </Upload>
+
             <Button type='dashed' icon={<EditOutlined />} onClick={() => selectProduct(record)} />
 
             <Popconfirm
