@@ -3,10 +3,11 @@
 // };
 
 function hello() {
+  console.log('Hello Nodejs');
   return 'Hello Nodejs';
 }
 
 // Legacy
-module.export = hello;
+module.exports = hello;
 // ES6
 // export default hello;
