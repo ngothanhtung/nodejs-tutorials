@@ -10,6 +10,7 @@ export default function ProductDetails({ product }: Props) {
   const router = useRouter();
   const { id } = router.query;
 
+  // fallback = true
   if (router.isFallback) {
     return (
       <div style={{ display: 'flex', flex: 1, height: '100vh', justifyContent: 'center', alignItems: 'center' }}>
@@ -36,7 +37,7 @@ export async function getStaticPaths() {
     params: { id: product._id },
   }));
 
-  return { paths, fallback: true };
+  return { paths, fallback: 'blocking' };
 }
 
 export async function getStaticProps({ params }: any) {
