@@ -1,6 +1,8 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import Head from 'next/head';
+import { GetStaticProps } from 'next';
 
 type Props = {
   product: any;
@@ -20,13 +22,18 @@ export default function ProductDetails({ product }: Props) {
   }
 
   return (
-    <div>
-      <ul>
-        <li>Product ID: {product._id}</li>
-        <li>Name: {product.name}</li>
-        <li>Price: {product.price}</li>
-      </ul>
-    </div>
+    <React.Fragment>
+      <Head>
+        <title>ONLINE SHOP | {product.name}</title>
+      </Head>
+      <div>
+        <ul>
+          <li>Product ID: {product._id}</li>
+          <li>Name: {product.name}</li>
+          <li>Price: {product.price}</li>
+        </ul>
+      </div>
+    </React.Fragment>
   );
 }
 
@@ -40,7 +47,7 @@ export async function getStaticPaths() {
   return { paths, fallback: 'blocking' };
 }
 
-export async function getStaticProps({ params }: any) {
+export const getStaticProps: GetStaticProps = async ({ params }: any) => {
   const product = (await axios.get(`http://localhost:9000/products/${params.id}`)).data;
 
   if (!product._id) {
@@ -48,4 +55,4 @@ export async function getStaticProps({ params }: any) {
   }
 
   return { props: { product } };
-}
+};
