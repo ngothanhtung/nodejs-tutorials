@@ -1,0 +1,3 @@
+GET http://localhost:9000/products HTTP/1.1
+content-type: application/json
+

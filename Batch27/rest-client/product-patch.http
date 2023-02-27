@@ -1,0 +1,7 @@
+PATCH  http://localhost:9000/products/1 HTTP/1.1
+content-type: application/json
+
+{
+  "price": 1111,
+  "name": "iPhone 14 Pro Max (512 GB)"
+}

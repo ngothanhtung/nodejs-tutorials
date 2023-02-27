@@ -1,0 +1,7 @@
+POST http://localhost:9000/products HTTP/1.1
+content-type: application/json
+
+{
+   "name": "Samsung Fold 3",
+   "price": 1300
+}
