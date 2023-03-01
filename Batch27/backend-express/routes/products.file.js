@@ -3,6 +3,7 @@ var router = express.Router();
 
 const { write } = require('../helpers/FileHelper');
 let data = require('../data/products.json');
+
 const fileName = './data/products.json';
 
 // Methods: POST / PATCH / GET / DELETE / PUT
