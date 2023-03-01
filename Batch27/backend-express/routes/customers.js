@@ -6,10 +6,11 @@ const data = [
   { id: 2, name: 'John', email: 'john@gmail.com', address: 'ENGLAND' },
   { id: 3, name: 'Yamaha', email: 'yamaha@gmail.com', address: 'JAPAN' },
 ];
-// Methods: POST / PATCH / GET / DELETE / PUT
 
+// Methods: POST / PATCH / GET / DELETE / PUT
+// Get all
 router.get('/', function (req, res, next) {
-  res.send('This is customer router');
+  res.send(data);
 });
 
 module.exports = router;

@@ -1,9 +1,16 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET users listing. */
+const data = [
+  { id: 1, name: 'admin', email: 'admin@gmail.com' },
+  { id: 2, name: 'manager', email: 'manager@gmail.com' },
+];
+
+// Methods: POST / PATCH / GET / DELETE / PUT
+// Get all
+
 router.get('/', function (req, res, next) {
-  res.send('respond with a resource');
+  res.send(data);
 });
 
 module.exports = router;

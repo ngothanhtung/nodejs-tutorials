@@ -1,13 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-let data = [
-  { id: 1, name: 'iPhone 14 Pro Max', price: 1500 },
-  { id: 2, name: 'iPhone 13 Pro Max', price: 1200 },
-  { id: 10, name: 'iPhone 12 Pro Max', price: 1000 },
-  { id: 4, name: 'iPhone 11 Pro Max', price: 800 },
-  { id: 9, name: 'iPhone X', price: 500 },
-];
+const { write } = require('../helpers/FileHelper');
+let data = require('../data/products.json');
+const fileName = './data/products.json';
 
 // Methods: POST / PATCH / GET / DELETE / PUT
 
@@ -32,6 +28,9 @@ router.post('/', function (req, res, next) {
 
   data.push(newItem);
 
+  // Write data to file
+  write(fileName, data);
+
   res.send({ ok: true, message: 'Created' });
 });
 
@@ -39,6 +38,9 @@ router.post('/', function (req, res, next) {
 router.delete('/:id', function (req, res, next) {
   const id = req.params.id;
   data = data.filter((x) => x.id != id);
+
+  // Write data to file
+  write(fileName, data);
 
   res.send({ ok: true, message: 'Deleted' });
 });
@@ -54,6 +56,9 @@ router.patch('/:id', function (req, res, next) {
       found[propertyName] = patchData[propertyName];
     }
   }
+
+  // Write data to file
+  write(fileName, data);
 
   res.send({ ok: true, message: 'Updated' });
 });
