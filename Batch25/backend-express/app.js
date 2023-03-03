@@ -14,7 +14,6 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwtSettings = require('./constants/jwtSettings');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var categoriesRouter = require('./routes/categories');
 var suppliersRouter = require('./routes/suppliers');
@@ -98,8 +97,7 @@ passport.use(
 );
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/auth', authRouter);
+
 app.use('/categories', categoriesRouter);
 
 app.use('/suppliers', suppliersRouter);
@@ -107,6 +105,8 @@ app.use('/customers', customersRouter);
 app.use('/employees', employeesRouter);
 app.use('/orders', ordersRouter);
 app.use('/products', productsRouter);
+
+app.use('/auth', authRouter);
 
 app.use('/upload', uploadRouter);
 app.use('/questions', questionsRouter);

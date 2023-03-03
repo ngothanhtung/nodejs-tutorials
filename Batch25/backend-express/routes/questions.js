@@ -1,9 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
+
 var { Question, Answer } = require('../models');
 
-mongoose.connect('mongodb://127.0.0.1:27017/training-database');
+const { CONNECTION_STRING } = require('../constants/dbSettings');
+mongoose.set('strictQuery', false);
+mongoose.connect(CONNECTION_STRING);
 
 /* GET home page. */
 router.get('/', async (req, res, next) => {

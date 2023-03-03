@@ -1,12 +1,11 @@
 'use strict';
+const { CONNECTION_STRING, DATABASE_NAME } = require('../constants/dbSettings');
 // Khai báo thư viện MongoClient
 const { MongoClient, ObjectId } = require('mongodb');
 
-// Chuỗi kết nối đến MongoDB
-const DATABASE_NAME = 'training-database';
-const CONNECTION_STRING = 'mongodb://127.0.0.1:27017/' + DATABASE_NAME;
-
 // INSERT: Thêm mới (một)
+// insertDocument({ name: 'Peter', email: 'peter@gmail.com' }, 'employees').then((result) => {}).catch(err => {});
+
 function insertDocument(data, collectionName) {
   return new Promise((resolve, reject) => {
     MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true })

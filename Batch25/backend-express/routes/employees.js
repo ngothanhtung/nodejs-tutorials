@@ -1,11 +1,14 @@
+const { CONNECTION_STRING } = require('../constants/dbSettings');
 const { default: mongoose } = require('mongoose');
 const passport = require('passport');
 
 const { Employee } = require('../models');
 // MONGOOSE
-mongoose.connect('mongodb://127.0.0.1:27017/training-database');
+mongoose.set('strictQuery', false);
+mongoose.connect(CONNECTION_STRING);
 
 var express = require('express');
+
 var router = express.Router();
 
 // GET
