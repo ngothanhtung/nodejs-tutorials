@@ -5,7 +5,7 @@ const { Order } = require('../models');
 mongoose.connect('mongodb://127.0.0.1:27017/training-database');
 
 var express = require('express');
-const { findDocuments } = require('../../../Batch23/express-app/helpers/MongoDbHelper');
+
 var router = express.Router();
 
 // GET
