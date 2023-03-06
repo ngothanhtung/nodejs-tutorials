@@ -7,17 +7,23 @@ let data = require('../data/categories.json');
 
 const fileName = './data/categories.json';
 
-// const data = [
-//   { id: 1, name: 'Mobile Phone', description: 'Điện thoại' },
-//   { id: 2, name: 'Fashion', description: 'Thời trang' },
-//   { id: 3, name: 'Toys', description: 'Đồ chơi cho trẻ em' },
-// ];
-
 // Methods: POST / PATCH / GET / DELETE / PUT
 // Get all
 router.get('/', function (req, res, next) {
   res.send(data);
 });
+
+// router.get('/:id', function (req, res, next) {
+//   const id = req.params.id;
+
+//   let found = data.find((x) => x.id == id);
+
+//   if (found) {
+//     return res.send({ ok: true, result: found });
+//   }
+
+//   return res.sendStatus(410);
+// });
 
 router.get('/:id', function (req, res, next) {
   // Validate
@@ -38,10 +44,10 @@ router.get('/:id', function (req, res, next) {
         return res.send({ ok: true, result: found });
       }
 
-      return res.sendStatus(410);
+      return res.send({ ok: false, message: 'Object not found' });
     })
     .catch((err) => {
-      return res.status(400).json({ type: err.name, errors: err.errors, provider: 'yup' });
+      return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
     });
 });
 
@@ -51,7 +57,7 @@ router.post('/', function (req, res, next) {
   const validationSchema = yup.object({
     body: yup.object({
       name: yup.string().required(),
-      price: yup.number().required(),
+      email: yup.string().email(),
       description: yup.string(),
     }),
   });
