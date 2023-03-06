@@ -3,5 +3,6 @@ content-type: application/json
 
 { 
    "name": "Fashion", 
+   "price": 12,
    "description": "Thời trang" 
 }

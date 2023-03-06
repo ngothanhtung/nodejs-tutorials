@@ -11,12 +11,17 @@ let data = [
 
 // Methods: POST / PATCH / GET / DELETE / PUT
 
+// ------------------------------------------------------------------------------------------------
 // Get all
 router.get('/', function (req, res, next) {
   res.send(data);
 });
 
+// ------------------------------------------------------------------------------------------------
 // Create new data
+
+// Validate
+
 router.post('/', function (req, res, next) {
   const newItem = req.body;
 
@@ -35,6 +40,7 @@ router.post('/', function (req, res, next) {
   res.send({ ok: true, message: 'Created' });
 });
 
+// ------------------------------------------------------------------------------------------------
 // Delete data
 router.delete('/:id', function (req, res, next) {
   const id = req.params.id;
@@ -58,10 +64,14 @@ router.patch('/:id', function (req, res, next) {
   res.send({ ok: true, message: 'Updated' });
 });
 
+// ------------------------------------------------------------------------------------------------
+// Search
 router.get('/search', function (req, res, next) {
   res.send('This is search router of products');
 });
 
+// ------------------------------------------------------------------------------------------------
+// details
 router.get('/details', function (req, res, next) {
   res.send('This is details router of products');
 });

@@ -1,5 +1,6 @@
-var express = require('express');
-var router = express.Router();
+const yup = require('yup');
+const express = require('express');
+const router = express.Router();
 
 const { write } = require('../helpers/FileHelper');
 let data = require('../data/categories.json');
@@ -18,25 +19,68 @@ router.get('/', function (req, res, next) {
   res.send(data);
 });
 
-// Create new data
-router.post('/', function (req, res, next) {
-  const newItem = req.body;
-
-  // Get max id
-  let max = 0;
-  data.forEach((item) => {
-    if (max < item.id) {
-      max = item.id;
-    }
+router.get('/:id', function (req, res, next) {
+  // Validate
+  const validationSchema = yup.object({
+    params: yup.object({
+      id: yup.number(),
+    }),
   });
 
-  newItem.id = max + 1;
+  validationSchema
+    .validate({ params: req.params })
+    .then(() => {
+      const id = req.params.id;
 
-  data.push(newItem);
+      let found = data.find((x) => x.id == id);
 
-  // Write data to file
-  write(fileName, data);
+      if (found) {
+        return res.send({ ok: true, result: found });
+      }
 
-  res.send({ ok: true, message: 'Created' });
+      return res.sendStatus(410);
+    })
+    .catch((err) => {
+      return res.status(400).json({ type: err.name, errors: err.errors, provider: 'yup' });
+    });
 });
+
+// Create new data
+router.post('/', function (req, res, next) {
+  // Validate
+  const validationSchema = yup.object({
+    body: yup.object({
+      name: yup.string().required(),
+      price: yup.number().required(),
+      description: yup.string(),
+    }),
+  });
+
+  validationSchema
+    .validate({ body: req.body }, { abortEarly: false })
+    .then(() => {
+      const newItem = req.body;
+
+      // Get max id
+      let max = 0;
+      data.forEach((item) => {
+        if (max < item.id) {
+          max = item.id;
+        }
+      });
+
+      newItem.id = max + 1;
+
+      data.push(newItem);
+
+      // Write data to file
+      write(fileName, data);
+
+      res.send({ ok: true, message: 'Created' });
+    })
+    .catch((err) => {
+      return res.status(400).json({ type: err.name, errors: err.errors, provider: 'yup' });
+    });
+});
+
 module.exports = router;
