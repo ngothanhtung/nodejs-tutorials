@@ -21,14 +21,14 @@ router.get('/', function (req, res, next) {
 
 router.get('/:id', function (req, res, next) {
   // Validate
-  const validationSchema = yup.object({
+  const validationSchema = yup.object().shape({
     params: yup.object({
       id: yup.number(),
     }),
   });
 
   validationSchema
-    .validate({ params: req.params })
+    .validate({ params: req.params }, { abortEarly: false })
     .then(() => {
       const id = req.params.id;
 
