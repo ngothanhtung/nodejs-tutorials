@@ -1,8 +1,1 @@
-[
-  {
-    "name": "Samsung Fold 4",
-    "price": 100,
-    "discount": 10,
-    "id": 1
-  }
-]
+[{"name":"Samsung Fold 4","price":100,"discount":10,"id":1},{"name":"Samsung Fold 4","price":100,"discount":10,"categoryId":1,"id":2}]

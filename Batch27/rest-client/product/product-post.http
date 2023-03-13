@@ -4,5 +4,6 @@ content-type: application/json
 {
    "name": "Samsung Fold 4",
    "price": 100,
-   "discount": 10
+   "discount": 10,
+   "categoryId": 1
 }
