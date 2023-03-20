@@ -5,6 +5,10 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 
+// MONGOOSE
+const { default: mongoose } = require('mongoose');
+const { CONNECTION_STRING } = require('./constants/dbSettings');
+
 // IMPORTS
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -30,6 +34,10 @@ app.use(
     origin: '*',
   }),
 );
+
+// MONGOOSE
+mongoose.set('strictQuery', false);
+mongoose.connect(CONNECTION_STRING);
 
 // REGISTER ROUTERS
 app.use('/', indexRouter);
