@@ -2,8 +2,10 @@ POST http://localhost:9000/products HTTP/1.1
 content-type: application/json
 
 {
-   "name": "Samsung Fold 4",
+   "name": "Máy giặt Samsung 10 lit",
    "price": 100,
    "discount": 10,
-   "categoryId": 1
+   "stock": 100,
+   "categoryId": "641847625916114fb90e61ca",
+   "supplierId": "6418540f029c6a147f5c7b18"
 }

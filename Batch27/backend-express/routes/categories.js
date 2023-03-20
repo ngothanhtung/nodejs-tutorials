@@ -6,15 +6,10 @@ const ObjectId = require('mongodb').ObjectId;
 
 // Methods: POST / PATCH / GET / DELETE / PUT
 // Get all
-router.get('/', function (req, res, next) {
+router.get('/', async (req, res, next) => {
   try {
-    Category.find()
-      .then((result) => {
-        res.send(result);
-      })
-      .catch((err) => {
-        res.status(400).send({ message: err.message });
-      });
+    let results = await Category.find();
+    res.send(results);
   } catch (err) {
     res.sendStatus(500);
   }
@@ -54,7 +49,6 @@ router.post('/', async function (req, res, next) {
   const validationSchema = yup.object({
     body: yup.object({
       name: yup.string().required(),
-      email: yup.string().email(),
       description: yup.string(),
     }),
   });
@@ -111,20 +105,15 @@ router.delete('/:id', function (req, res, next) {
 });
 
 router.patch('/:id', function (req, res, next) {
-  const id = req.params.id;
-  const patchData = req.body;
+  try {
+    const id = req.params.id;
+    const patchData = req.body;
+    let found = Category.findByIdAndUpdate(id, patchData);
 
-  let found = data.find((x) => x.id == id);
-
-  if (found) {
-    for (let propertyName in patchData) {
-      found[propertyName] = patchData[propertyName];
-    }
+    res.send({ ok: true, message: 'Updated', result: found });
+  } catch (error) {
+    res.status(500).send({ ok: false, error });
   }
-
-  write(fileName, data);
-
-  res.send({ ok: true, message: 'Updated' });
 });
 
 module.exports = router;

@@ -1,18 +1,20 @@
 const yup = require('yup');
 const express = require('express');
 const router = express.Router();
-
-const { write } = require('../helpers/FileHelper');
-let data = require('../data/products.json');
-
-const fileName = './data/products.json';
+const { Product } = require('../models');
+const ObjectId = require('mongodb').ObjectId;
 
 // Methods: POST / PATCH / GET / DELETE / PUT
 
 // ------------------------------------------------------------------------------------------------
 // Get all
-router.get('/', function (req, res, next) {
-  res.send(data);
+router.get('/', async (req, res, next) => {
+  try {
+    let results = await Product.find();
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ ok: false, error });
+  }
 });
 
 // ------------------------------------------------------------------------------------------------
@@ -24,30 +26,28 @@ router.post('/', function (req, res, next) {
       name: yup.string().required(),
       price: yup.number().positive().required(),
       discount: yup.number().positive().max(50).required(),
+      categoryId: yup
+        .string()
+        .required()
+        .test('Validate ObjectID', '${path} is not valid ObjectID', (value) => {
+          return ObjectId.isValid(value);
+        }),
+      supplierId: yup
+        .string()
+        .required()
+        .test('Validate ObjectID', '${path} is not valid ObjectID', (value) => {
+          return ObjectId.isValid(value);
+        }),
     }),
   });
 
   validationSchema
     .validate({ body: req.body }, { abortEarly: false })
-    .then(() => {
-      const newItem = req.body;
-
-      // Get max id
-      let max = 0;
-      data.forEach((item) => {
-        if (max < item.id) {
-          max = item.id;
-        }
-      });
-
-      newItem.id = max + 1;
-
-      data.push(newItem);
-
-      // Write data to file
-      write(fileName, data);
-
-      res.send({ ok: true, message: 'Created' });
+    .then(async () => {
+      const data = req.body;
+      let newItem = new Product(data);
+      await newItem.save();
+      res.send({ ok: true, message: 'Created', result: newItem });
     })
     .catch((err) => {
       return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });

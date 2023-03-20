@@ -1,16 +1,30 @@
-var express = require('express');
-var router = express.Router();
-
-const data = [
-  { id: 1, name: 'Apple', email: 'apple@apple.com', country: 'USA' },
-  { id: 2, name: 'Sony', email: 'sony@sony.com', country: 'JAPAN' },
-  { id: 3, name: 'Xiaomi', email: 'xiaomi@xiaomi.com', country: 'CHINA' },
-];
+const express = require('express');
+const router = express.Router();
+const { Supplier } = require('../models');
 
 // Methods: POST / PATCH / GET / DELETE / PUT
 // Get all
-router.get('/', function (req, res, next) {
-  res.send(data);
+router.get('/', async (req, res, next) => {
+  try {
+    let results = await Supplier.find();
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ ok: false, error });
+  }
+});
+
+// Create new data
+router.post('/', async function (req, res, next) {
+  // Mongoose
+  try {
+    const data = req.body;
+    const newItem = new Supplier(data);
+    let result = await newItem.save();
+
+    return res.send({ ok: true, message: 'Created', result });
+  } catch (err) {
+    return res.status(500).json({ error: err });
+  }
 });
 
 module.exports = router;
