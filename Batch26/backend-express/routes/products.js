@@ -4,7 +4,7 @@ var { validateSchema } = require('../validations/validateSchema');
 const { CONNECTION_STRING } = require('../constants/dbSettings');
 const { default: mongoose } = require('mongoose');
 
-const { Product } = require('../models');
+const { Product, Order, Supplier } = require('../models');
 // MONGOOSE
 mongoose.set('strictQuery', false);
 mongoose.connect(CONNECTION_STRING);
@@ -15,9 +15,9 @@ var router = express.Router();
 /* GET ALL */
 router.get('/', function (req, res, next) {
   try {
-    Product.find()
-      .populate('category')
-      .populate('supplier')
+    Product.find({})
+      .populate('category', 'name')
+      .populate('supplier', 'name')
       .then((result) => {
         res.send(result);
       })
@@ -190,6 +190,71 @@ router.get('/questions/3', async (req, res, next) => {
 
     let aggregate = [{ $match: { $expr: { $lte: [d, price] } } }];
     Product.aggregate(aggregate)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).json(err);
+      });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 25
+// Hiển thị tất cả các mặt hàng không bán được
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/25', async (req, res, next) => {
+  try {
+    const aggregate = [{ $lookup: { from: 'orders', localField: '_id', foreignField: 'orderDetails.productId', as: 'orders' } }, { $match: { orders: { $size: 0 } } }];
+
+    Product.aggregate(aggregate)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).json(err);
+      });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 26
+// Hiển thị tất cả các nhà cung cấp không bán được hàng
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/26', async (req, res, next) => {
+  try {
+    const aggregate = [{ $lookup: { from: 'orders', localField: '_id', foreignField: 'orderDetails.productId', as: 'orders' } }, { $match: { orders: { $size: 0 } } }];
+
+    Product.aggregate(aggregate)
+      .lookup({
+        from: 'suppliers',
+        localField: 'supplierId',
+        foreignField: '_id',
+        as: 'suppliers',
+      })
+      .project({
+        _id: 0,
+        suppliers: 1,
+      })
+      .unwind({
+        path: '$suppliers',
+        preserveNullAndEmptyArrays: true,
+      })
+      .addFields({
+        _id: '$suppliers._id',
+        name: '$suppliers.name',
+        email: '$suppliers.email',
+        phoneNumber: '$suppliers.phoneNumber',
+        address: '$suppliers.address',
+      })
+      .project({
+        suppliers: 0,
+      })
+
       .then((result) => {
         res.send(result);
       })

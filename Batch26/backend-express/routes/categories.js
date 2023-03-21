@@ -1,10 +1,4 @@
-const { CONNECTION_STRING } = require('../constants/dbSettings');
-const { default: mongoose } = require('mongoose');
-
 const { Category } = require('../models');
-// MONGOOSE
-mongoose.set('strictQuery', false);
-mongoose.connect(CONNECTION_STRING);
 
 var express = require('express');
 var router = express.Router();

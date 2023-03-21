@@ -41,6 +41,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// MONGOOSE
+
+const { CONNECTION_STRING } = require('./constants/dbSettings');
+const { default: mongoose } = require('mongoose');
+
+mongoose.set('strictQuery', false);
+mongoose.connect(CONNECTION_STRING);
+
 // Add CORS here
 app.use(
   cors({
