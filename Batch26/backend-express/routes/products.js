@@ -254,6 +254,13 @@ router.get('/questions/26', async (req, res, next) => {
       .project({
         suppliers: 0,
       })
+      .group({
+        _id: '$_id',
+        name: { $first: '$name' },
+        phoneNumber: { $first: '$phoneNumber' },
+        email: { $first: '$email' },
+        address: { $first: '$address' },
+      })
 
       .then((result) => {
         res.send(result);
