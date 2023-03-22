@@ -10,7 +10,8 @@ const ObjectId = require('mongodb').ObjectId;
 // Get all
 router.get('/', async (req, res, next) => {
   try {
-    let results = await Product.find();
+    let results = await Product.find().populate('category').populate('supplier').lean({ virtuals: true });
+
     res.json(results);
   } catch (error) {
     res.status(500).json({ ok: false, error });
