@@ -7,10 +7,9 @@ const { Schema, model } = mongoose;
 // Validator
 // https://mongoosejs.com/docs/validation.html#built-in-validators
 
-const employeeSchema = new Schema(
+const supplierSchema = new Schema(
   {
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
+    name: { type: String, required: true },
     email: {
       type: String,
       validate: {
@@ -35,17 +34,11 @@ const employeeSchema = new Schema(
       },
     },
     address: { type: String, required: true },
-    birthday: { type: Date },
   },
   {
     versionKey: false,
   },
 );
 
-// Virtuals
-employeeSchema.virtual('fullName').get(function () {
-  return this.firstName + ' ' + this.lastName;
-});
-
-const Employee = model('Employee', employeeSchema);
-module.exports = Employee;
+const Supplier = model('Supplier', supplierSchema);
+module.exports = Supplier;

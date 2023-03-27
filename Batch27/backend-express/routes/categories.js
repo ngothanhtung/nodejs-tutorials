@@ -116,4 +116,40 @@ router.patch('/:id', function (req, res, next) {
   }
 });
 
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 18
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/18', function (req, res, next) {
+  try {
+    const aggregate = [
+      {
+        $lookup: {
+          from: 'products',
+          let: { id: '$_id' },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ['$$id', '$categoryId'] },
+              },
+            },
+          ],
+          as: 'products',
+        },
+      },
+      {
+        $addFields: { numberOfProducts: { $size: '$products' } },
+      },
+    ];
+    Category.aggregate(aggregate)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).send({ message: err.message });
+      });
+  } catch (err) {
+    res.sendStatus(500);
+  }
+});
+
 module.exports = router;

@@ -175,11 +175,12 @@ router.get('/questions/2', function (req, res, next) {
     res.sendStatus(500);
   }
 });
+
 // ------------------------------------------------------------------------------------------------
 // QUESTIONS 3
 // ------------------------------------------------------------------------------------------------
 // http://localhost:9000/products/questions/3?price=100000
-router.get('/questions/3', async (req, res, next) => {
+router.get('/3', async (req, res, next) => {
   try {
     // let finalPrice = price * (100 - discount) / 100;
     const s = { $subtract: [100, '$discount'] }; // (100 - 5)
@@ -188,8 +189,9 @@ router.get('/questions/3', async (req, res, next) => {
 
     const { price } = req.query;
 
-    let aggregate = [{ $match: { $expr: { $lte: [d, price] } } }];
-    Product.aggregate(aggregate)
+    let query = { $expr: { $lte: [d, parseFloat(price)] } };
+    Product.find(query)
+      .select('name price discount')
       .then((result) => {
         res.send(result);
       })
