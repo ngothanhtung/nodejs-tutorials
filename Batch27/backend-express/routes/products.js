@@ -54,29 +54,48 @@ router.post('/', function (req, res, next) {
       return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
     });
 });
-
 // ------------------------------------------------------------------------------------------------
 // Delete data
 router.delete('/:id', function (req, res, next) {
-  const id = req.params.id;
-  data = data.filter((x) => x.id != id);
+  const validationSchema = yup.object().shape({
+    params: yup.object({
+      id: yup.string().test('Validate ObjectID', '${path} is not valid ObjectID', (value) => {
+        return ObjectId.isValid(value);
+      }),
+    }),
+  });
 
-  res.send({ ok: true, message: 'Deleted' });
+  validationSchema
+    .validate({ params: req.params }, { abortEarly: false })
+    .then(async () => {
+      try {
+        const id = req.params.id;
+
+        let found = await Product.findByIdAndDelete(id);
+
+        if (found) {
+          return res.send({ ok: true, result: found });
+        }
+
+        return res.status(410).send({ ok: false, message: 'Object not found' });
+      } catch (err) {
+        return res.status(500).json({ error: err });
+      }
+    })
+    .catch((err) => {
+      return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
+    });
 });
 
-router.patch('/:id', function (req, res, next) {
-  const id = req.params.id;
-  const patchData = req.body;
-
-  let found = data.find((x) => x.id == id);
-
-  if (found) {
-    for (let propertyName in patchData) {
-      found[propertyName] = patchData[propertyName];
-    }
+router.patch('/:id', async function (req, res, next) {
+  try {
+    const id = req.params.id;
+    const data = req.body;
+    await Product.findByIdAndUpdate(id, data);
+    res.send({ ok: true, message: 'Updated' });
+  } catch (error) {
+    res.status(500).send({ ok: false, error });
   }
-
-  res.send({ ok: true, message: 'Updated' });
 });
 
 module.exports = router;
