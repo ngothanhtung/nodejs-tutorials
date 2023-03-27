@@ -2,6 +2,7 @@ const yup = require('yup');
 const express = require('express');
 const router = express.Router();
 const { Category, Product, Customer, Employee, Order, Supplier } = require('../models');
+const { default: mongoose } = require('mongoose');
 const ObjectId = require('mongodb').ObjectId;
 
 // ------------------------------------------------------------------------------------------------
@@ -20,6 +21,7 @@ router.get('/1a', function (req, res, next) {
         res.status(400).send({ message: err.message });
       });
   } catch (err) {
+    console.log(err);
     res.sendStatus(500);
   }
 });
