@@ -1,16 +1,14 @@
 import { Button, Form, Input, message, Modal, Space, Table } from 'antd';
-import axios from 'axios';
+import axios from '../../libraries/axiosClient';
 import React from 'react';
 
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 import type { ColumnsType } from 'antd/es/table';
 
-type Props = {};
+const apiName = '/categories';
 
-const API_URL = 'http://localhost:9000/categories';
-
-export default function Categories({}: Props) {
+export default function Categories() {
   const [categories, setCategories] = React.useState<any[]>([]);
   const [refresh, setRefresh] = React.useState<number>(0);
   const [open, setOpen] = React.useState<boolean>(false);
@@ -62,7 +60,7 @@ export default function Categories({}: Props) {
               icon={<DeleteOutlined />}
               onClick={() => {
                 console.log(record.id);
-                axios.delete(API_URL + '/' + record.id).then((response) => {
+                axios.delete('/categories/' + record.id).then((response) => {
                   setRefresh((f) => f + 1);
                   message.success('Xóa danh mục thành công!', 1.5);
                 });
@@ -77,7 +75,7 @@ export default function Categories({}: Props) {
   // Call api to get data
   React.useEffect(() => {
     axios
-      .get(API_URL)
+      .get(apiName)
       .then((response) => {
         const { data } = response;
         setCategories(data);
@@ -92,7 +90,7 @@ export default function Categories({}: Props) {
     console.log(values);
 
     axios
-      .post(API_URL, values)
+      .post(apiName, values)
       .then((response) => {
         setRefresh((f) => f + 1);
         createForm.resetFields();
@@ -106,7 +104,7 @@ export default function Categories({}: Props) {
     // console.log(updateId);
 
     axios
-      .patch(API_URL + '/' + updateId, values)
+      .patch(apiName + '/' + updateId, values)
       .then((response) => {
         setRefresh((f) => f + 1);
         updateForm.resetFields();

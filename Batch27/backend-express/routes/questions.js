@@ -11,8 +11,8 @@ const ObjectId = require('mongodb').ObjectId;
 // http://localhost:9000/questions/1a?discount=10
 router.get('/1a', function (req, res, next) {
   try {
-    let discount = req.query.discount;
-    let query = { discount: { $lte: discount } };
+    let param = req.query.discount;
+    let query = { discount: { $lte: param } };
     Product.find(query)
       .then((result) => {
         res.send(result);

@@ -104,51 +104,15 @@ router.delete('/:id', function (req, res, next) {
     });
 });
 
-router.patch('/:id', function (req, res, next) {
+router.patch('/:id', async function (req, res, next) {
   try {
     const id = req.params.id;
     const patchData = req.body;
-    let found = Category.findByIdAndUpdate(id, patchData);
+    await Category.findByIdAndUpdate(id, patchData);
 
-    res.send({ ok: true, message: 'Updated', result: found });
+    res.send({ ok: true, message: 'Updated' });
   } catch (error) {
     res.status(500).send({ ok: false, error });
-  }
-});
-
-// ------------------------------------------------------------------------------------------------
-// QUESTIONS 18
-// ------------------------------------------------------------------------------------------------
-router.get('/questions/18', function (req, res, next) {
-  try {
-    const aggregate = [
-      {
-        $lookup: {
-          from: 'products',
-          let: { id: '$_id' },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ['$$id', '$categoryId'] },
-              },
-            },
-          ],
-          as: 'products',
-        },
-      },
-      {
-        $addFields: { numberOfProducts: { $size: '$products' } },
-      },
-    ];
-    Category.aggregate(aggregate)
-      .then((result) => {
-        res.send(result);
-      })
-      .catch((err) => {
-        res.status(400).send({ message: err.message });
-      });
-  } catch (err) {
-    res.sendStatus(500);
   }
 });
 
