@@ -19,48 +19,77 @@ import DiscountPage from './pages/Sales/Products/DiscountPage';
 import StockPage from './pages/Sales/Products/StockPage';
 import FormUpload from './pages/Upload/FormUpload';
 import AntUpload from './pages/Upload/AntUpload';
+import LoginPage from './pages/Auth/LoginPage';
+import { useAuthStore } from './hooks/useAuthStore';
 
 numeral.locale('vi');
 
-const { Header, Footer, Sider, Content } = Layout;
+const { Header, Sider, Content } = Layout;
 
 function App() {
+  const { auth, logout } = useAuthStore((state) => state);
   return (
     <div>
       <BrowserRouter>
-        <Layout>
-          <Sider theme='dark' style={{ minHeight: '100vh' }}>
-            <MainMenu />
-          </Sider>
+        {!auth && (
+          <Content style={{ padding: 24 }}>
+            <Routes>
+              <Route path='/' element={<LoginPage />} />
+              {/* NO MATCH ROUTE */}
+              <Route path='*' element={<NotFoundPage />} />
+            </Routes>
+          </Content>
+        )}
+
+        {auth && (
           <Layout>
-            <Header style={{ backgroundColor: 'blue' }}>
-              <h1 style={{ color: 'white' }}> ONLINE SHOP - ADMIN</h1>
-            </Header>
+            <Sider theme='dark' style={{ minHeight: '100vh' }}>
+              <MainMenu />
+            </Sider>
+            <Layout>
+              <Header style={{ backgroundColor: 'blue' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <h1 style={{ color: 'white' }}> ONLINE SHOP - ADMIN</h1>
+                  <div style={{ display: 'flex', color: 'white' }}>
+                    <strong>{auth?.loggedInUser?.username}</strong>
+                    <span style={{ marginInline: 8 }}>|</span>
+                    <strong
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => {
+                        logout();
+                      }}
+                    >
+                      Log out
+                    </strong>
+                  </div>
+                </div>
+              </Header>
 
-            <Content style={{ padding: 24 }}>
-              {/* Register routes */}
-              <Routes>
-                <Route path='/' element={<HomePage />} />
-                <Route path='/home' element={<HomePage />} />
+              <Content style={{ padding: 24 }}>
+                {/* Register routes */}
+                <Routes>
+                  <Route path='/' element={<HomePage />} />
+                  <Route path='/home' element={<HomePage />} />
 
-                {/* MANAGEMENT */}
-                <Route path='/management/products' element={<ProductPage />} />
-                <Route path='/management/customers' element={<CustomerPage />} />
+                  {/* MANAGEMENT */}
+                  <Route path='/management/products' element={<ProductPage />} />
+                  <Route path='/management/customers' element={<CustomerPage />} />
 
-                {/* SALES */}
-                <Route path='/sales/products/discount' element={<DiscountPage />} />
-                <Route path='/sales/products/stock' element={<StockPage />} />
+                  {/* SALES */}
+                  <Route path='/sales/products/discount' element={<DiscountPage />} />
+                  <Route path='/sales/products/stock' element={<StockPage />} />
 
-                {/* UPLOAD */}
+                  {/* UPLOAD */}
 
-                <Route path='/upload/form' element={<FormUpload />} />
-                <Route path='/upload/antd' element={<AntUpload />} />
-                {/* NO MATCH ROUTE */}
-                <Route path='*' element={<NotFoundPage />} />
-              </Routes>
-            </Content>
+                  <Route path='/upload/form' element={<FormUpload />} />
+                  <Route path='/upload/antd' element={<AntUpload />} />
+                  {/* NO MATCH ROUTE */}
+                  <Route path='*' element={<NotFoundPage />} />
+                </Routes>
+              </Content>
+            </Layout>
           </Layout>
-        </Layout>
+        )}
       </BrowserRouter>
     </div>
   );
