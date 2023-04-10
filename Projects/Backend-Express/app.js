@@ -75,7 +75,6 @@ passport.use(
   }),
 );
 
-// jwt
 // Passport: jwt
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
