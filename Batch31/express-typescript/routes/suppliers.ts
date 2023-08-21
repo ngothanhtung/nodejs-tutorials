@@ -1,20 +1,20 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 
 import { AppDataSource } from '../data-source';
-import { Category } from '../entities/category.entity';
+import { Supplier } from '../entities/supplier.entity';
 
 const router = express.Router();
 
-const repository = AppDataSource.getRepository(Category);
+const repository = AppDataSource.getRepository(Supplier);
 
-/* GET categories */
+/* GET suppliers */
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const categories = await repository.find();
-    if (categories.length === 0) {
+    const suppliers = await repository.find();
+    if (suppliers.length === 0) {
       res.status(204).send();
     } else {
-      res.json(categories);
+      res.json(suppliers);
     }
   } catch (error) {
     console.error(error);
@@ -22,43 +22,43 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-/* GET category by id */
+/* GET supplier by id */
 router.get('/:id', async (req: Request, res: Response, next: any) => {
   try {
-    const category = await repository.findOneBy({ id: parseInt(req.params.id) });
-    if (!category) {
+    const supplier = await repository.findOneBy({ id: parseInt(req.params.id) });
+    if (!supplier) {
       return res.status(404).json({ error: 'Not found' });
     }
-    res.json(category);
+    res.json(supplier);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-/* POST category */
+/* POST supplier */
 router.post('/', async (req: Request, res: Response, next: any) => {
   try {
-    const category = new Category();
-    Object.assign(category, req.body);
-    await repository.save(category);
-    res.status(201).json(category);
+    const supplier = new Supplier();
+    Object.assign(supplier, req.body);
+    await repository.save(supplier);
+    res.status(201).json(supplier);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-/* PATCH category */
+/* PATCH supplier */
 router.patch('/:id', async (req: Request, res: Response, next: any) => {
   try {
-    const category = await repository.findOneBy({ id: parseInt(req.params.id) });
-    if (!category) {
+    const supplier = await repository.findOneBy({ id: parseInt(req.params.id) });
+    if (!supplier) {
       return res.status(404).json({ error: 'Not found' });
     }
 
-    Object.assign(category, req.body);
-    await repository.save(category);
+    Object.assign(supplier, req.body);
+    await repository.save(supplier);
 
     const updatedCategory = await repository.findOneBy({ id: parseInt(req.params.id) });
     res.json(updatedCategory);
@@ -68,14 +68,14 @@ router.patch('/:id', async (req: Request, res: Response, next: any) => {
   }
 });
 
-/* DELETE category */
+/* DELETE supplier */
 router.delete('/:id', async (req: Request, res: Response, next: any) => {
   try {
-    const category = await repository.findOneBy({ id: parseInt(req.params.id) });
-    if (!category) {
+    const supplier = await repository.findOneBy({ id: parseInt(req.params.id) });
+    if (!supplier) {
       return res.status(404).json({ error: 'Not found' });
     }
-    await repository.delete({ id: category.id });
+    await repository.delete({ id: supplier.id });
     res.status(200).send();
   } catch (error) {
     console.error(error);

@@ -10,6 +10,7 @@ const repository = AppDataSource.getRepository(Product);
 /* GET products */
 router.get('/', async (req: Request, res: Response, next: any) => {
   try {
+    // SELECT * FROM [Products] AS 'product'
     const products = await repository.createQueryBuilder('product').leftJoinAndSelect('product.category', 'category').leftJoinAndSelect('product.supplier', 'supplier').getMany();
 
     if (products.length === 0) {
@@ -46,8 +47,7 @@ router.get('/:id', async (req: Request, res: Response, next: any) => {
 router.post('/', async (req: Request, res: Response, next: any) => {
   try {
     const product = new Product();
-    product.name = req.body.name;
-    product.description = req.body.description;
+    Object.assign(product, req.body);
     await repository.save(product);
     res.status(201).json(product);
   } catch (error) {
