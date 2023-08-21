@@ -9,9 +9,9 @@ export const AppDataSource = new DataSource({
   port: 1433,
   username: 'developer',
   password: 'developer',
-  database: 'onlineshop',
+  database: 'TypeOrm',
   entities: ['entities/**/*.entity{.ts,.js}'],
-  synchronize: false,
+  synchronize: true,
   logging: false,
   options: {
     encrypt: false,
