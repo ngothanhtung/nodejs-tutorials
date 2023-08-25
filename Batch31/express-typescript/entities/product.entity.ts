@@ -1,7 +1,8 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Category } from './category.entity';
 import { Supplier } from './supplier.entity';
+import { OrderDetail } from './order-details.entity';
 
 @Entity({ name: 'Products' })
 export class Product {
@@ -58,4 +59,7 @@ export class Product {
 
   @ManyToOne(() => Supplier, (s) => s.products)
   supplier: Supplier;
+
+  @OneToMany(() => OrderDetail, (od) => od.product)
+  orderDetails: OrderDetail[];
 }

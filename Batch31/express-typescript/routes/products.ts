@@ -11,7 +11,11 @@ const repository = AppDataSource.getRepository(Product);
 router.get('/', async (req: Request, res: Response, next: any) => {
   try {
     // SELECT * FROM [Products] AS 'product'
-    const products = await repository.createQueryBuilder('product').leftJoinAndSelect('product.category', 'category').leftJoinAndSelect('product.supplier', 'supplier').getMany();
+    const products = await repository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.supplier', 'supplier')
+      .getMany();
 
     if (products.length === 0) {
       res.status(204).send();
