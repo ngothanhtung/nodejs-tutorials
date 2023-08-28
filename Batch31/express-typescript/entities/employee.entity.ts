@@ -24,7 +24,7 @@ export class Employee {
   address: string;
 
   // BIRTHDAY
-  @Column({ name: 'Birthday', type: 'date' })
+  @Column({ name: 'Birthday', type: 'date', nullable: true })
   birthday: Date;
 
   // EMAIL

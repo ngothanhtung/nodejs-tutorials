@@ -2,6 +2,7 @@ import express, { Express, NextFunction, Request, Response } from 'express';
 
 import { AppDataSource } from '../data-source';
 import { Category } from '../entities/category.entity';
+import { CategoryView } from '../entities/views/category-view.entity';
 
 const router = express.Router();
 
