@@ -58,6 +58,16 @@ router.get('/get-all-orders', async (req: Request, res: Response, next: any) => 
   }
 });
 
+// Call store procedure
+router.get('/customers/get-by-year-of-birthday/:year', async (req: Request, res: Response, next: any) => {
+  try {
+    const results = await repository.manager.connection.query('EXECUTE [dbo].[usp_Customers_GetByYearOfBirth] @0', [req.params.year]);
+    res.json(toCamelCase(results));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 router.get('/view', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const categories = await viewRepository.find();
