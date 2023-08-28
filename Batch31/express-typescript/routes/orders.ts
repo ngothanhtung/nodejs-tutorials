@@ -19,6 +19,7 @@ router.get('/', async (req: Request, res: Response, next: any) => {
       .leftJoinAndSelect('order.orderDetails', 'orderDetails')
       .leftJoinAndSelect('orderDetails.product', 'product')
       .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.supplier', 'supplier')
       .select([
         'order.id',
         'order.createdDate',
@@ -37,6 +38,7 @@ router.get('/', async (req: Request, res: Response, next: any) => {
         'orderDetails.discount',
         'product',
         'category',
+        'supplier',
       ])
       .getMany();
 

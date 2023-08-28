@@ -9,6 +9,8 @@ export class Category extends BaseEntity {
   // ----------------------------------------------------------------------------------------------
   // NAME
   // ----------------------------------------------------------------------------------------------
+  // Annotation: @Column({ name: 'Name', unique: true, length: 100 })
+  // Decorator: @Column
   @Column({ name: 'Name', unique: true, length: 100 })
   name: string;
 

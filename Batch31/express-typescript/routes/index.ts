@@ -29,8 +29,8 @@ router.get('/call-separating-entity', async (req: Request, res: Response, next: 
 router.get('/call-raw-sql', async (req: Request, res: Response, next: any) => {
   try {
     const results = await repository.manager.connection.query('SELECT * FROM Orders AS O WHERE O.Id = @0', [10]);
-    res.json(results);
-    // res.json(toCamelCase(results));
+    // res.json(results);
+    res.json(toCamelCase(results));
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -40,7 +40,17 @@ router.get('/call-raw-sql', async (req: Request, res: Response, next: any) => {
 // Call store procedure
 router.get('/call-stored-procedure', async (req: Request, res: Response, next: any) => {
   try {
-    const results = await repository.manager.connection.query('EXECUTE [dbo].[usp_Products_CheckStock] @0', [15]);
+    const results = await repository.manager.connection.query('EXECUTE [dbo].[usp_Products_GetByDiscount] @0', [5]);
+    res.json(toCamelCase(results));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/get-all-orders', async (req: Request, res: Response, next: any) => {
+  try {
+    const results = await repository.manager.connection.query('EXECUTE [dbo].[usp_Orders_GetAll]', []);
     res.json(toCamelCase(results));
   } catch (error) {
     console.error(error);
@@ -51,6 +61,7 @@ router.get('/call-stored-procedure', async (req: Request, res: Response, next: a
 router.get('/view', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const categories = await viewRepository.find();
+
     if (categories.length === 0) {
       res.status(204).send();
     } else {
