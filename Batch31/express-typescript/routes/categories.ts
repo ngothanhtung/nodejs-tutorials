@@ -42,11 +42,20 @@ router.post('/', async (req: Request, res: Response, next: any) => {
   try {
     const category = new Category();
     Object.assign(category, req.body);
+
+    // MANUAL VALIDATION
+    // const errors = await category.validate();
+    // if (errors) {
+    //   res.status(400).json(errors);
+    //   return;
+    // }
+
+    // HOOKS (AUTO VALIDATE)
     await repository.save(category);
     res.status(201).json(category);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(400).json({ error });
   }
 });
 

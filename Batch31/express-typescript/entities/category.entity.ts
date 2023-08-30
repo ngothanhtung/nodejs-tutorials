@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, BaseEntity, OneToMany } from 'typeorm';
+import { IsNotEmpty, Length, MaxLength, ValidateIf, validate, validateOrReject } from 'class-validator';
+import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Product } from './product.entity';
 
 @Entity({ name: 'Categories' })
@@ -9,8 +10,8 @@ export class Category extends BaseEntity {
   // ----------------------------------------------------------------------------------------------
   // NAME
   // ----------------------------------------------------------------------------------------------
-  // Annotation: @Column({ name: 'Name', unique: true, length: 100 })
-  // Decorator: @Column
+  @IsNotEmpty({ message: 'Name is required' })
+  @Length(1, 5, { message: 'Name must be greater than $constraint1 and less than $constraint2 characters' })
   @Column({ name: 'Name', unique: true, length: 100 })
   name: string;
 
@@ -25,4 +26,21 @@ export class Category extends BaseEntity {
   // ----------------------------------------------------------------------------------------------
   @OneToMany(() => Product, (p) => p.category)
   products: Product[];
+
+  // MANUAL VALIDATION
+  // async validate() {
+  //   const errors = await validate(this);
+  //   if (errors.length > 0) {
+  //     return errors;
+  //   }
+
+  //   return null;
+  // }
+
+  // HOOKS (AUTO VALIDATE)
+  @BeforeInsert()
+  @BeforeUpdate()
+  async validate() {
+    await validateOrReject(this);
+  }
 }
