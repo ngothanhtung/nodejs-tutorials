@@ -43,7 +43,7 @@ router.get('/', async (req: Request, res: Response, next: any) => {
       .getMany();
 
     if (orders.length === 0) {
-      res.status(204).send();
+      res.sendStatus(204);
     } else {
       res.json(orders);
     }
@@ -53,30 +53,10 @@ router.get('/', async (req: Request, res: Response, next: any) => {
   }
 });
 
-/* POST order */
-router.post('/', async (req: Request, res: Response, next: any) => {
+router.get('/:id', async (req: Request, res: Response, next: any) => {
   try {
-    const queryRunner = repository.manager.connection.createQueryRunner();
-    await queryRunner.connect();
-    // Begin transaction
-    await queryRunner.startTransaction();
-
-    const order = req.body as Order;
-
-    // Lưu thông tin order
-    const result = await queryRunner.manager.save(Order, order);
-
-    // Lưu thông tin order details
-    const orderDetails = order.orderDetails.map((od) => {
-      return { ...od, orderId: result.id };
-    });
-
-    await queryRunner.manager.save(OrderDetail, orderDetails);
-
-    // Commit transaction
-    await queryRunner.commitTransaction();
-
-    const orderResult = await repository
+    // SELECT * FROM [Products] AS 'product'
+    const order = await repository
       .createQueryBuilder('order')
       .leftJoinAndSelect('order.customer', 'customer')
       .leftJoinAndSelect('order.employee', 'employee')
@@ -84,7 +64,7 @@ router.post('/', async (req: Request, res: Response, next: any) => {
       .leftJoinAndSelect('orderDetails.product', 'product')
       .leftJoinAndSelect('product.category', 'category')
       .leftJoinAndSelect('product.supplier', 'supplier')
-      .where('order.id = :id', { id: result.id })
+      .where('order.id = :id', { id: req.params.id })
       .select([
         'order.id',
         'order.createdDate',
@@ -107,7 +87,47 @@ router.post('/', async (req: Request, res: Response, next: any) => {
       ])
       .getOne();
 
-    res.json(orderResult);
+    if (order) {
+      res.json(order);
+    } else {
+      res.sendStatus(204);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/* POST order */
+router.post('/', async (req: Request, res: Response, next: any) => {
+  try {
+    const queryRunner = repository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    // Begin transaction
+    try {
+      await queryRunner.startTransaction();
+
+      const order = req.body as Order;
+
+      // Lưu thông tin order
+      const result = await queryRunner.manager.save(Order, order);
+
+      // Lưu thông tin order details
+      const orderDetails = order.orderDetails.map((od) => {
+        return { ...od, orderId: result.id };
+      });
+
+      await queryRunner.manager.save(OrderDetail, orderDetails);
+
+      // Commit transaction
+      await queryRunner.commitTransaction();
+
+      // Get order by id
+      res.redirect(`/orders/${result.id}`);
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      res.status(500).json({ error: 'Transaction failed' });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });

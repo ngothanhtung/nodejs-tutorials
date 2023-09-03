@@ -1,8 +1,7 @@
-import express, { Express, NextFunction, Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 
 import { AppDataSource } from '../data-source';
 import { Category } from '../entities/category.entity';
-import { CategoryView } from '../entities/views/category-view.entity';
 
 const router = express.Router();
 
@@ -13,7 +12,9 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const categories = await repository.find();
     if (categories.length === 0) {
-      res.status(204).send();
+      res.status(204).send({
+        error: 'No content',
+      });
     } else {
       res.json(categories);
     }
@@ -28,7 +29,7 @@ router.get('/:id', async (req: Request, res: Response, next: any) => {
   try {
     const category = await repository.findOneBy({ id: parseInt(req.params.id) });
     if (!category) {
-      return res.status(404).json({ error: 'Not found' });
+      return res.status(410).json({ error: 'Not found' });
     }
     res.json(category);
   } catch (error) {

@@ -1,26 +1,30 @@
 import cookieParser from 'cookie-parser';
 import express, { Express, NextFunction, Request, Response } from 'express';
-import createError from 'http-errors';
+
 import logger from 'morgan';
 import path from 'path';
 
 import { AppDataSource } from './data-source';
-import indexRouter from './routes/index';
 import categoriesRouter from './routes/categories';
+import indexRouter from './routes/index';
+import ordersRouter from './routes/orders';
 import productsRouter from './routes/products';
 import suppliersRouter from './routes/suppliers';
-import ordersRouter from './routes/orders';
+import cors from 'cors';
 
 const app: Express = express();
 
 AppDataSource.initialize().then(async () => {
-  console.log('Data source initialized');
+  console.log('Data source was initialized');
 
   app.use(logger('dev'));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
   app.use(express.static(path.join(__dirname, 'public')));
+
+  // use cors
+  app.use(cors({ origin: '*' }));
 
   app.use('/', indexRouter);
   app.use('/categories', categoriesRouter);
@@ -29,8 +33,9 @@ AppDataSource.initialize().then(async () => {
   app.use('/orders', ordersRouter);
 
   // catch 404 and forward to error handler
-  app.use(function (req, res, next) {
-    next(createError(404));
+  app.use(function (req: Request, res: Response, next: NextFunction) {
+    res.status(404).send('Not found');
+    // next(createError(404));
   });
 
   // error handler
