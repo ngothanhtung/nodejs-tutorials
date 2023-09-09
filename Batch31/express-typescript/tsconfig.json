@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["bun-types"],
     "target": "es2016",
     "module": "commonjs",
     "outDir": "./dist",
