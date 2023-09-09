@@ -1,6 +1,8 @@
-import cookieParser from 'cookie-parser';
-import express, { Express, NextFunction, Request, Response } from 'express';
+import 'reflect-metadata';
 
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express, { Express, NextFunction, Request, Response } from 'express';
 import logger from 'morgan';
 import path from 'path';
 
@@ -10,7 +12,6 @@ import indexRouter from './routes/index';
 import ordersRouter from './routes/orders';
 import productsRouter from './routes/products';
 import suppliersRouter from './routes/suppliers';
-import cors from 'cors';
 
 const app: Express = express();
 
