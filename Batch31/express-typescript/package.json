@@ -29,6 +29,7 @@
     "@types/http-errors": "^2.0.1",
     "@types/morgan": "^1.9.3",
     "@types/node": "^18.11.9",
+    "bun-types": "^1.0.1",
     "concurrently": "^7.5.0",
     "nodemon": "^2.0.20",
     "ts-node": "^10.9.1",
