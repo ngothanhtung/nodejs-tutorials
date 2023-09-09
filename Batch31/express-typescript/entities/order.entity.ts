@@ -10,40 +10,40 @@ export class Order {
   @PrimaryGeneratedColumn({ name: 'Id' })
   id: number;
 
-  @Column({ name: 'CreatedDate', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ name: 'CreatedDate', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdDate: Date;
 
-  @Column({ name: 'ShippedDate', nullable: true })
+  @Column({ name: 'ShippedDate', type: 'datetime', nullable: true })
   shippedDate: Date;
 
   // ----------------------------------------------------------------------------------------------
   // STATUS
   // ----------------------------------------------------------------------------------------------
-  @Column({ name: 'Status', default: 'WAITING', length: 50 })
+  @Column({ name: 'Status', type: 'varchar', default: 'WAITING', length: 50 })
   status: string;
 
   // ----------------------------------------------------------------------------------------------
   // DESCRIPTION
   // ----------------------------------------------------------------------------------------------
-  @Column({ name: 'Description', nullable: true })
+  @Column({ name: 'Description', type: 'nvarchar', length: 'MAX', nullable: true })
   description: string;
 
   // ----------------------------------------------------------------------------------------------
   // SHIPPING ADDRESS
   // ----------------------------------------------------------------------------------------------
-  @Column({ name: 'ShippingAddress', nullable: true, length: 500 })
+  @Column({ name: 'ShippingAddress', type: 'nvarchar', nullable: true, length: 500 })
   shippingAddress: string;
 
   // ----------------------------------------------------------------------------------------------
   // SHIPPING CITY
   // ----------------------------------------------------------------------------------------------
-  @Column({ name: 'ShippingCity', nullable: true, length: 50 })
+  @Column({ name: 'ShippingCity', type: 'nvarchar', nullable: true, length: 50 })
   shippingCity: string;
 
   // ----------------------------------------------------------------------------------------------
   // PAYMENT TYPE
   // ----------------------------------------------------------------------------------------------
-  @Column({ name: 'PaymentType', default: 'CASH' })
+  @Column({ name: 'PaymentType', type: 'varchar', length: 20, default: 'CASH' })
   paymentType: string;
 
   @Column()

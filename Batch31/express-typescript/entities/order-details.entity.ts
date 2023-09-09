@@ -6,19 +6,19 @@ import { Product } from './product.entity';
 
 @Entity({ name: 'OrderDetails' })
 export class OrderDetail {
-  @PrimaryColumn()
+  @PrimaryColumn({ name: 'OrderId' })
   orderId: number;
 
-  @PrimaryColumn()
+  @PrimaryColumn({ name: 'ProductId' })
   productId: number;
 
-  @Column()
+  @Column({ name: 'Quantity', type: 'decimal', precision: 18, scale: 2 })
   quantity: number;
 
-  @Column()
+  @Column({ name: 'Price', type: 'decimal', precision: 18, scale: 2 })
   price: number;
 
-  @Column()
+  @Column({ name: 'Discount', type: 'decimal', precision: 18, scale: 2 })
   discount: number;
 
   @ManyToOne(() => Product, (p) => p.orderDetails)
