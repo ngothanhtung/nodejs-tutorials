@@ -12,13 +12,13 @@ export class Category extends BaseEntity {
   // ----------------------------------------------------------------------------------------------
   @IsNotEmpty({ message: 'Name is required' })
   @Length(1, 5, { message: '[$property] of [$target]: [$value] must be greater than $constraint1 and less than $constraint2 characters' })
-  @Column({ name: 'Name', unique: true, length: 100 })
+  @Column({ name: 'Name', unique: true, type: 'nvarchar', length: 100 })
   name: string;
 
   // ----------------------------------------------------------------------------------------------
   // DESCRIPTION
   // ----------------------------------------------------------------------------------------------
-  @Column({ name: 'Description', length: 500, nullable: true })
+  @Column({ name: 'Description', type: 'nvarchar', length: 500, nullable: true })
   description: string;
 
   // ----------------------------------------------------------------------------------------------
