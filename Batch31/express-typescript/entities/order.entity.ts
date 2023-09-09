@@ -46,10 +46,10 @@ export class Order {
   @Column({ name: 'PaymentType', type: 'varchar', length: 20, default: 'CASH' })
   paymentType: string;
 
-  @Column()
+  @Column({ type: 'int' })
   customerId: number;
 
-  @Column()
+  @Column({ type: 'int' })
   employeeId: number;
 
   // RELATIONS

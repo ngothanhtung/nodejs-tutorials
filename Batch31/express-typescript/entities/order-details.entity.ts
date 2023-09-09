@@ -6,10 +6,10 @@ import { Product } from './product.entity';
 
 @Entity({ name: 'OrderDetails' })
 export class OrderDetail {
-  @PrimaryColumn({ name: 'OrderId' })
+  @PrimaryColumn({ type: 'int' })
   orderId: number;
 
-  @PrimaryColumn({ name: 'ProductId' })
+  @PrimaryColumn({ type: 'int' })
   productId: number;
 
   @Column({ name: 'Quantity', type: 'decimal', precision: 18, scale: 2 })
