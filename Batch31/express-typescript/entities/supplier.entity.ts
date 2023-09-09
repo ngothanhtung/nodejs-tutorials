@@ -19,17 +19,17 @@ export class Supplier {
   // ----------------------------------------------------------------------------------------------
   // PHONE NUMBER
   // ----------------------------------------------------------------------------------------------
-  @Column({ name: 'Phone', type: 'varchar', length: 50, unique: true })
+  @Column({ name: 'Phone', type: 'varchar', length: 50, unique: true, default: '' })
   phoneNumber: string;
 
   // ----------------------------------------------------------------------------------------------
   // EMAIL
   // ----------------------------------------------------------------------------------------------
-  @Column({ name: 'Email', type: 'varchar', length: 100, unique: true })
+  @Column({ name: 'Email', type: 'varchar', length: 100, unique: true, default: '' })
   email: string;
 
   // ----------------------------------------------------------------------------------------------
-  @Column({ name: 'Address', type: 'nvarchar', length: 500 })
+  @Column({ name: 'Address', type: 'nvarchar', length: 500, default: '' })
   address: string;
 
   // ----------------------------------------------------------------------------------------------
