@@ -1,1 +1,17 @@
-[{"id":1,"name":"Mobile Phone","description":"Điện thoại"},{"name":"Fashion","description":"Thời trang","id":2},{"name":"Toys","description":"Đồ chơi trẻ em","id":3}]
+[
+  {
+    "id": 1,
+    "name": "Mobile Phone",
+    "description": "Điện thoại"
+  },
+  {
+    "name": "Fashion",
+    "description": "Thời trang",
+    "id": 2
+  },
+  {
+    "name": "Toys",
+    "description": "Đồ chơi trẻ em",
+    "id": 3
+  }
+]

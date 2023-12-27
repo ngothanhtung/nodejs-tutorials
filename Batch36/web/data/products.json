@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "CPU Core i7",
+    "price": 400,
+    "discount": 0,
+    "stock": 10,
+    "description": "Các loại CPU cho máy tính"
+  },
+  {
+    "id": 3,
+    "name": "RAM DDR4 2600MHz 8GB",
+    "price": 100,
+    "discount": 5,
+    "stock": 30,
+    "description": "Các loại ram cho máy tính"
+  },
+  {
+    "id": 100,
+    "name": "Power Cooler Master 750W",
+    "price": 300,
+    "discount": 0,
+    "stock": 120,
+    "description": "Nguồn máy tinh"
+  }
+]
