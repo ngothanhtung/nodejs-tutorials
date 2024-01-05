@@ -6,7 +6,7 @@ const fileName = './data/customers.json';
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-  res.send(data);
+  res.status(200).json(data);
 });
 
 module.exports = router;

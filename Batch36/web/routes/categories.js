@@ -1,3 +1,4 @@
+const yup = require('yup');
 var express = require('express');
 var router = express.Router();
 var data = require('../data/categories.json');
@@ -5,6 +6,20 @@ var data = require('../data/categories.json');
 var { write } = require('../helpers/fileHelper');
 
 const fileName = './data/categories.json';
+
+const createSchema = yup
+  .object()
+  .shape({
+    id: yup.number().required(),
+    email: yup.string().email('Email ko hợp lệ').required(),
+    name: yup.string().required('Tên bắt buộc phải co'),
+    price: yup.number().positive().required(),
+    // 0 <= price <= 90
+    discount: yup.number().min(0).max(90).required(),
+    // stock >= 0
+    stock: yup.number().min(0).required(),
+  })
+  .required();
 
 /* GET users listing. */
 
@@ -37,10 +52,18 @@ router.get('/search/text', function (req, res, next) {
 router.post('/', function (req, res, next) {
   const body = req.body;
 
-  data.push(body);
-
-  write(fileName, data);
-  res.send();
+  createSchema
+    .validate(body, { abortEarly: false })
+    .then((value) => {
+      // Everything is fine
+      data.push(body);
+      write(fileName, data);
+      return res.status(201).send();
+    })
+    .catch((err) => {
+      // Something went wrong
+      return res.status(400).send(err.errors);
+    });
 });
 
 // Get one by id
