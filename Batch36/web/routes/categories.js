@@ -2,6 +2,7 @@ const yup = require('yup');
 var express = require('express');
 var router = express.Router();
 var data = require('../data/categories.json');
+const _ = require('lodash');
 
 var { write } = require('../helpers/fileHelper');
 
@@ -10,14 +11,8 @@ const fileName = './data/categories.json';
 const createSchema = yup
   .object()
   .shape({
-    id: yup.number().required(),
-    email: yup.string().email('Email ko hợp lệ').required(),
-    name: yup.string().required('Tên bắt buộc phải co'),
-    price: yup.number().positive().required(),
-    // 0 <= price <= 90
-    discount: yup.number().min(0).max(90).required(),
-    // stock >= 0
-    stock: yup.number().min(0).required(),
+    name: yup.string().required(),
+    description: yup.string(),
   })
   .required();
 
@@ -55,13 +50,24 @@ router.post('/', function (req, res, next) {
   createSchema
     .validate(body, { abortEarly: false })
     .then((value) => {
-      // Everything is fine
+      // Auto generate id
+      // MAX ID by LODASH // npm install lodash -- save
+      let maxId = _.maxBy(data, 'id')?.id;
+
+      if (maxId === undefined) {
+        maxId = 1;
+      } else {
+        maxId++;
+      }
+
+      body.id = maxId;
       data.push(body);
       write(fileName, data);
       return res.status(201).send();
     })
     .catch((err) => {
       // Something went wrong
+      console.log(err);
       return res.status(400).send(err.errors);
     });
 });
@@ -77,9 +83,14 @@ router.delete('/:id', function (req, res, next) {
 
   let remain = data.filter((x) => x.id != id);
 
-  write(fileName, remain);
-
-  return res.send();
+  write(fileName, remain)
+    .then(() => {
+      data = remain;
+      return res.send();
+    })
+    .catch((err) => {
+      return res.sendStatus(500);
+    });
 });
 
 // Get one by id
@@ -98,7 +109,13 @@ router.patch('/:id', function (req, res, next) {
     found[key] = body[key];
   }
 
-  write(fileName, data);
+  write(fileName, data)
+    .then(() => {
+      return res.send();
+    })
+    .catch((err) => {
+      return res.sendStatus(500);
+    });
 
   return res.send();
 });
