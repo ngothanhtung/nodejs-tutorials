@@ -19,6 +19,22 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+// Get all
+router.get('/check', async (req, res, next) => {
+  try {
+    let found = await Category.findOne({
+      name: req.query.name,
+    });
+
+    if (found) {
+      return res.json({ ok: true });
+    }
+    return res.json({ ok: false });
+  } catch (err) {
+    res.sendStatus(500);
+  }
+});
+
 router.get('/:id', async function (req, res, next) {
   // Validate
   const validationSchema = yup.object().shape({

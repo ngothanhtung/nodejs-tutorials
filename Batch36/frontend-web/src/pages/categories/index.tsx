@@ -1,5 +1,5 @@
 import { Button, Card, Form, Input, Space, Table, Popconfirm, message, Modal } from 'antd';
-
+import { useRequest } from 'ahooks';
 import React from 'react';
 import { axiosClient } from '../../libraries/axiosClient';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
@@ -11,7 +11,23 @@ type FieldType = {
   description?: string;
 };
 
+const checkNameUnique = async (name: string) => {
+  try {
+    const res = await axiosClient.get(`/categories/check?name=${name}`);
+    console.log(res.data);
+    return res.data.ok;
+  } catch (error) {
+    return false;
+  }
+};
+
 export default function Categories({}: Props) {
+  const { data, run: checkNameUniqueDebounce } = useRequest(checkNameUnique, {
+    debounceWait: 300,
+    manual: true,
+    cacheTime: 0,
+  });
+
   const [categories, setCategories] = React.useState([]);
   const [selectedCategory, setSelectedCategory] = React.useState<any>(null);
   const [createForm] = Form.useForm<FieldType>();
@@ -33,7 +49,7 @@ export default function Categories({}: Props) {
   const onFinish = async (values: any) => {
     try {
       console.log('Success:', values);
-      const response = await axiosClient.post('/categories', values);
+      await axiosClient.post('/categories', values);
       getCategories();
       createForm.resetFields();
     } catch (error) {
@@ -43,7 +59,7 @@ export default function Categories({}: Props) {
 
   const onDelete = async (id: number) => {
     try {
-      const response = await axiosClient.delete(`/categories/${id}`);
+      await axiosClient.delete(`/categories/${id}`);
       getCategories();
       message.success('Category deleted successfully!');
     } catch (error) {
@@ -54,7 +70,7 @@ export default function Categories({}: Props) {
   const onUpdate = async (values: any) => {
     try {
       console.log('Success:', values);
-      const response = await axiosClient.patch(`/categories/${selectedCategory.id}`, values);
+      await axiosClient.patch(`/categories/${selectedCategory._id}`, values);
       getCategories();
       setSelectedCategory(null);
       message.success('Category updated successfully!');
@@ -66,8 +82,9 @@ export default function Categories({}: Props) {
   const columns = [
     {
       title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: '_id',
+      key: '_id',
+      width: '1%',
     },
     {
       title: 'Name',
@@ -100,7 +117,7 @@ export default function Categories({}: Props) {
               title='Delete the category'
               description='Are you sure to delete this category?'
               onConfirm={() => {
-                onDelete(record.id);
+                onDelete(record._id);
               }}
             >
               <Button type='primary' danger icon={<DeleteOutlined />} />
@@ -115,7 +132,25 @@ export default function Categories({}: Props) {
     <div style={{ padding: 36 }}>
       <Card title='Create new category' style={{ width: '100%' }}>
         <Form form={createForm} name='create-category' labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} initialValues={{ name: '', description: '' }} onFinish={onFinish}>
-          <Form.Item<FieldType> label='Name' name='name' rules={[{ required: true, message: 'Please input name!' }]} hasFeedback>
+          <Form.Item<FieldType>
+            label='Name'
+            name='name'
+            rules={[
+              { required: true, message: 'Please input name!' },
+              {
+                validator(rule, value, callback) {
+                  checkNameUniqueDebounce(value);
+                  console.log(data);
+                  if (data === true) {
+                    callback('Name must be unique!');
+                  } else {
+                    callback();
+                  }
+                },
+              },
+            ]}
+            hasFeedback
+          >
             <Input />
           </Form.Item>
           <Form.Item<FieldType> label='Description' name='description'>
