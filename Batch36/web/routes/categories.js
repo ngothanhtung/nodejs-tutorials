@@ -1,123 +1,143 @@
 const yup = require('yup');
 var express = require('express');
 var router = express.Router();
-var data = require('../data/categories.json');
-const _ = require('lodash');
 
-var { write } = require('../helpers/fileHelper');
+const { default: mongoose } = require('mongoose');
+const { Category } = require('../models');
+const ObjectId = require('mongodb').ObjectId;
 
-const fileName = './data/categories.json';
+mongoose.connect('mongodb://localhost:27017/online-shop');
 
-const createSchema = yup
-  .object()
-  .shape({
-    name: yup.string().required(),
-    description: yup.string(),
-  })
-  .required();
-
-/* GET users listing. */
-
-router.get('/', function (req, res, next) {
-  res.send(data);
-});
-
-// Get one by id
-router.get('/:id', function (req, res, next) {
-  const id = req.params.id;
-
-  let found = data.find((x) => x.id == id);
-
-  if (found) {
-    return res.send(found);
+// Methods: POST / PATCH / GET / DELETE / PUT
+// Get all
+router.get('/', async (req, res, next) => {
+  try {
+    let results = await Category.find();
+    res.send(results);
+  } catch (err) {
+    res.sendStatus(500);
   }
-
-  return res.sendStatus(410);
 });
 
-router.get('/search/text', function (req, res, next) {
-  const name = req.query.name;
-  const price = req.query.price;
-  const color = req.query.color;
-  console.log(req.query);
-  res.send();
-});
+router.get('/:id', async function (req, res, next) {
+  // Validate
+  const validationSchema = yup.object().shape({
+    params: yup.object({
+      id: yup.string().test('Validate ObjectID', '${path} is not valid ObjectID', (value) => {
+        return ObjectId.isValid(value);
+      }),
+    }),
+  });
 
-// Add new category
-router.post('/', function (req, res, next) {
-  const body = req.body;
+  validationSchema
+    .validate({ params: req.params }, { abortEarly: false })
+    .then(async () => {
+      const id = req.params.id;
 
-  createSchema
-    .validate(body, { abortEarly: false })
-    .then((value) => {
-      // Auto generate id
-      // MAX ID by LODASH // npm install lodash -- save
-      let maxId = _.maxBy(data, 'id')?.id;
+      let found = await Category.findById(id);
 
-      if (maxId === undefined) {
-        maxId = 1;
-      } else {
-        maxId++;
+      if (found) {
+        return res.json(found);
       }
 
-      body.id = maxId;
-      data.push(body);
-      write(fileName, data);
-      return res.status(201).send();
+      return res.sendStatus(410);
     })
     .catch((err) => {
-      // Something went wrong
-      console.log(err);
-      return res.status(400).send(err.errors);
+      return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
     });
 });
 
-// Get one by id
+// Create new data
+router.post('/', async function (req, res, next) {
+  // Validate
+  const validationSchema = yup.object({
+    body: yup.object({
+      name: yup.string().required(),
+      description: yup.string(),
+    }),
+  });
+
+  validationSchema
+    .validate({ body: req.body }, { abortEarly: false })
+    .then(async () => {
+      try {
+        const data = req.body;
+        const newItem = new Category(data);
+        let result = await newItem.save();
+
+        return res.status(201).json(result);
+      } catch (err) {
+        return res.status(500).json({ error: err });
+      }
+    })
+    .catch((err) => {
+      return res.status(400).json({ type: err.name, errors: err.errors, provider: 'yup' });
+    });
+});
+
+// ------------------------------------------------------------------------------------------------
+// Delete data
 router.delete('/:id', function (req, res, next) {
-  const id = req.params.id;
+  const validationSchema = yup.object().shape({
+    params: yup.object({
+      id: yup.string().test('Validate ObjectID', '${path} is not valid ObjectID', (value) => {
+        return ObjectId.isValid(value);
+      }),
+    }),
+  });
 
-  let found = data.find((x) => x.id == id);
-  if (!found) {
-    return res.sendStatus(410);
-  }
+  validationSchema
+    .validate({ params: req.params }, { abortEarly: false })
+    .then(async () => {
+      try {
+        const id = req.params.id;
 
-  let remain = data.filter((x) => x.id != id);
+        let found = await Category.findByIdAndDelete(id);
 
-  write(fileName, remain)
-    .then(() => {
-      data = remain;
-      return res.send();
+        if (found) {
+          return res.json(found);
+        }
+
+        return res.sendStatus(410);
+      } catch (err) {
+        return res.status(500).json({ error: err });
+      }
     })
     .catch((err) => {
-      return res.sendStatus(500);
+      return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
     });
 });
 
-// Get one by id
-router.patch('/:id', function (req, res, next) {
-  const id = req.params.id;
-  const body = req.body;
+router.patch('/:id', async function (req, res, next) {
+  const validationSchema = yup.object().shape({
+    params: yup.object({
+      id: yup.string().test('Validate ObjectID', '${path} is not valid ObjectID', (value) => {
+        return ObjectId.isValid(value);
+      }),
+    }),
+  });
 
-  let found = data.find((x) => x.id == id);
+  validationSchema
+    .validate({ params: req.params }, { abortEarly: false })
+    .then(async () => {
+      try {
+        const id = req.params.id;
+        const patchData = req.body;
 
-  if (!found) {
-    return res.sendStatus(410);
-  }
+        let found = await Category.findByIdAndUpdate(id, patchData);
 
-  // update dynamic depend body properties
-  for (const key in body) {
-    found[key] = body[key];
-  }
+        if (found) {
+          return res.sendStatus(200);
+        }
 
-  write(fileName, data)
-    .then(() => {
-      return res.send();
+        return res.sendStatus(410);
+      } catch (err) {
+        return res.status(500).json({ error: err });
+      }
     })
     .catch((err) => {
-      return res.sendStatus(500);
+      return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
     });
-
-  return res.send();
 });
 
 module.exports = router;
