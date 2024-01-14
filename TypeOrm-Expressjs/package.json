@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./bin/www.ts",
     "dev": "ts-node-dev --respawn --transpile-only --exit-child bin/www.ts",
-    "build": "npx tsc -p"
+    "build": "npx tsc"
   },
   "dependencies": {
     "class-validator": "^0.14.0",
