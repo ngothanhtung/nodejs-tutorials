@@ -2,11 +2,8 @@ const yup = require('yup');
 var express = require('express');
 var router = express.Router();
 
-const { default: mongoose } = require('mongoose');
 const { Category } = require('../models');
 const ObjectId = require('mongodb').ObjectId;
-
-mongoose.connect('mongodb://localhost:27017/online-shop');
 
 // Methods: POST / PATCH / GET / DELETE / PUT
 // Get all

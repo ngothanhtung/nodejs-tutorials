@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -8,7 +9,11 @@ const cors = require('cors');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var categoriesRouter = require('./routes/categories');
+var suppliersRouter = require('./routes/suppliers');
+var productsRouter = require('./routes/products');
 var customersRouter = require('./routes/customers');
+var employeesRouter = require('./routes/employees');
+var ordersRouter = require('./routes/orders');
 var httpResponsesRouter = require('./routes/http-responses');
 
 var app = express();
@@ -32,11 +37,19 @@ app.use(
     // allowedHeaders: 'Content-Type,Authorization',
   }),
 );
+
+//
+mongoose.connect('mongodb://localhost:27017/online-shop');
+
 // Register routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
+app.use('/suppliers', suppliersRouter);
+app.use('/products', productsRouter);
 app.use('/customers', customersRouter);
+app.use('/employees', employeesRouter);
+app.use('/orders', ordersRouter);
 app.use('/http-responses', httpResponsesRouter);
 
 // catch 404 and forward to error handler
