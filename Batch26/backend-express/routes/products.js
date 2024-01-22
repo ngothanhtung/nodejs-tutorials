@@ -103,7 +103,7 @@ router.delete('/:id', function (req, res, next) {
 });
 
 // ------------------------------------------------------------------------------------------------
-// QUESTIONS 1a
+// QUESTIONS 1
 // ------------------------------------------------------------------------------------------------
 // https://www.mongodb.com/docs/manual/reference/operator/query/
 // http://localhost:9000/products/questions/1?discount=10
@@ -114,30 +114,13 @@ const question1Schema = yup.object({
   }),
 });
 
-router.get('/questions/1a', validateSchema(question1Schema), function (req, res, next) {
+router.get('/questions/1', validateSchema(question1Schema), function (req, res, next) {
   try {
     let discount = req.query.discount;
     let query = { discount: { $lte: discount } };
     Product.find(query)
-      .then((result) => {
-        res.send(result);
-      })
-      .catch((err) => {
-        res.status(400).send({ message: err.message });
-      });
-  } catch (err) {
-    res.sendStatus(500);
-  }
-});
-
-// ------------------------------------------------------------------------------------------------
-// QUESTIONS 1a
-// ------------------------------------------------------------------------------------------------
-// https://www.mongodb.com/docs/manual/reference/operator/query/
-router.get('/questions/1a', function (req, res, next) {
-  try {
-    let query = { discount: { $lte: 10 } };
-    Product.find(query)
+      .populate('category')
+      .populate('supplier')
       .then((result) => {
         res.send(result);
       })
@@ -153,7 +136,7 @@ router.get('/questions/1a', function (req, res, next) {
 // QUESTIONS 1b
 // ------------------------------------------------------------------------------------------------
 // https://www.mongodb.com/docs/manual/reference/operator/query/
-router.get('/questions/1a', function (req, res, next) {
+router.get('/questions/1b', function (req, res, next) {
   try {
     let query = { discount: { $lte: 10 } };
     Product.find(query)
