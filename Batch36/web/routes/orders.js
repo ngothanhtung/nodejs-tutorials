@@ -31,4 +31,33 @@ router.post('/', async function (req, res, next) {
   }
 });
 
+// ------------------------------------------------------------------------------------------------
+// QUESTIONS 8
+// ------------------------------------------------------------------------------------------------
+router.get('/questions/8', function (req, res, next) {
+  try {
+    const fromDate = new Date();
+    fromDate.setHours(0, 0, 0, 0);
+
+    const toDate = new Date(new Date().setDate(fromDate.getDate() + 1));
+    toDate.setHours(0, 0, 0, 0);
+
+    const compareStatus = { $eq: ['$status', 'COMPLETED'] };
+    const compareFromDate = { $gte: ['$createdDate', fromDate] };
+    const compareToDate = { $lt: ['$createdDate', toDate] };
+    const query = { $expr: { $and: [compareStatus, compareFromDate, compareToDate] } };
+
+    Order.find(query)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((err) => {
+        res.status(400).send({ message: err.message });
+      });
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
+});
+
 module.exports = router;
