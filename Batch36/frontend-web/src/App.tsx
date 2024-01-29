@@ -10,6 +10,8 @@ import { createBrowserRouter, Outlet, RouterProvider, useLocation, useNavigate, 
 import Home from './pages/home';
 import { MenuItemType } from 'antd/es/menu/hooks/useItems';
 import { FileOutlined, HomeOutlined } from '@ant-design/icons';
+import Products from './pages/products';
+import Orders from './pages/orders';
 
 // numeral.locale('vi');
 
@@ -23,8 +25,12 @@ const router = createBrowserRouter([
         element: <Categories />,
       },
       {
-        path: '/reports/products/discount',
-        element: <Question_1d />,
+        path: '/management/products',
+        element: <Products />,
+      },
+      {
+        path: '/management/orders',
+        element: <Orders />,
       },
     ],
   },
@@ -48,6 +54,10 @@ const items = [
       {
         key: '/management/products',
         label: 'Products',
+      },
+      {
+        key: '/management/orders',
+        label: 'Orders',
       },
     ],
   },

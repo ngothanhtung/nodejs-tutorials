@@ -32,6 +32,71 @@ router.post('/', async function (req, res, next) {
 });
 
 // ------------------------------------------------------------------------------------------------
+// Delete data
+router.delete('/:id', function (req, res, next) {
+  const validationSchema = yup.object().shape({
+    params: yup.object({
+      id: yup.string().test('Validate ObjectID', '${path} is not valid ObjectID', (value) => {
+        return ObjectId.isValid(value);
+      }),
+    }),
+  });
+
+  validationSchema
+    .validate({ params: req.params }, { abortEarly: false })
+    .then(async () => {
+      try {
+        const id = req.params.id;
+
+        let found = await Order.findByIdAndDelete(id);
+
+        if (found) {
+          return res.json(found);
+        }
+
+        return res.sendStatus(410);
+      } catch (err) {
+        return res.status(500).json({ error: err });
+      }
+    })
+    .catch((err) => {
+      return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
+    });
+});
+
+router.patch('/:id', async function (req, res, next) {
+  const validationSchema = yup.object().shape({
+    params: yup.object({
+      id: yup.string().test('Validate ObjectID', '${path} is not valid ObjectID', (value) => {
+        return ObjectId.isValid(value);
+      }),
+    }),
+  });
+
+  validationSchema
+    .validate({ params: req.params }, { abortEarly: false })
+    .then(async () => {
+      try {
+        const id = req.params.id;
+        const patchData = req.body;
+
+        let found = await Order.findByIdAndUpdate(id, patchData);
+
+        if (found) {
+          return res.sendStatus(200);
+        }
+
+        return res.sendStatus(410);
+      } catch (err) {
+        return res.status(500).json({ error: err });
+      }
+    })
+    .catch((err) => {
+      return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
+    });
+});
+
+// ------------------------------------------------------------------------------------------------
 // QUESTIONS 8
 // ------------------------------------------------------------------------------------------------
 router.get('/questions/8', function (req, res, next) {

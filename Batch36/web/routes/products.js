@@ -16,6 +16,19 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+// http://localhost:3000/products/search?name=iphone
+router.get('/search', async (req, res, next) => {
+  try {
+    let name = req.query.name;
+    const query = { name: new RegExp(`${name}`) };
+
+    let results = await Product.find(query).populate('category').populate('supplier').lean({ virtuals: true });
+    res.send(results);
+  } catch (err) {
+    res.sendStatus(500);
+  }
+});
+
 // Create new data
 router.post('/', async function (req, res, next) {
   // Validate body from client send to server
@@ -50,6 +63,71 @@ router.post('/', async function (req, res, next) {
     })
     .catch((err) => {
       return res.status(400).json({ type: err.name, errors: err.errors, provider: 'yup' });
+    });
+});
+
+// ------------------------------------------------------------------------------------------------
+// Delete data
+router.delete('/:id', function (req, res, next) {
+  const validationSchema = yup.object().shape({
+    params: yup.object({
+      id: yup.string().test('Validate ObjectID', '${path} is not valid ObjectID', (value) => {
+        return ObjectId.isValid(value);
+      }),
+    }),
+  });
+
+  validationSchema
+    .validate({ params: req.params }, { abortEarly: false })
+    .then(async () => {
+      try {
+        const id = req.params.id;
+
+        let found = await Product.findByIdAndDelete(id);
+
+        if (found) {
+          return res.json(found);
+        }
+
+        return res.sendStatus(410);
+      } catch (err) {
+        return res.status(500).json({ error: err });
+      }
+    })
+    .catch((err) => {
+      return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
+    });
+});
+
+router.patch('/:id', async function (req, res, next) {
+  const validationSchema = yup.object().shape({
+    params: yup.object({
+      id: yup.string().test('Validate ObjectID', '${path} is not valid ObjectID', (value) => {
+        return ObjectId.isValid(value);
+      }),
+    }),
+  });
+
+  validationSchema
+    .validate({ params: req.params }, { abortEarly: false })
+    .then(async () => {
+      try {
+        const id = req.params.id;
+        const patchData = req.body;
+
+        let found = await Product.findByIdAndUpdate(id, patchData);
+
+        if (found) {
+          return res.sendStatus(200);
+        }
+
+        return res.sendStatus(410);
+      } catch (err) {
+        return res.status(500).json({ error: err });
+      }
+    })
+    .catch((err) => {
+      return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
     });
 });
 
