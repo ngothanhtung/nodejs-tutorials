@@ -1,22 +1,32 @@
 const { default: mongoose } = require('mongoose');
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 const cors = require('cors');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var categoriesRouter = require('./routes/categories');
-var suppliersRouter = require('./routes/suppliers');
-var productsRouter = require('./routes/products');
-var customersRouter = require('./routes/customers');
-var employeesRouter = require('./routes/employees');
-var ordersRouter = require('./routes/orders');
-var httpResponsesRouter = require('./routes/http-responses');
+// AUTH WITH JWT
 
-var app = express();
+const passport = require('passport');
+const BasicStrategy = require('passport-http').BasicStrategy;
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const jwtSettings = require('./constants/jwtSettings');
+
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const categoriesRouter = require('./routes/categories');
+const suppliersRouter = require('./routes/suppliers');
+const productsRouter = require('./routes/products');
+const customersRouter = require('./routes/customers');
+const employeesRouter = require('./routes/employees');
+const ordersRouter = require('./routes/orders');
+const httpResponsesRouter = require('./routes/http-responses');
+
+const authRouter = require('./routes/auth');
+
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -33,13 +43,31 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(
   cors({
     origin: '*',
-    // methods: 'GET,POST,PUT,DELETE',
-    // allowedHeaders: 'Content-Type,Authorization',
   }),
 );
 
-//
-mongoose.connect('mongodb://localhost:27017/online-shop');
+// Passport: Basic Auth
+passport.use(
+  new BasicStrategy(async (username, password, done) => {
+    console.log('🚀 BasicStrategy');
+
+    if (username === 'aptech' && password === '147258369') {
+      return done(null, true);
+    } else {
+      return done(null, false);
+    }
+  }),
+);
+
+// CONNECT TO MONGODB
+// mongoose
+//   .connect('mongodb://localhost:27017/online-shop')
+//   .then(() => {
+//     console.log('Connected to MongoDB');
+//   })
+//   .catch((error) => {
+//     console.log('Error connecting to MongoDB', error);
+//   });
 
 // Register routes
 app.use('/', indexRouter);
@@ -51,6 +79,8 @@ app.use('/customers', customersRouter);
 app.use('/employees', employeesRouter);
 app.use('/orders', ordersRouter);
 app.use('/http-responses', httpResponsesRouter);
+
+app.use('/auth', authRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
