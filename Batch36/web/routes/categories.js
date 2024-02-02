@@ -2,6 +2,9 @@ const yup = require('yup');
 var express = require('express');
 var router = express.Router();
 
+const { validateSchema } = require('../validations/validateSchema');
+const { createCategorySchema } = require('../validations/category.schema.yup');
+
 const { Category } = require('../models');
 const ObjectId = require('mongodb').ObjectId;
 
@@ -61,31 +64,16 @@ router.get('/:id', async function (req, res, next) {
 });
 
 // Create new data
-router.post('/', async function (req, res, next) {
-  // Validate
-  const validationSchema = yup.object({
-    body: yup.object({
-      name: yup.string().required(),
-      description: yup.string(),
-    }),
-  });
+router.post('/', validateSchema(createCategorySchema), async function (req, res, next) {
+  try {
+    const data = req.body;
+    const newItem = new Category(data);
+    let result = await newItem.save();
 
-  validationSchema
-    .validate({ body: req.body }, { abortEarly: false })
-    .then(async () => {
-      try {
-        const data = req.body;
-        const newItem = new Category(data);
-        let result = await newItem.save();
-
-        return res.status(201).json(result);
-      } catch (err) {
-        return res.status(500).json({ error: err });
-      }
-    })
-    .catch((err) => {
-      return res.status(400).json({ type: err.name, errors: err.errors, provider: 'yup' });
-    });
+    return res.status(201).json(result);
+  } catch (err) {
+    return res.status(500).json({ error: err });
+  }
 });
 
 // ------------------------------------------------------------------------------------------------

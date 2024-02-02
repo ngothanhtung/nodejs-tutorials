@@ -5,9 +5,9 @@ const validateSchema = (schema) => async (req, res, next) => {
       query: req.query,
       params: req.params,
     });
-    return next();
+    next();
   } catch (err) {
-    return res.status(400).json({ type: err.name, message: err.message, provider: 'yup' });
+    res.status(400).json({ type: err.name, message: err.message, provider: 'yup' });
   }
 };
 

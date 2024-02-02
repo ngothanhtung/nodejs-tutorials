@@ -6,12 +6,15 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 
-// AUTH WITH JWT
-
 const passport = require('passport');
+
+// HTTP BASIC AUTH
 const BasicStrategy = require('passport-http').BasicStrategy;
+// JWT
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
+
+// SETTINGS
 const jwtSettings = require('./constants/jwtSettings');
 
 const indexRouter = require('./routes/index');
@@ -46,34 +49,70 @@ app.use(
   }),
 );
 
+// My Logger
+const myLogger = async (req, res, next) => {
+  console.log('LOGGED', req.body);
+  next();
+};
+
+app.use(myLogger);
+
 // Passport: Basic Auth
 passport.use(
   new BasicStrategy(async (username, password, done) => {
     console.log('🚀 BasicStrategy');
 
+    // hard code
     if (username === 'aptech' && password === '147258369') {
-      return done(null, true);
+      let error = null;
+      let user = true;
+      return done(error, user); // => next()
     } else {
-      return done(null, false);
+      let error = null;
+      let user = false;
+      return done(error, user); // res.sendStatus(401)
+    }
+  }),
+);
+
+// Passport: jwt
+const opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = jwtSettings.SECRET;
+opts.audience = jwtSettings.AUDIENCE;
+opts.issuer = jwtSettings.ISSUER;
+
+passport.use(
+  new JwtStrategy(opts, function (payload, done) {
+    console.log(payload);
+    if (['tungnt@softech.vn', 'peter@gmail.com'].includes(payload.sub)) {
+      let error = null;
+      let user = true;
+      return done(error, user); // => next()
+    } else {
+      let error = null;
+      let user = false;
+      return done(error, user); //
     }
   }),
 );
 
 // CONNECT TO MONGODB
-// mongoose
-//   .connect('mongodb://localhost:27017/online-shop')
-//   .then(() => {
-//     console.log('Connected to MongoDB');
-//   })
-//   .catch((error) => {
-//     console.log('Error connecting to MongoDB', error);
-//   });
+mongoose
+  .connect('mongodb://localhost:27017/online-shop')
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.log('Error connecting to MongoDB', error);
+  });
 
 // Register routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
 app.use('/suppliers', suppliersRouter);
+
 app.use('/products', productsRouter);
 app.use('/customers', customersRouter);
 app.use('/employees', employeesRouter);
