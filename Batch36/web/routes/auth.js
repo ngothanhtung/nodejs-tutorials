@@ -39,17 +39,20 @@ router.post('/jwt', async (req, res, next) => {
   const { username, password } = req.body;
 
   if (username === 'tungnt@softech.vn' && password === '123456789') {
+    // TODO: DATABASE
+    // 5-7 dòng
     // Cấp JWT
     const payload = {
       message: 'Hello JWT',
       id: username,
+      roles: ['administrators', 'managers'],
     };
 
     const secret = jwtSettings.SECRET;
 
     // ACCESS TOKEN
     const token = jwt.sign(payload, secret, {
-      expiresIn: 15, //24 * 60 * 60, // expires in 24 hours (24 x 60 x 60)
+      expiresIn: 24 * 60 * 60, // expires in 24 hours (24 x 60 x 60)
       audience: jwtSettings.AUDIENCE,
       issuer: jwtSettings.ISSUER,
       subject: username, // Thường dùng để kiểm tra JWT lần sau
@@ -86,7 +89,7 @@ router.post('/refresh-token', async (req, res, next) => {
         };
 
         const token = jwt.sign(payload, secret, {
-          expiresIn: 15, //24 * 60 * 60, // expires in 24 hours (24 x 60 x 60)
+          expiresIn: 24 * 60 * 60, // expires in 24 hours (24 x 60 x 60)
           audience: jwtSettings.AUDIENCE,
           issuer: jwtSettings.ISSUER,
           subject: username, // Thường dùng để kiểm tra JWT lần sau
@@ -101,6 +104,44 @@ router.post('/refresh-token', async (req, res, next) => {
 });
 
 router.get('/jwt', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+  res.json({ ok: true });
+});
+
+// CHECK ROLES : MIDLEWARE
+// Call allowRoles ('admin', 'user', 'managers')
+const allowRoles = (...required_roles) => {
+  // return a middleware
+  return (request, response, next) => {
+    // GET BEARER TOKEN FROM HEADER
+    const bearerToken = request.get('Authorization').replace('Bearer ', '');
+
+    // DECODE TOKEN
+    const payload = jwt.decode(bearerToken, { json: true });
+
+    // AFTER DECODE TOKEN: GET UID FROM PAYLOAD
+    const { sub, roles } = payload;
+
+    // CHECK ROLES
+    let ok = false;
+    roles.forEach((role) => {
+      if (required_roles.includes(role)) {
+        ok = true;
+        return;
+      }
+    });
+
+    if (ok === true) {
+      next();
+    } else {
+      response.status(403).json({ message: 'Forbidden' }); // user is forbidden
+    }
+  };
+};
+
+// ------------------------------------------------------------------------------------------------
+// CALL API JWT AUTHENTICATION & CHECK ROLES
+// ------------------------------------------------------------------------------------------------
+router.get('/roles', passport.authenticate('jwt', { session: false }), allowRoles('supervisors', 'administrators'), function (req, res, next) {
   res.json({ ok: true });
 });
 
