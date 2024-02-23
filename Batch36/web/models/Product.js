@@ -11,6 +11,7 @@ const productSchema = new Schema(
     price: { type: Number, required: true, min: 0, default: 0 },
     discount: { type: Number, min: 0, max: 90, default: 0 },
     stock: { type: Number, min: 0, default: 0 },
+    imageUrl: { type: String, required: false },
     categoryId: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
     supplierId: { type: Schema.Types.ObjectId, ref: 'Supplier', required: true },
   },

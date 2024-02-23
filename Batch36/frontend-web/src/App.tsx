@@ -9,9 +9,12 @@ import 'numeral/locales/vi';
 import { createBrowserRouter, Outlet, RouterProvider, useLocation, useNavigate, useRoutes } from 'react-router-dom';
 import Home from './pages/home';
 import { MenuItemType } from 'antd/es/menu/hooks/useItems';
-import { FileOutlined, HomeOutlined } from '@ant-design/icons';
+import { FileOutlined, HomeOutlined, UploadOutlined } from '@ant-design/icons';
 import Products from './pages/products';
 import Orders from './pages/orders';
+import FormUpload from './pages/upload/FormUpload';
+import AntUpload from './pages/upload/AntUpload';
+import ManualAntUpload from './pages/upload/ManualAntUpload';
 
 // numeral.locale('vi');
 
@@ -32,6 +35,18 @@ const router = createBrowserRouter([
         path: '/management/orders',
         element: <Orders />,
       },
+      {
+        path: '/upload',
+        element: <FormUpload />,
+      },
+      {
+        path: '/upload/antd',
+        element: <AntUpload />,
+      },
+      {
+        path: '/upload/antd-form',
+        element: <ManualAntUpload />,
+      },
     ],
   },
 ]);
@@ -41,6 +56,21 @@ const items = [
     key: '/',
     label: 'Home',
     icon: <HomeOutlined />,
+  },
+  {
+    key: '/upload',
+    label: 'Upload',
+    icon: <UploadOutlined />,
+  },
+  {
+    key: '/upload/antd',
+    label: 'Upload with Antd',
+    icon: <UploadOutlined />,
+  },
+  {
+    key: '/upload/antd-form',
+    label: 'Upload with Antd Form',
+    icon: <UploadOutlined />,
   },
   {
     key: '/management',

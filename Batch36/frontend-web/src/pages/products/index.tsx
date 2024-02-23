@@ -1,8 +1,9 @@
-import { Button, Card, Form, Input, Space, Table, Popconfirm, message, Modal, InputNumber, Select } from 'antd';
+import { Button, Card, Form, Input, Space, Table, Popconfirm, message, Modal, InputNumber, Select, Upload } from 'antd';
 import React from 'react';
 import { axiosClient } from '../../libraries/axiosClient';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
 import numeral from 'numeral';
+import axios from 'axios';
 
 type Props = {};
 
@@ -25,6 +26,8 @@ export default function Products({}: Props) {
   const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
   const [createForm] = Form.useForm<FieldType>();
   const [updateForm] = Form.useForm<FieldType>();
+
+  const [file, setFile] = React.useState(null);
 
   const getProducts = async () => {
     try {
@@ -62,7 +65,20 @@ export default function Products({}: Props) {
   const onFinish = async (values: any) => {
     try {
       console.log('Success:', values);
-      await axiosClient.post('/products', values);
+      const response = await axiosClient.post('/products', values);
+      console.log(response.data);
+
+      const _id = response.data._id;
+
+      if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('name', 'Category 1234');
+        formData.append('description', 'Mo ta 1234');
+
+        await axios.post('http://127.0.0.1:9000/upload/products/' + _id, formData);
+      }
+
       getProducts();
       createForm.resetFields();
     } catch (error) {
@@ -100,6 +116,16 @@ export default function Products({}: Props) {
       width: '1%',
       render: (text: string, record: any, index: number) => {
         return <div style={{ textAlign: 'right' }}>{index + 1}</div>;
+      },
+    },
+
+    {
+      title: 'Picture',
+      key: 'imageUrl',
+      dataIndex: 'imageUrl',
+      width: '1%',
+      render: (text: string, record: any, index: number) => {
+        return <img src={'http://localhost:9000' + text} style={{ height: 60 }} alt='' />;
       },
     },
     {
@@ -204,6 +230,19 @@ export default function Products({}: Props) {
     <div style={{ padding: 36 }}>
       <Card title='Create new product' style={{ width: '100%' }}>
         <Form form={createForm} name='create-product' labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} initialValues={{ name: '', discount: 0, stock: 0, description: '' }} onFinish={onFinish}>
+          <Form.Item label='Image'>
+            <Upload
+              listType='text'
+              showUploadList={true}
+              beforeUpload={(f: any) => {
+                setFile(f);
+                return false;
+              }}
+            >
+              <Button icon={<UploadOutlined />}>Click to Upload</Button>
+            </Upload>
+          </Form.Item>
+
           <Form.Item<FieldType> name='categoryId' label='Category' rules={[{ required: true }]} hasFeedback>
             <Select
               options={categories.map((item: any) => {

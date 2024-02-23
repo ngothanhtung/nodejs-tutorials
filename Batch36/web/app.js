@@ -28,6 +28,7 @@ const ordersRouter = require('./routes/orders');
 const httpResponsesRouter = require('./routes/http-responses');
 
 const authRouter = require('./routes/auth');
+const uploadRouter = require('./routes/upload');
 
 const app = express();
 
@@ -120,6 +121,8 @@ app.use('/orders', ordersRouter);
 app.use('/http-responses', httpResponsesRouter);
 
 app.use('/auth', authRouter);
+
+app.use('/upload', uploadRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
