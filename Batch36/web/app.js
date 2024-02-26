@@ -30,6 +30,8 @@ const httpResponsesRouter = require('./routes/http-responses');
 const authRouter = require('./routes/auth');
 const uploadRouter = require('./routes/upload');
 
+const questionsRouter = require('./routes/questions');
+
 const app = express();
 
 // view engine setup
@@ -123,6 +125,7 @@ app.use('/http-responses', httpResponsesRouter);
 app.use('/auth', authRouter);
 
 app.use('/upload', uploadRouter);
+app.use('/questions', questionsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
