@@ -4,12 +4,14 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
 import { Category } from './entities/category.entity';
-import { Product } from './entities/product.entity';
-import { Supplier } from './entities/supplier.entity';
 import { Customer } from './entities/customer.entity';
 import { Employee } from './entities/employee.entity';
-import { Order } from './entities/order.entity';
 import { OrderDetail } from './entities/order-details.entity';
+import { Order } from './entities/order.entity';
+import { Product } from './entities/product.entity';
+import { SeparatingCategory } from './entities/schemas/category.schema';
+import { Supplier } from './entities/supplier.entity';
+import { CategoryView } from './entities/views/category-view.entity';
 
 export const AppDataSource = new DataSource({
   type: 'mssql',
@@ -19,7 +21,7 @@ export const AppDataSource = new DataSource({
   password: 'developer',
   database: 'TypeOrm',
   // entities: ['entities/**/*.entity{.ts,.js}', 'entities/**/*.schema{.ts,.js}'],
-  entities: [Category, Supplier, Product, Customer, Employee, Order, OrderDetail],
+  entities: [Category, Supplier, Product, Customer, Employee, Order, OrderDetail, CategoryView, SeparatingCategory],
   synchronize: true,
   logging: false,
   options: {

@@ -10,6 +10,7 @@ import categoriesRouter from './routes/categories';
 import suppliersRouter from './routes/suppliers';
 import productsRouter from './routes/products';
 import ordersRouter from './routes/orders';
+import advancedRouter from './routes/advanced';
 
 const app: Express = express();
 
@@ -30,6 +31,7 @@ AppDataSource.initialize().then(async () => {
   app.use('/products', productsRouter);
   app.use('/suppliers', suppliersRouter);
   app.use('/orders', ordersRouter);
+  app.use('/advanced', advancedRouter);
 
   // catch 404 and forward to error handler
   app.use(function (req: Request, res: Response, next: NextFunction) {
