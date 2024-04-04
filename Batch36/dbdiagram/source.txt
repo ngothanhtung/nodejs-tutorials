@@ -1,0 +1,28 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table Categories {
+  id int [primary key]
+  name nvarchar(100) [not null, unique]
+  description datetime 
+}
+
+Table Suppliers {
+  id int [primary key]
+  name nvarchar(100) [not null, unique]
+  description datetime 
+}
+
+Table Products {
+  id int 
+  name nvarchar(100) [not null, unique]
+  price decimal(18, 2) [default: 0]
+  discount decimal(18, 2)
+  stock decimal(18, 2) [not null, default: 0]
+  description nvarchar(max)
+  category_id int
+  supplier_id int
+}
+
+Ref: "Categories"."id" < "Products"."category_id"
+Ref: "Suppliers"."id" < "Products"."supplier_id"
