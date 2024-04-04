@@ -1,11 +1,10 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { Express, NextFunction, Request, Response } from 'express';
-import { initialize } from 'express-openapi';
 import logger from 'morgan';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
-
+import swaggerJsdoc from 'swagger-jsdoc';
 import { AppDataSource } from './data-source';
 // OPEN API
 import apiDoc from './docs/apiDoc';
@@ -18,27 +17,11 @@ import suppliersRouter from './routes/suppliers';
 
 const app: Express = express();
 
-initialize({
-  app,
-  // NOTE: If using yaml you can provide a path relative to process.cwd() e.g.
-  // apiDoc: './api-v1/api-doc.yml',
-  apiDoc: apiDoc,
-  dependencies: {},
-  paths: './api-routes',
-});
+app.use('/open-api', swaggerUi.serve, swaggerUi.setup(require('./swagger.json'), { explorer: true }));
 
-// OpenAPI UI
-app.use(
-  '/open-api',
-  swaggerUi.serve,
-  swaggerUi.setup(apiDoc, {
-    explorer: true,
-    swaggerOptions: {},
-  }),
-);
-
+// Initialize data source
 AppDataSource.initialize().then(async () => {
-  console.log('Data source was initialized');
+  console.log('🚀 Data source was initialized.');
 });
 
 app.use(logger('dev'));

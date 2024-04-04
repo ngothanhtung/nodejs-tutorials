@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-01/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "The unique identifier of the category."
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the category."
+    },
+    "description": {
+      "type": "string",
+      "description": "A brief description of the category."
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "additionalProperties": false
+}

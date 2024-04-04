@@ -5,5 +5,11 @@
 ## Setup
 
 ```bash
-npm install express-openapi
+npm install express swagger-ui-express swagger-jsdoc --save
+```
+
+or yarn
+
+```bash
+yarn add express swagger-ui-express swagger-jsdoc
 ```

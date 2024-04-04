@@ -6,8 +6,6 @@ import { Category } from '../entities/category.entity';
 const repository = AppDataSource.getRepository(Category);
 
 const router = express.Router();
-
-/* GET categories */
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const categories = await repository.find();
@@ -38,7 +36,6 @@ router.get('/:id', async (req: Request, res: Response, next: any) => {
   }
 });
 
-/* POST category */
 router.post('/', async (req: Request, res: Response, next: any) => {
   try {
     const category = new Category();
