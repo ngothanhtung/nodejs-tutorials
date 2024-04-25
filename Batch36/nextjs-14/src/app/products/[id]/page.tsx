@@ -9,7 +9,7 @@ export async function generateStaticParams() {
   }));
 }
 
-async function getProducts({ id }: { id: string }) {
+async function getProduct({ id }: { id: string }) {
   const response = await axios.get(`https://server.aptech.io/online-shop/products/${id}`);
 
   return response.data;
@@ -23,7 +23,7 @@ type Props = {
 
 export default async function Product({ params }: Props) {
   const { id } = params;
-  const product = await getProducts({ id });
+  const product = await getProduct({ id });
   return (
     <div>
       <div className='bg-white shadow-md rounded-lg overflow-hidden'>

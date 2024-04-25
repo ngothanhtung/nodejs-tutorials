@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props) {
   const category = await getCategory(id);
 
   return {
-    title: `Products of Category ${category.name}`,
+    title: `Category ${category.name}`,
     description: `View all products of category ${category.name}`,
   };
 }
