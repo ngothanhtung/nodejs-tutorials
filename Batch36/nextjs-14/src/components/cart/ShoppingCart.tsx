@@ -2,11 +2,13 @@
 import React from 'react';
 import numeral from 'numeral';
 import { useCartStore } from '@/providers/cart-store-provider';
+import ClearCart from './ClearCart';
+import TotalLabel from './TotalLabel';
 
 type Props = {};
 
 export default function ShoppingCart({}: Props) {
-  const { items, addToCart, removeFromCart } = useCartStore((state) => state);
+  const { items, addToCart, decreaseQuantity, removeFromCart } = useCartStore((state) => state);
 
   return (
     <div className='overflow-x-auto'>
@@ -45,19 +47,24 @@ export default function ShoppingCart({}: Props) {
                   <div className='text-sm font-medium text-gray-100'>{item.product.name}</div>
                 </td>
                 <td className='px-6 py-4 whitespace-nowrap w-0'>
-                  <div className='text-sm text-gray-100'>{numeral(item.product.price).format('$0.0')}</div>
+                  <div className='text-sm text-gray-100'>{numeral(item.product.price).format('$0,0')}</div>
                 </td>
                 <td className='px-6 py-4 whitespace-nowrap w-0'>
                   <div className='text-sm text-gray-100 text-right'>{numeral(item.product.discount).format('0.0')}%</div>
                 </td>
                 <td className='px-6 py-4 whitespace-nowrap w-0'>
-                  <div className='text-sm text-gray-100 text-right'>{item.quantity}</div>
-                </td>
-                <td className='px-6 py-4 whitespace-nowrap w-0'>
-                  <div className='text-sm font-medium text-gray-100 text-right'>{numeral(((item.product.price * (100 - item.product.discount)) / 100) * item.quantity).format('$0')}</div>
-                </td>
-                <td className='px-6 py-4 whitespace-nowrap w-0'>
-                  <div className='space-x-4'>
+                  <div className='flex space-x-8'>
+                    <button
+                      onClick={() =>
+                        decreaseQuantity({
+                          productId: item.product.id,
+                        })
+                      }
+                      className='text-green-500 hover:text-green-900'
+                    >
+                      -
+                    </button>
+                    <div className='text-sm text-gray-100 text-right'>{item.quantity}</div>
                     <button
                       onClick={() =>
                         addToCart({
@@ -67,8 +74,15 @@ export default function ShoppingCart({}: Props) {
                       }
                       className='text-green-500 hover:text-green-900'
                     >
-                      Add more
+                      +
                     </button>
+                  </div>
+                </td>
+                <td className='px-6 py-4 whitespace-nowrap w-0'>
+                  <div className='text-sm font-medium text-gray-100 text-right'>{numeral(((item.product.price * (100 - item.product.discount)) / 100) * item.quantity).format('$0,0')}</div>
+                </td>
+                <td className='px-6 py-4 whitespace-nowrap w-0'>
+                  <div className='space-x-4'>
                     <button
                       onClick={() =>
                         removeFromCart({
@@ -86,6 +100,11 @@ export default function ShoppingCart({}: Props) {
           })}
         </tbody>
       </table>
+      <div className='my-8'>
+        <hr />
+      </div>
+
+      <TotalLabel />
     </div>
   );
 }

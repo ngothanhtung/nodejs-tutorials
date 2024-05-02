@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 import { CartStoreProvider } from '@/providers/cart-store-provider';
 import CartLink from '@/components/cart/CartLink';
+import ClearCart from '@/components/cart/ClearCart';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,6 +31,7 @@ export default function RootLayout({
               <Link href='/sales'>Sales</Link>
               {/* <Link href='/cart'>Cart</Link> */}
               <CartLink />
+              <ClearCart />
             </nav>
 
             <main className='mt-8'>{children}</main>

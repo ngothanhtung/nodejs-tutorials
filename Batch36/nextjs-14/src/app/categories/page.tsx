@@ -21,6 +21,7 @@ async function getCategories() {
 export const metadata: Metadata = {
   title: 'Categories',
   description: 'Categories page',
+  keywords: 'categories, products, shop online',
 };
 
 type Props = {};
